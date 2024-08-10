@@ -41,3 +41,8 @@ Route::post('/pg_listings', [PgListingController::class, 'store']);
 
 Route::get('/userDetail', [UserController::class, 'decodeToken']);
 Route::get('/user-ads/{id}/', [AdsController::class, 'getUserAds']);
+
+use App\Http\Controllers\PasswordChangeController;
+
+Route::post('/change-password', [PasswordChangeController::class, 'changePassword']);
+
