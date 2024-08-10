@@ -55,7 +55,7 @@ const PropertyPage = () => {
     const handleSearchSubmit = (event) => {
         event.preventDefault();
         setSearchParams({
-            address: search,
+            address: search,// Pass the handleSortChange function
             t: searchParams.get("t") || "a",
             p: 1,
             gender: gender,
@@ -126,9 +126,10 @@ const PropertyPage = () => {
 
     const renderListing = (listing) => {
         let photos = [];
-
         if (listing.photos) {
-            photos = JSON.parse(listing.photos);
+            photos = JSON.parse(listing.photos).map((photo) =>
+                photo.replace("/", "/")
+            );
         }
 
         return (
@@ -180,7 +181,7 @@ const PropertyPage = () => {
                 onSearchSubmit={handleSearchSubmit}
                 gender={gender}
                 onGenderChange={handleGenderChange}
-                setListingType={handleNavClick}  
+                setListingType={handleNavClick} 
                 onSortChange={handleSortChange}  
             />
             <div className="flex justify-center mt-6">
