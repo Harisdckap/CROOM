@@ -14,6 +14,7 @@ const PropertyPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [search, setSearch] = useState("");
     const [gender, setGender] = useState("all");
+    const [sortOrder, setSortOrder] = useState(searchParams.get("sort") || "ASC");
 
     useEffect(() => {
         fetchListings();
@@ -26,6 +27,7 @@ const PropertyPage = () => {
                 t: searchParams.get("t") || "a",
                 p: searchParams.get("p") || 1,
                 gender: searchParams.get("gender") || "all",
+                sort: searchParams.get("sort") || sortOrder,
             };
             const response = await axios.get(
                 "http://127.0.0.1:8000/api/properties",
@@ -57,6 +59,18 @@ const PropertyPage = () => {
             t: searchParams.get("t") || "a",
             p: 1,
             gender: gender,
+            sort: sortOrder,
+        });
+    };
+
+    const handleSortChange = (order) => {
+        setSortOrder(order);
+        setSearchParams({
+            address: searchParams.get("address") || "",
+            t: searchParams.get("t") || "a",
+            p: 1,
+            gender: searchParams.get("gender") || "all",
+            sort: order,
         });
     };
 
@@ -65,7 +79,8 @@ const PropertyPage = () => {
             address: searchParams.get("address") || "",
             t: type,
             p: 1,
-            gender: gender,
+            gender: searchParams.get("gender") || "all",
+            sort: sortOrder,
         });
     };
 
@@ -111,10 +126,9 @@ const PropertyPage = () => {
 
     const renderListing = (listing) => {
         let photos = [];
+
         if (listing.photos) {
-            photos = JSON.parse(listing.photos).map((photo) =>
-                photo.replace("/", "/")
-            );
+            photos = JSON.parse(listing.photos);
         }
 
         return (
@@ -166,7 +180,8 @@ const PropertyPage = () => {
                 onSearchSubmit={handleSearchSubmit}
                 gender={gender}
                 onGenderChange={handleGenderChange}
-                onNavClick={handleNavClick}
+                setListingType={handleNavClick}  
+                onSortChange={handleSortChange}  
             />
             <div className="flex justify-center mt-6">
                 <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

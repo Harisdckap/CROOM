@@ -13,64 +13,79 @@ use Illuminate\Support\Facades\Log;
 class PropertyController extends Controller
 {
 
-
     public function index(Request $request)
-{
-    $address = $request->input('address', '');
-    $page = $request->input('p', 1);
-    $itemsPerPage = 8;
-    $type = $request->input('t', 'a');
-    $gender = $request->input('gender', 'all'); 
+    {
+        $address = $request->input('address', '');
+        $page = $request->input('p', 1);
+        $itemsPerPage = 8;
+        $type = $request->input('t', 'a');
+        $gender = $request->input('gender', 'all');
+        $sortOrder = $request->input('sort', 'ASC'); 
+    
+        $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
+        $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
+        $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
+    
+        if ($gender !== 'all') {
+            $roommateQuery->where('looking_for_gender', $gender);
+            $listingQuery->where('looking_for_gender', $gender);
+            $pgQuery->where('pg_type', $gender);
+        }
 
-    $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
-    $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
-    $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
+        switch ($type) {
+            case 'r':
+                $listings = $listingQuery->where('listing_type', 'room')->get();
+                $roommates = collect();
+                $pglistings = collect();
+                break;
+            case 'rm':
+                $roommates = $roommateQuery->where('listing_type', 'roommates')->get();
+                $listings = collect();
+                $pglistings = collect();
+                break;
+            case 'pg':
+                $pglistings = $pgQuery->get();
+                $roommates = collect();
+                $listings = collect();
+                break;
+            default:
+                $roommates = $roommateQuery->get();
+                $listings = $listingQuery->where('listing_type', '!=', 'pg')->get();
+                $pglistings = $pgQuery->get();
+                break;
+        }
 
-    if ($gender !== 'all') {
-        $roommateQuery->where('looking_for_gender', $gender);
-        $listingQuery->where('looking_for_gender', $gender);
-        $pgQuery->where('pg_type', $gender);
+        $combinedListings = $listings->merge($roommates)->merge($pglistings);
+
+        $combinedListings = $combinedListings->sort(function ($a, $b) use ($sortOrder) {
+            $aPrice = $a->price ?? $a->approx_rent ?? $a->occupancy_amount;
+            $bPrice = $b->price ?? $b->approx_rent ?? $b->occupancy_amount;
+    
+            if ($aPrice === $bPrice) {
+                return 0;
+            }
+    
+            return ($sortOrder === 'ASC') ? ($aPrice < $bPrice ? -1 : 1) : ($aPrice > $bPrice ? -1 : 1);
+        });
+    
+        // Paginate the combined collection
+        $paginatedListings = $this->paginate($combinedListings, $itemsPerPage, $page, $request);
+    
+        // Log the current sorting order and the number of listings
+        Log::info('Current sort order: ' . $sortOrder);
+        Log::info('Total listings: ' . $combinedListings->count());
+    
+        // Return the response
+        return response()->json([
+            'data' => $paginatedListings->items(),
+            'current_page' => $paginatedListings->currentPage(),
+            'last_page' => $paginatedListings->lastPage(),
+            'total' => $paginatedListings->total(),
+        ]);
     }
-
-    switch ($type) {
-        case 'r':
-            $listings = $listingQuery->where('listing_type', 'room')->get();
-            $roommates = collect();
-            $pglistings = collect();
-            break;
-        case 'rm':
-            $roommates = $roommateQuery->where('listing_type', 'roommates')->get();
-            $listings = collect();
-            $pglistings = collect();
-            break;
-        case 'pg':
-            $pglistings = $pgQuery->get();
-            $roommates = collect();
-            $listings = collect();
-            break;
-        default:
-            $roommates = $roommateQuery->get();
-            $listings = $listingQuery->where('listing_type', '!=', 'pg')->get(); 
-            $pglistings = $pgQuery->get();
-            break;
-    }
-
-    $combinedListings = $listings->merge($roommates)->merge($pglistings)->sortByDesc('created_at')->values();
-
-    // Paginate the combined collection
-    $paginatedListings = $this->paginate($combinedListings, $itemsPerPage, $page, $request);
-
-    // Return the response
-    return response()->json([
-        'data' => $paginatedListings->items(),
-        'current_page' => $paginatedListings->currentPage(),
-        'last_page' => $paginatedListings->lastPage(),
-        'total' => $paginatedListings->total(),
-    ]);
-}
-
-
+    
     /**
+     * Custom pagination function for a collection
      * Paginate a given collection.
      *
      * @param \Illuminate\Support\Collection $items
@@ -83,7 +98,7 @@ class PropertyController extends Controller
     {
         $offset = ($page - 1) * $perPage;
         $paginatedItems = $items->slice($offset, $perPage)->values();
-
+    
         return new \Illuminate\Pagination\LengthAwarePaginator(
             $paginatedItems,
             $items->count(),
@@ -92,7 +107,7 @@ class PropertyController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
     }
-
+    
 
 
 
