@@ -1,285 +1,574 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useRef } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
+// import "./Roommate.css";
 
-export const Add_PG = () => {
-  const [pgType, setPgType] = useState('Both');
-  const [mobileNum, setMobileNum] = useState('');
-  const [pgName, setPgName] = useState('');
-  const [ownerName, setOwnerName] = useState('');
-  const [pgAddress, setPgAddress] = useState('');
-  const [singleOccupancy, setSingleOccupancy] = useState('');
-  const [doubleOccupancy, setDoubleOccupancy] = useState('');
-  const [tripleOccupancy, setTripleOccupancy] = useState('');
-  const [securityDeposit, setSecurityDeposit] = useState('');
-  const [noticePeriod, setNoticePeriod] = useState('');
-  const [maintenanceCharge, setMaintenanceCharge] = useState('');
-  const [electricityCharges, setElectricityCharges] = useState('');
-  const [pgPostContent, setPgPostContent] = useState('');
-  const [pgFiles, setPgFiles] = useState([]);
 
-  const handleFileClick = () => {
-    document.getElementById('fileInput').click();
-  };
 
-  const handleFileChange = (e) => {
-    setPgFiles(e.target.files);
-  };
+const Add_PG = () => {
+   const [pg_type, setPgType] = useState("Both");
+   const [mobile_num, setMobileNum] = useState("");
+   const [pg_name, setPgName] = useState("");
+   const [occupancy_type, setOccupancyType] = useState("");
+   const [occupancy_amount, setOccupancyAmount] = useState("");
+   const [images, setImages] = useState([]);
+   const [highlighted_features, sethighlighted_features] = useState([]);
+   const [amenities, setAmenities] = useState([]);
+   const [pg_post_content, setPgPostContent] = useState("");
+   const fileInputRef = useRef(null);
 
-  const showToastMessage = (message) => {
-    toast.error(message, { position: "top-center" });
-  };
+   
+   // const navigate = useNavigate();
+   const [address_1,setaddress_1 ] = useState("")
+   const [address_2,setaddress_2 ] = useState("")
+   const [PIN,setPIN ] = useState("")
+   const [state,setstate ] = useState("")
 
-  const validateInputs = () => {
-    if (!pgName) {
-      showToastMessage("PG name is required");
-      return false;
-    }
 
-    if (!mobileNum) {
-      showToastMessage("Mobile Number is required");
-      return false;
-    }
 
-    if (!ownerName) {
-      showToastMessage("Owner name is required");
-      return false;
-    }
+  const handleChangeAddress_1 = (e) =>{
+   setaddress_1(e.target.value)
 
-    if (!pgAddress) {
-      showToastMessage("PG address is required");
-      return false;
-    }
+  }
+  
+  
+  const handleChangeAddress_2 = (e) =>{
+   setaddress_2(e.target.value)
+  }
+  
 
-    if (!singleOccupancy) {
-      showToastMessage("Valid single occupancy amount is required");
-      return false;
-    }
+  const handleChangeState = (e) =>{
+   setstate(e.target.value)
+  }
 
-    if (!doubleOccupancy) {
-      showToastMessage("Valid double occupancy amount is required");
-      return false;
-    }
+  const handleChangePIN = (e) =>{
+    setPIN(e.target.value)
+   }
 
-    if (!tripleOccupancy) {
-      showToastMessage("Valid triple occupancy amount is required");
-      return false;
-    }
+   const location = ` ${address_1} ${address_2} ${PIN} ${state}`;
 
-    if (!securityDeposit) {
-      showToastMessage("Valid security deposit amount is required");
-      return false;
-    }
 
-    if (!noticePeriod) {
-      showToastMessage("Notice period is required");
-      return false;
-    }
 
-    if (!maintenanceCharge) {
-      showToastMessage("Valid maintenance charge amount is required");
-      return false;
-    }
+   const allHighlightedFeatures = [
+       "Furnished",
+       "Attached Bathroom",
+       "Balcony",
+       "Parking",
+   ];
+   const allAmenities = [
+       "WiFi",
+       "Air Conditioning",
+       "Laundry Facilities",
+       "Hot Water",
+       "Refrigerator",
+       "Kitchen",
+   ];
 
-    if (!electricityCharges) {
-      showToastMessage("Valid electricity charges amount is required");
-      return false;
-    }
 
-    if (!pgPostContent) {
-      showToastMessage("Post content is required");
-      return false;
-    }
+   const handleFeatureClick = (feature) => {
+       setHighlightedFeatures((prevFeatures) =>
+           prevFeatures.includes(feature)
+               ? prevFeatures.filter((f) => f !== feature)
+               : [...prevFeatures, feature]
+       );
+   };
 
-    return true;
-  };
 
-  const handleSubmit = () => {
-    if (validateInputs()) {
-      toast.success("Form submitted successfully", { position: "top-center" });
-    }
-  };
+   const handleAmenityClick = (amenity) => {
+       setAmenities((prevAmenities) =>
+           prevAmenities.includes(amenity)
+               ? prevAmenities.filter((a) => a !== amenity)
+               : [...prevAmenities, amenity]
+       );
+   };
 
-  const handleCancel = () => {
-    setPgType('Both');
-    setMobileNum('');
-    setPgName('');
-    setOwnerName('');
-    setPgAddress('');
-    setSingleOccupancy('');
-    setDoubleOccupancy('');
-    setTripleOccupancy('');
-    setSecurityDeposit('');
-    setNoticePeriod('');
-    setMaintenanceCharge('');
-    setElectricityCharges('');
-    setPgPostContent('');
-    setPgFiles([]);
-  };
-
-  return (
-    <div className="max-w-6xl mx-auto p-16 bg-white rounded-md relative">
-      <div className="absolute top-4 right-4">
-       <Link to = "/PostRequirementPage"> <button
-          onClick={handleCancel}
-          className="text-gray-900 text-center text-lg w-8 h-8 border border-gray-900 rounded-full absolute right-4"
-          aria-label="Close"
-     
-        >
-         X
-        </button>
-        </Link>
-      </div>
-      <div className="text-center">
-        <h1 className="text-3xl font-bold">Add your PG</h1>
-        <p className="text-gray-500 mt-2">We've over thousand tenants for you!</p>
-      </div>
-      <div className="space-y-4">
-        <div className="flex gap-20 mt-12">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Your name</label>
-            <input
-              value={ownerName}
-              onChange={(e) => setOwnerName(e.target.value)}
-              type="text"
-              className="mt-1 block px-2 py-3 border w-72 border-gray-300 rounded-md shadow-sm sm:text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
-            <input
-              value={mobileNum}
-              onChange={(e) => setMobileNum(e.target.value)}
-              type="number"
-              className="mt-1 block px-2 py-3 border w-72 border-gray-300 rounded-md shadow-sm sm:text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">PG Name</label>
-            <input
-              value={pgName}
-              onChange={(e) => setPgName(e.target.value)}
-              type="text"
-              className="mt-1 block px-2 py-3 border w-72 border-gray-300 rounded-md shadow-sm sm:text-sm"
-            />
-          </div>
-        </div>
-        <div className="flex gap-32 mt-16">
-          <fieldset className="border mt-6 p-3 px-10">
-            <legend className="text-base font-medium text-gray-900">PG Type</legend>
-            <div className="mt-2 space-x-4">
-              {['Boys', 'Girls', 'Both'].map((option) => (
-                <button
-                  key={option}
-                  className={`px-8 py-3 border rounded-md text-sm font-medium ${
-                    pgType === option ? 'color' : 'hover:bg-gray-100'
-                  }`}
-                  onClick={() => setPgType(option)}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-          <div className="mt-10 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">PG Address</label>
-              <input
-                value={pgAddress}
-                onChange={(e) => setPgAddress(e.target.value)}
-                type="text"
-                className="mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-32 mt-16">
-          <fieldset className="border mt-6 p-3 px-8">
-            <legend className="text-base font-medium text-gray-900">Occupancy</legend>
-            <div className="flex gap-20 mt-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Single</label>
-                <input
-                  value={singleOccupancy}
-                  onChange={(e) => setSingleOccupancy(e.target.value)}
-                  type="number"
-                  className="mt-1 block px-2 py-3 border w-64 border-gray-300 rounded-md shadow-sm sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Double</label>
-                <input
-                  value={doubleOccupancy}
-                  onChange={(e) => setDoubleOccupancy(e.target.value)}
-                  type="number"
-                  className="mt-1 block px-2 py-3 border w-64 border-gray-300 rounded-md shadow-sm sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Triple</label>
-                <input
-                  value={tripleOccupancy}
-                  onChange={(e) => setTripleOccupancy(e.target.value)}
-                  type="number"
-                  className="mt-1 block px-2 py-3 border w-64 border-gray-300 rounded-md shadow-sm sm:text-sm"
-                />
-              </div>
-            </div>
-          </fieldset>
-        </div>
-      </div>
-      <label className="text-sm text-gray-600 mt-12 block font-medium">Upload 3 Photos of your room</label>
-      <div className="grid place-items-center mt-2 border-2 border-dashed">
-        <div role="button" tabIndex="0" className="w-full h-full" onClick={handleFileClick}>
-          <input
-            id="fileInput"
-            accept="image/png, image/jpg, image/webp, image/jpeg"
-            multiple
-            type="file"
-            autoComplete="off"
-            onChange={handleFileChange}
-            style={{ display: 'none' }}
-          />
-          <div className="w-full h-full grid place-content-center p-3">
-            <label htmlFor="fileInput" className="text-sm text-gray-600">
-              <div className="bg-gray-100 upload-fonts w-full rounded-lg text-gray-600 flex flex-col items-center py-4 px-3 gap-0 mt-1 cursor-pointer md:text-xs md:gap-2 md:px-8 md:py-5">
-                <img src="https://www.flatmate.in/upload-outline.svg" alt="upload-icon" className="w-5" />
-                <p>Click or Drag Images To Upload</p>
-                <p>(JPG, PNG, JPEG)</p>
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
-      <div className="mt-12">
-        <div className="mt-8">
-          <label className="block text-sm font-medium text-gray-700">
-            Write your post:
-            <textarea
-              value={pgPostContent}
-              onChange={(e) => setPgPostContent(e.target.value)}
-              rows={4}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            ></textarea>
-          </label>
-        </div>
-        <p className="mt-8 text-sm text-gray-500"><input type="checkbox" /> I confirm that the information given in this form is true</p>
-        <div className="mt-6">
-        <div className="text-center">
-                    <button
-                      onClick={()=>handleSubmit()}
-                       type="submit"
-                        className=" w-52 p-4 h-10 py-2 mt-2 px-4 border border-transparent rounded-3xl shadow-sm text-sm font-medium text-center text-white color hover:bg-indigo-700 focus:outline-none bgHover"
-                        >
-                        Submit
-                    </button>
-                    <ToastContainer />
-                </div>
-        </div>
-      </div>
-    </div>
-  );
+   const deleteIMG = (index) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
 };
+   const handleFileChange = (e) => {
+       const files = Array.from(e.target.files);
+
+
+       if (images.length + files.length > 3) {
+           showToastMessage("You can only upload up to 3 images in total.");
+           return;
+       }
+       setImages((prevImages) => [...prevImages, ...files]);
+
+   };
+
+
+   const showToastMessage = (message) => {
+       toast.error(message, { position: "top-center" });
+   };
+
+
+   const validateInputs = () => {
+
+       if (!pg_name) {
+           showToastMessage("PG name is required");
+           return false;
+       }
+
+       if (!address_1) {
+        showToastMessage("address_1 is required");
+        return false;
+    }
+    if (!address_2) {
+        showToastMessage("address_2 is required");
+        return false;
+    }
+    if (!PIN) {
+        showToastMessage("PIN name is required");
+        return false;
+    }
+    if (!state) {
+        showToastMessage("state is required");
+        return false;
+    }
+
+       if (!mobile_num) {
+           showToastMessage("Valid Mobile Number is required");
+           return false;
+       }
+
+
+       if (!occupancy_type || !occupancy_amount || isNaN(occupancy_amount)) {
+           showToastMessage(
+               "Please select an occupancy type and provide a valid amount"
+           );
+           return false;
+       }
+
+       if (images.length === 0) {
+           showToastMessage("Please upload at least 1 photo of your room");
+           return false;
+       }
+
+       if (!pg_post_content) {
+           showToastMessage("PG post content is required");
+           return false;
+       }
+       return true;
+   };
+
+
+   const handleSubmit = async (e) => {
+       e.preventDefault();
+       if (!validateInputs()) return;
+
+
+       const formData = new FormData();
+       formData.append("pg_type", pg_type);
+       formData.append("mobile_num", mobile_num);
+       formData.append("pg_name", pg_name);
+       formData.append("location", location);
+       formData.append("occupancy_type", occupancy_type);
+       formData.append("occupancy_amount", occupancy_amount);
+       formData.append("pg_post_content", pg_post_content);
+       formData.append("highlighted_features", JSON.stringify(highlighted_features));
+       formData.append("amenities", JSON.stringify(amenities));
+       images.forEach((image, index) => {
+           formData.append(`photos[${index}]`, image);
+       });
+
+
+       for (let [key, value] of formData.entries()) {
+        console.log(key + " " + value);
+      }
+
+       try {
+           const response = await axios.post(
+               "http://127.0.0.1:8000/api/handleChangePINpg_listings",
+               formData,
+               {
+                   headers: {
+                       "Content-Type": "multipart/form-data",
+                   },
+               }
+           );
+           toast.success("Form submitted successfully", {
+               position: "top-center",
+           });
+           console.log(response.data);
+       } catch (error) {
+           console.error(
+               "Error details:",
+               error.response?.data || error.message || error
+           );
+           toast.error("Error submitting form", { position: "top-center" });
+       }
+   };
+
+console.log(PIN,address_1,address_2,state)
+
+
+   const handleCancel = () => {
+       setPgType("Both");
+       setMobileNum("");
+       setPgName("");
+       setLocation("");
+       setOccupancyType("");
+       setOccupancyAmount("");
+       setImages([]);
+       setHighlightedFeatures([]);
+       setAmenities([]);
+       setPgPostContent("");
+   };
+
+
+   return (
+       <div className="max-w-6xl mx-auto p-8 bg-white rounded-lg shadow-md mt-4">
+           <div className="absolute top-6 right-[3.5rem]">
+               <Link to="/PostRequirementPage">
+                   <button
+                       onClick={handleCancel}
+                       className="text-gray-900 text-center text-lg w-8 h-8 border border-gray-900 rounded-full absolute right-4"
+                       aria-label="Close"
+                   >
+                       X
+                   </button>
+               </Link>
+           </div>
+
+           <div className="text-center">
+               <h1 className="text-3xl font-bold">Add your PG</h1>
+               <p className="text-gray-500 mt-2">
+                   We are over a thousand tenants for you!
+               </p>
+           </div>
+
+           <div className="">
+    
+<div >
+    <div className="flex m-0 justify-between">
+    <div className="flex  m-0 items-center gap-14">
+        <div className="mt-0">
+        <label className="block text-sm font-medium text-gray-700">
+                           PG Name
+                       </label>
+                       <input
+                           value={pg_name}
+                           onChange={(e) => setPgName(e.target.value)}
+                           type="text"
+                           className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                           />
+        </div>
+                       
+                          <div className="mt-0">
+                       <label className="block text-sm font-medium text-gray-700">{`Amount for ${occupancy_type} Occupancy`}</label>
+                       <input
+                           value={occupancy_amount}
+                           onChange={(e) => setOccupancyAmount(e.target.value)}
+                           type="number"
+                                    className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                       />
+                   </div>
+        </div>
+        <fieldset className="border text-center w-96 p-4 rounded-md">
+                   <legend className="text-base font-medium text-gray-900">
+                       PG Type
+                   </legend>
+                   <div className="flex gap-4 mt-2">
+                       {["Boys", "Girls", "Both"].map((option) => (
+                           <button
+                               key={option}
+                               className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                   pg_type === option
+                                       ? "bg-blue-500 text-white"
+                                       : "hover:bg-gray-100"
+                               }`}
+                               onClick={() => setPgType(option)}
+                           >
+                               {option}
+                           </button>
+                       ))}
+                   </div>
+               </fieldset>
+    </div>
+</div>
+            
+    <div className="flex mt-0 justify-between">
+        <div className="flex items-center gap-14">
+       
+                   <div>
+                                <label className="block text-sm font-medium text-gray-700">
+                                    address 1
+                                </label>
+                                <input
+                                value={address_1}
+                                onChange={handleChangeAddress_1}
+                                    name="  address_1"
+                                    placeholder="Address 1"
+                                    className="mt-1 block px-3 w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                                />
+                            </div> 
+                   
+        </div>
+        <fieldset className="border text-center w-96 p-4 rounded-md">
+    <legend className="text-base font-medium text-gray-900">
+        Occupancy
+    </legend>
+    <div className="mt-2 space-x-4">
+        {["Single", "Double", "Triple"].map((option) => (
+            <button
+                type="button"
+                key={option}
+                className={`px-4 py-2 border rounded-md text-sm font-medium ${occupancy_type === option
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setOccupancyType(option)}
+            >
+                {option}
+            </button>
+        ))}
+    </div>
+</fieldset>
+
+    </div>          
+              
+      
+
+{/*                  
+    <div className="mt-6">
+                   <label className="block text-sm font-medium text-gray-700">
+                       PG Address
+                   </label>
+                   <input
+                       value={location}
+                       onChange={(e) => setLocation(e.target.value)}
+                       type="text"
+                       className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full"
+                   />
+               </div>          */}
+            
+               {/* PG Address */}
+            
+
+
+<div className="flex justify-between">
+    <div className="flex items-center gap-14">
+    <div>
+                                <label className="block mt-3 text-sm font-medium text-gray-700">
+                                    address 2
+                                </label>
+                                <input
+                                    name="  address_2"
+                                    value={address_2}
+                                    onChange={handleChangeAddress_2}
+                                    placeholder="Address 1"
+                                    className="mt-1 block px-3 min-w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                                />
+                            </div> 
+
+                           
+                           
+    </div>
+   
+</div>
+            
+<div className="flex ">
+<div className="flex mt-5 gap-14">
+<div>
+                                <label className="block text-sm font-medium text-gray-700">
+                                    PIN code
+                                </label>
+                                <input
+                                value={PIN}
+                                onChange={handleChangePIN}
+                                    name="pincode"
+                                    placeholder="PIN code"
+                                    className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                                />
+                            </div>
+                                    <div>
+                       <label className="block text-sm font-medium text-gray-700">
+                           Mobile Number
+                       </label>
+                       <input
+                           value={mobile_num}
+                           onChange={(e) => setMobileNum(e.target.value)}
+                           type="tel"
+                           className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm "
+                       />
+                   </div>  
+</div>
+
+</div>
+                       
+             <div className="mt-5" >
+                                        <label className="block text-sm font-medium text-gray-700">
+                                            state
+                                        </label>
+                                        <input
+                                        value={state}
+                                        onChange={handleChangeState}
+                                            name="state"
+                                            placeholder="state"
+                                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                                        />
+                                    </div>                        
+                 
+<div className="flex  items-center gap-48">
+    <div className="w-1/2">
+    <fieldset className="border text-center w-96 p-4 rounded-md">
+    <legend className="text-base font-medium text-gray-900">
+        Highlighted Features
+    </legend>
+    <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {allHighlightedFeatures.map((feature) => (
+            <button
+                type="button"
+                key={feature}
+                className={`px-4 py-2 border rounded-md text-sm font-medium ${highlighted_features.includes(feature)
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => handleFeatureClick(feature)}
+            >
+                {feature}
+            </button>
+        ))}
+    </div>
+</fieldset>
+</div>
+
+
+<div className="w-1/2">
+<fieldset className="border text-center w-full p-4 rounded-md">
+    <legend className="text-base font-medium text-gray-900">
+        Amenities
+    </legend>
+    <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {allAmenities.map((amenity) => (
+            <button
+                type="button"
+                key={amenity}
+                className={`px-4 py-2 border rounded-md text-sm font-medium$ ${amenities.includes(amenity)
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => handleAmenityClick(amenity)}
+            >
+                {amenity}
+            </button>
+        ))}
+    </div>
+</fieldset>
+</div>
+
+   
+</div>
+
+
+  
+               
+               {/* PG Type */}
+             
+               {/* Occupancy */}
+
+
+{/* HIGHLIGHTED */}
+
+
+               {/* Amenities */}
+      
+
+               {/* PG Post Content */}
+          
+               {/* Image Upload */}
+              
+
+               <div>
+                    <label className="block text-sm font-medium text-black">
+                        Upload Photos (up to 3)
+                    </label>
+                   
+
+                    <label
+                        htmlFor="uploadFile1"
+                        className="bg-white text-gray-500 font-semibold text-base rounded max-w-sm h-52 flex flex-col items-center justify-center cursor-pointer border-2 border-gray-300 border-dashed mx-auto font-[sans-serif]"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-11 mb-2 fill-gray-500"
+                            viewBox="0 0 32 32"
+                        >
+                            <path
+                                d="M23.75 11.044a7.99 7.99 0 0 0-15.5-.009A8 8 0 0 0 9 27h3a1 1 0 0 0 0-2H9a6 6 0 0 1-.035-12 1.038 1.038 0 0 0 1.1-.854 5.991 5.991 0 0 1 11.862 0A1.08 1.08 0 0 0 23 13a6 6 0 0 1 0 12h-3a1 1 0 0 0 0 2h3a8 8 0 0 0 .75-15.956z"
+                                data-original="#000000"
+                            />
+                            <path
+                                d="M20.293 19.707a1 1 0 0 0 1.414-1.414l-5-5a1 1 0 0 0-1.414 0l-5 5a1 1 0 0 0 1.414 1.414L15 16.414V29a1 1 0 0 0 2 0V16.414z"
+                                data-original="#000000"
+                            />
+                        </svg>
+                        Upload file
+                        <input
+                            type="file"
+                            id="uploadFile1"
+                            accept="image/*"
+                            multiple
+                            onChange={handleFileChange}
+                            ref={fileInputRef}
+                            className="hidden"
+                        />
+                        <p className="text-xs font-medium text-gray-400 mt-2">
+                            PNG, JPG, SVG, WEBP, and GIF are Allowed.
+                        </p>
+                    </label>
+
+
+
+                    {images.length > 0 && (
+    <div className="mt-4 flex flex-wrap gap-4">
+        {images.map((image, index) => (
+            <div key={index} className="relative">
+                <img
+                    src={URL.createObjectURL(image)}
+                    alt={`Preview ${index}`}
+                    className="w-32 h-32 object-cover rounded-md shadow-md"
+                />
+                <span
+                    onClick={() => deleteIMG(index)}
+                    className="absolute top-1 right-1 text-white bg-red-600 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
+                >
+                    X
+                </span>
+            </div>
+        ))}
+    </div>
+)}
+
+                </div>
+                <div className="mt-6">
+                   <label className="block text-sm font-medium text-gray-700">
+                       PG Post Content
+                   </label>
+                   <textarea
+                       value={pg_post_content}
+                       onChange={(e) => setPgPostContent(e.target.value)}
+                       className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full h-32"
+                   />
+               </div>
+               {/* Buttons */}
+
+               <div className="flex justify-between mt-6">
+                   <button
+                       onClick={handleSubmit}
+                       className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                   >
+                       Submit
+                   </button>
+               </div>
+           </div>
+           <ToastContainer />
+       </div>
+   );
+};
+
 
 export default Add_PG;
