@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const ExploreButton = () => {
     const navigate = useNavigate(); // Use useNavigate hook from react-router-dom
     const address = "Chennai";
-    const page = 0;
+    const page = 1;
     const type = "a";
 
     // Construct the URL with query parameters

@@ -10,7 +10,6 @@ import {
     faHome,
     faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
-// import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import "../../slider.css";
 
 const PropertyPage = () => {
@@ -19,7 +18,6 @@ const PropertyPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [search, setSearch] = useState("");
     const [gender, setGender] = useState("all");
-    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         fetchListings();
@@ -30,24 +28,14 @@ const PropertyPage = () => {
             const params = {
                 address: searchParams.get("address") || "",
                 t: searchParams.get("t") || "a",
-                p: searchParams.get("p") || 1,
                 gender: searchParams.get("gender") || "all",
             };
             const response = await axios.get(
                 "http://127.0.0.1:8000/api/properties",
                 { params }
             );
-
-            if (params.p > 1) {
-                setListings((prevListings) => [
-                    ...prevListings,
-                    ...response.data.data,
-                ]);
-            } else {
-                setListings(response.data.data);
-            }
-
-            setCurrentPage(parseInt(params.p));
+            setListings(response.data.data);
+            console.log(response.data);
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
@@ -71,7 +59,6 @@ const PropertyPage = () => {
         setSearchParams({
             address: search,
             t: searchParams.get("t") || "a",
-            p: 1,
             gender: gender,
         });
     };
@@ -80,7 +67,6 @@ const PropertyPage = () => {
         setSearchParams({
             address: searchParams.get("address") || "",
             t: type,
-            p: 1,
             gender: gender,
         });
     };
@@ -92,15 +78,6 @@ const PropertyPage = () => {
                 trimmedLocation
             )}/${listingType}`
         );
-    };
-
-    const handleLoadMore = () => {
-        const nextPage = currentPage + 1;
-        setSearchParams((prev) => {
-            const newParams = new URLSearchParams(prev);
-            newParams.set("p", nextPage);
-            return newParams;
-        });
     };
 
     const renderSlider = (photos) => {
@@ -215,18 +192,6 @@ const PropertyPage = () => {
                     {listings.map(renderListing)}
                 </div>
             </div>
-            {listings.length >= 8 && (
-                <div className="flex justify-center mt-6">
-                    <button
-                        onClick={handleLoadMore}
-                        className="w-30 h-30 text-white p-2 bg-blue-600 hover:bg-blue-800 rounded-sm flex items-center justify-center"
-                    >
-                        <span className="font-semibold">
-                            Load More <FontAwesomeIcon icon={faArrowUp} />
-                        </span>
-                    </button>
-                </div>
-            )}
         </div>
     );
 };
