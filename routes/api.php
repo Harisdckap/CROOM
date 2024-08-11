@@ -11,11 +11,9 @@ use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RoommateController;
-// use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PgListingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdsController;
-
 
 // routes/api
 
@@ -34,11 +32,6 @@ Route::get('/property/{id}/{location}/{listingType}', [PropertyController::class
 Route::post('/upload', [ImageController::class, 'upload']);
 Route::post('/roommates', [RoommateController::class,'store']);
 Route::post('/pg_listings', [PgListingController::class, 'store']);
-// Route::middleware('auth:sanctum')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'index']);
-//     Route::post('/profile', [ProfileController::class, 'store']);
-// });
-
 Route::get('/userDetail', [UserController::class, 'decodeToken']);
 Route::get('/user-ads/{id}/', [AdsController::class, 'getUserAds']);
 
@@ -46,3 +39,4 @@ use App\Http\Controllers\PasswordChangeController;
 
 Route::post('/change-password', [PasswordChangeController::class, 'changePassword']);
 
+Route::get('user/{userId}/ads', [AdsController::class, 'getUserAds']);

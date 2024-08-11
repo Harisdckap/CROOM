@@ -11,6 +11,7 @@ class ListingController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'price' => 'required|numeric',

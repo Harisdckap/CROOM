@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
+        user_id: localStorage.getItem('user_id'),
         title: "",
         location: "",
         price: "",
@@ -138,7 +139,7 @@ const AddRoomForm = () => {
             uploadData.append(`photos[${index}]`, image); // Ensure correct field name
         });
     
-        // Log the FormData entries to verify images are being appended correctly
+        //log the FormData entries to verify images are being appended correctly
         for (let pair of uploadData.entries()) {
             console.log(pair[0] + ', ' + pair[1]);
         }
