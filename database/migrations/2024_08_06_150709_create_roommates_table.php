@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         Schema::create('roommates', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->unsignedBigInteger('user_id');
             $table->string('location');
             $table->string('looking_for');
             $table->string('looking_for_gender')->nullable();
@@ -27,6 +24,8 @@ return new class extends Migration
             $table->json('photos')->nullable();
             $table->json('amenities')->nullable(); 
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); //foreign key constraint
         });
     }
 

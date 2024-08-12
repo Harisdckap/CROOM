@@ -23,6 +23,7 @@ class PgListingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+          'user_id' => 'required|exists:users,id',
             'pg_type' => 'required|string|max:255',
             'looking_for_gender' => 'nullable|string|max:255',
             'mobile_num' => 'required|numeric',
@@ -48,6 +49,7 @@ class PgListingController extends Controller
 
         // Convert image paths to JSON for storage
         $validated['photos'] = json_encode($imagePaths);
+      
         Log::info('Uploaded files:', $imagePaths);
 
         $validated['highlighted_features'] = isset($validated['highlighted_features'])

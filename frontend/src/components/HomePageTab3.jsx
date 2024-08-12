@@ -13,9 +13,9 @@ const HomePageTab3 = () => {
   return (
     <div className="w-full px-14 py-10 flex justify-between items-top pt-20">
     <div className='w-auto'>
-    <h3 className="text-3xl font-bold mb-4">Explore The Latest</h3>
+    <h3 className="gradient-text text-3xl font-bold mb-4">Explore The Latest</h3>
     <h2 className="gradient-text text-3xl font-bold mb-4">C-room</h2>
-    <h4 className="text-2xl mb-8">Listings</h4>
+    <h4 className="gradient-text text-2xl mb-8">Listings</h4>
     </div>
     <div className=''>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

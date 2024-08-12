@@ -15,7 +15,7 @@ const Home = () => {
     return (
         <div>
             <Header />
-            <div className="w-full min-h-screen relative bg-white overflow-hidden leading-normal tracking-normal pt-16">
+            <div className="w-full min-h-screen relative bg-white overflow-hidden leading-normal tracking-normal pt-14">
                 <section
                     className="relative pt-24 pb-12 flex flex-col items-center"
                     style={{
@@ -98,7 +98,7 @@ const Home = () => {
                         </h5>
                         <p className="mb-2 text-sm text-gray-700">
                             The journey commences with a straightforward quest.
-                            On FlatMate.in, you possess the authority to search
+                            On C-room, you possess the authority to search
                             into your favored location and unearth the listings
                             that align with your requirements. Whether you're in
                             pursuit of a room, a flat, or looking for a flatmate

@@ -6,7 +6,12 @@ import { Link } from "react-router-dom";
 
 const AddRequirement = () => {
     const [formData, setFormData] = useState({
-        title:"",
+        user_id: localStorage.getItem("user_id"),
+        title: "",
+        looking_for: "Any",
+        looking_for_gender: "Male",
+        room_type: "1RK",
+        title: "",
         looking_for: "Any",
         looking_for_gender: "Male",
         room_type: "1RK",
@@ -185,7 +190,7 @@ const AddRequirement = () => {
 
     const handleCancel = () => {
         setFormData({
-            title:"",
+            title: "",
             looking_for: "Any",
             looking_for_gender: "Male",
             room_type: "1RK",
@@ -221,7 +226,7 @@ const AddRequirement = () => {
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-                <div>
+                    <div>
                         <label className="block text-sm font-medium text-black">
                             Title
                         </label>
@@ -290,7 +295,7 @@ const AddRequirement = () => {
                             Room Type
                         </legend>
                         <div className="mt-2 space-x-4">
-                            {["1RK", "1BHK","2BHK","3BHK"].map((option) => (
+                            {["1RK", "1BHK", "2BHK", "3BHK"].map((option) => (
                                 <button
                                     type="button"
                                     key={option}
@@ -369,9 +374,7 @@ const AddRequirement = () => {
                                             ? "bg-blue-500 text-white"
                                             : "hover:bg-gray-100"
                                     }`}
-                                    onClick={() =>
-                                        handleFeatureClick(feature)
-                                    }
+                                    onClick={() => handleFeatureClick(feature)}
                                 >
                                     {feature}
                                 </button>
@@ -394,9 +397,7 @@ const AddRequirement = () => {
                                             ? "bg-blue-500 text-white"
                                             : "hover:bg-gray-100"
                                     }`}
-                                    onClick={() =>
-                                        handleAmenityClick(amenity)
-                                    }
+                                    onClick={() => handleAmenityClick(amenity)}
                                 >
                                     {amenity}
                                 </button>

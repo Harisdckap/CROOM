@@ -10,6 +10,7 @@ class PgListing extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'pg_type',
         'looking_for_gender',
         'mobile_num',

@@ -106,6 +106,7 @@ const Add_PG = () => {
         if (!validateInputs()) return;
 
         const formData = new FormData();
+        formData.append("user_id", localStorage.getItem("user_id"));
         formData.append("pg_type", pg_type);
         formData.append("looking_for_gender", looking_for_gender);
         formData.append("mobile_num", mobile_num);
@@ -114,7 +115,10 @@ const Add_PG = () => {
         formData.append("occupancy_type", occupancy_type);
         formData.append("occupancy_amount", occupancy_amount);
         formData.append("pg_post_content", pg_post_content);
-        formData.append("highlighted_features", JSON.stringify(highlighted_features));
+        formData.append(
+            "highlighted_features",
+            JSON.stringify(highlighted_features)
+        );
         formData.append("amenities", JSON.stringify(amenities));
         images.forEach((image, index) => {
             formData.append(`photos[${index}]`, image);

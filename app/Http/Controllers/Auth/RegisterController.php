@@ -23,6 +23,7 @@ class RegisterController extends Controller
             'password' => 'required|string|min:8',
             'gender' => 'required|string',
             'mobile' => 'required|string|max:10',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -51,7 +52,7 @@ class RegisterController extends Controller
         $token = JWTAuth::fromUser($user);
 
         // Send OTP via email
-        Mail::send('auth.emails.otp', ['otp' => $otp, 'auth_token' => $token], function($message) use ($user) {
+        Mail::send('auth.emails.otp', ['otp' => $otp, 'auth_token' => $token], function ($message) use ($user) {
             $message->to($user->email);
             $message->subject('Your OTP Code');
         });
@@ -93,5 +94,5 @@ class RegisterController extends Controller
             ], 500);
         }
     }
-   
+
 }

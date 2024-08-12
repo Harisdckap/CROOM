@@ -27,6 +27,7 @@ class User extends Authenticatable implements JWTSubject
         'userType',
         'gender',
         'mobile',
+        'photo',
     ];
 
 
@@ -67,7 +68,5 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Profile::class);
     }
-
-   
 
 }

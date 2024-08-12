@@ -4,11 +4,12 @@ import { RotatingLines } from "react-loader-spinner";
 import logo from "../assets/logo.png";
 import img from "../assets/reg.png";
 import { register } from "../js/api/auth";
-// import "./Style.css";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 
 const Register = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -35,7 +36,7 @@ const Register = () => {
             setLoading(true);
             try {
                 const response = await register(formData);
-                console.log("Registration response:", response);
+                // console.log("Registration response:", response);
 
                 if (response && response.access_token) {
                     const { access_token, user_id } = response;
@@ -85,7 +86,7 @@ const Register = () => {
 
     return (
         <div
-            className="min-h-screen flex flex-col rounded"
+            className="min-h-screen"
             style={{ backgroundColor: "rgb(31, 41, 59)" }}
         >
             {/* loader */}
@@ -107,9 +108,9 @@ const Register = () => {
                 </div>
             )}
             {/* navbar */}
-            <nav className="w-full bg-gray-100 px-3 py-4">
+            <nav className="w-full bg-gray-100 px-3 py-2">
                 <div className="flex items-center">
-                    <img src={logo} alt="Logo" className="w-20 h-auto" />
+                    <img src={logo} alt="Logo" className="w-30 h-10" />
                 </div>
             </nav>
             <div className="main flex flex-grow items-center justify-center">
@@ -130,11 +131,11 @@ const Register = () => {
                                         htmlFor="name"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Username
+                                        Username:
                                     </label>
                                     <input
                                         type="text"
-                                        className={`mt-1 block w-full p-2 border ${
+                                        className={`mt-1 block w-full p-1 border ${
                                             errors.name
                                                 ? "border-red-500"
                                                 : "border-gray-300"
@@ -156,11 +157,11 @@ const Register = () => {
                                         htmlFor="email"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Email
+                                        Email:
                                     </label>
                                     <input
                                         type="email"
-                                        className={`mt-1 block w-full p-2 border ${
+                                        className={`mt-1 block w-full p-1 border ${
                                             errors.email
                                                 ? "border-red-500"
                                                 : "border-gray-300"
@@ -177,11 +178,11 @@ const Register = () => {
                                     )}
                                 </div>
                                 {/* gender */}
-                                <fieldset className="mb-3">
+                                <fieldset className="mb-3 flex items-center gap-4">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Gender
+                                        Gender:
                                     </label>
-                                    <div className="mt-1">
+                                    <div className="">
                                         <label className="inline-flex items-center">
                                             <input
                                                 type="radio"
@@ -229,11 +230,11 @@ const Register = () => {
                                         htmlFor="mobile"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Phone Number
+                                        Phone Number:
                                     </label>
                                     <input
                                         type="text"
-                                        className={`mt-1 block w-full p-2 border ${
+                                        className={`mt-1 block w-full p-1 border ${
                                             errors.mobile
                                                 ? "border-red-500"
                                                 : "border-gray-300"
@@ -250,50 +251,59 @@ const Register = () => {
                                     )}
                                 </div>
                                 {/* password */}
-                                <div className="mb-3">
+                                <div className="mb-3 relative">
                                     <label
                                         htmlFor="password"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Password
+                                        Password:
                                     </label>
                                     <input
-                                        type="password"
-                                        className={`mt-1 block w-full p-2 border ${
+                                        type={
+                                            showPassword ? "text" : "password"
+                                        }
+                                        className={`mt-1 block w-full p-1 border ${
                                             errors.password
                                                 ? "border-red-500"
                                                 : "border-gray-300"
                                         } rounded-md`}
                                         name="password"
                                         id="password"
+                                        placeholder="password"
                                         value={formData.password}
                                         onChange={handleChange}
+                                        autoComplete="off"
                                     />
+                                    <p
+                                        className="absolute top-8 right-3 cursor-pointer"
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                        id="eye"
+                                    >
+                                        {showPassword ? (
+                                            <EyeOutlined
+                                                style={{
+                                                    fontSize: "16px",
+                                                    color: "#1F293B",
+                                                }}
+                                            />
+                                        ) : (
+                                            <EyeInvisibleOutlined
+                                                style={{
+                                                    fontSize: "16px",
+                                                    color: "#1F293B",
+                                                }}
+                                            />
+                                        )}
+                                    </p>
                                     {errors.password && (
                                         <div className="text-red-500 text-sm">
                                             {errors.password}
                                         </div>
                                     )}
                                 </div>
-                                {/* select avatar */}
-                                {/* <div className="mb-3">
-                                    <label htmlFor="selectAvatar" className="block text-sm font-medium text-gray-700">Select Avatar</label>
-                                    <div class="grid grid-cols-4 mt-2">
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/9.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/7.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/32.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/5.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                    </div>
-                                </div> */}
-                                {/* register button */}
+
                                 <div className="mt-4">
                                     {!loading && (
                                         <button

@@ -19,6 +19,7 @@ return array(
     'App\\Http\\Controllers\\ProfileController' => $baseDir . '/app/Http/Controllers/ProfileController.php',
     'App\\Http\\Controllers\\PropertyController' => $baseDir . '/app/Http/Controllers/PropertyController.php',
     'App\\Http\\Controllers\\RoommateController' => $baseDir . '/app/Http/Controllers/RoommateController.php',
+    'App\\Http\\Controllers\\UserController' => $baseDir . '/app/Http/Controllers/UserController.php',
     'App\\Mail\\OTPMail' => $baseDir . '/app/Mail/OTPMail.php',
     'App\\Models\\OTPVerification' => $baseDir . '/app/Models/OTPVerification.php',
     'App\\Models\\PgListing' => $baseDir . '/app/Models/PgListing.php',

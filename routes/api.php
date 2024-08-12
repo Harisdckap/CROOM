@@ -11,10 +11,9 @@ use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RoommateController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PgListingController;
-use App\Http\Controllers\JwtController;
-
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdsController;
 
 // routes/api
 
@@ -28,14 +27,12 @@ Route::post('/verify-otp', [OTPVerificationController::class, 'verifyOtp']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('reset-password', [ResetPasswordController::class, 'reset']);
 Route::get('/password/reset/', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('/listings', [ListingController::class, 'store']);
+
+Route::middleware('auth')->post('/listings', [ListingController::class, 'store']);
 Route::get('/properties', [PropertyController::class, 'index']);
 Route::get('/property/{id}/{location}/{listingType}', [PropertyController::class, 'show']);
 Route::post('/upload', [ImageController::class, 'upload']);
 Route::post('/roommates', [RoommateController::class,'store']);
 Route::post('/pg_listings', [PgListingController::class, 'store']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'index']);
-    Route::post('/profile', [ProfileController::class, 'store']);
-});
-Route::get('/decode', [JwtController::class, 'decodeTokenQuery']);
+Route::get('/userDetail', [UserController::class, 'decodeToken']);
+Route::get('user/{userId}/ads', [AdsController::class, 'getUserAds']);

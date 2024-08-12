@@ -70,10 +70,3 @@ npm install @vitejs/plugin-react
 npm install vite
 composer install
 npm i
-npm install @fortawesome/fontawesome-free
-
-npm install react-icons
-
-
-<!-- created -->
-<!-- Merge-Branch -->
