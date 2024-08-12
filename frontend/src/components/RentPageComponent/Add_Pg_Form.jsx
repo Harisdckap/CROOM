@@ -312,7 +312,7 @@ console.log(PIN,address_1,address_2,state)
         Occupancy
     </legend>
     <div className="mt-2 space-x-4">
-        {["Single", "Double", "Triple"].map((option) => (
+        {["Bacheler", "Family"].map((option) => (
             <button
                 type="button"
                 key={option}
