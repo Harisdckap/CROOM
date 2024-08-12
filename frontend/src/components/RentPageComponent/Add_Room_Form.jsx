@@ -134,12 +134,7 @@ const deleteIMG = (index) => {
             showToast("Title is required");
             return false;
         }
-        // if (!formData.state) {
-        //     showToast("state is require");
-        //     return false;
-        // }
-
-
+      
         if (!formData.price || isNaN(formData.price)) {
             showToast("Valid rent amount is required");
             return false;
@@ -169,11 +164,6 @@ const deleteIMG = (index) => {
 
         const locationAdd = `${PIN} ${address_1} ${address_2} ${state}`;
  
-
-
-
-
-
 
         if (!validateInputs()) return;
         const uploadData = new FormData()
@@ -247,8 +237,6 @@ const deleteIMG = (index) => {
                     </button>
                 </Link>
             </div>
-
-
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-800">Add Room</h1>
             </div>

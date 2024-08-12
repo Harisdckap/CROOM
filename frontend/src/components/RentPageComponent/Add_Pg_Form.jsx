@@ -135,7 +135,7 @@ const Add_PG = () => {
        }
 
 
-       if (!occupancy_type || !occupancy_amount || isNaN(occupancy_amount)) {
+       if (!occupancy_type) {
            showToastMessage(
                "Please select an occupancy type and provide a valid amount"
            );
@@ -556,12 +556,12 @@ console.log(PIN,address_1,address_2,state)
                </div>
                {/* Buttons */}
 
-               <div className="flex justify-between mt-6">
+               <div className="mt-12 text-center">
                    <button
                        onClick={handleSubmit}
-                       className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                       className="px-8 py-2 bg-blue-500 text-white rounded-md"
                    >
-                       Submit
+                       Add PG
                    </button>
                </div>
            </div>

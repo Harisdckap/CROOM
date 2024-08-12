@@ -46,8 +46,6 @@ const AddRequirement = () => {
    setPIN(e.target.value) 
   }
 
-
-
    const deleteIMG = (index) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
 };
@@ -144,10 +142,6 @@ const AddRequirement = () => {
            showToast("At least one highlight is required");
            return false;
        }
-    //    if (!post) {
-    //        showToast("Post is required");
-    //        return false;
-    //    }
        if (!occupancy) {
            showToast("Valid occupancy is required");
            return false;
@@ -179,6 +173,7 @@ const AddRequirement = () => {
 
        const locationAdd = ` ${address_1} ${address_2} ${PIN} ${state}`;
     formDataObj.append('location', locationAdd);
+    // formDataObj.append('post', formData.post);
 
     for (const key in formData) {
         if (key !== "location") { 
@@ -465,7 +460,7 @@ const AddRequirement = () => {
                                        formData.highlighted_features.includes(
                                            feature
                                        )
-                                           ? "bg-blue-500 text-white"
+                                           ? "bg-blue-500 bg-blue-500 "
                                            : "hover:bg-gray-100"
                                    }`}
                                    onClick={() =>
@@ -575,15 +570,12 @@ const AddRequirement = () => {
         ))}
     </div>
                </div>
-
-
-
                <div>
                        <label className="block text-sm font-medium text-gray-700">
                            Add Your Post
                        </label>
                           <textarea
-                        name="description"
+                        name="post"
                         value={formData.post}
                         onChange={handleInputChange}
                         placeholder="Description"
