@@ -39,7 +39,7 @@ const Navbar = ({
     const handleTypeClick = (type) => {
         setListingType(type);
         updateQueryParams({
-            address: "Chennai",
+            address: search || "Chennai",
             p: 0,
             t: type,
             sort: sortOrder,
@@ -56,7 +56,7 @@ const Navbar = ({
         <div className="w-full h-32 bg-white mx-auto flex items-center justify-between pt-16 px-4">
             <div className="flex items-center space-x-6">
                 <NavLink
-                    to="?address=Chennai&p=0&t=a&sort=ASC"
+                    to={`?address=${search || "Chennai"}&p=0&t=a&sort=ASC`}
                     onClick={() => handleTypeClick("a")}
                     className={({ isActive }) =>
                         `flex items-center font-medium ${
@@ -70,7 +70,7 @@ const Navbar = ({
                     All Listings
                 </NavLink>
                 <NavLink
-                    to="?address=Chennai&p=0&t=r&sort=ASC"
+                    to={`?address=${search || "Chennai"}&p=0&t=r&sort=ASC`}
                     onClick={() => handleTypeClick("r")}
                     className={({ isActive }) =>
                         `flex items-center font-medium ${
@@ -84,7 +84,7 @@ const Navbar = ({
                     Rooms
                 </NavLink>
                 <NavLink
-                    to="?address=Chennai&p=0&t=rm&sort=ASC"
+                    to={`?address=${search || "Chennai"}&p=0&t=rm&sort=ASC`}
                     onClick={() => handleTypeClick("rm")}
                     className={({ isActive }) =>
                         `flex items-center font-medium ${
@@ -98,7 +98,7 @@ const Navbar = ({
                     Roommates
                 </NavLink>
                 <NavLink
-                    to="?address=Chennai&p=0&t=pg&sort=ASC"
+                    to={`?address=${search || "Chennai"}&p=0&t=pg&sort=ASC`}
                     onClick={() => handleTypeClick("pg")}
                     className={({ isActive }) =>
                         `flex items-center font-medium ${
@@ -125,7 +125,7 @@ const Navbar = ({
                         type="text"
                         value={search}
                         onChange={onSearchChange}
-                        placeholder="Chennai..."
+                        placeholder="Enter a location..."
                         className="border border-gray-300 rounded-full py-2 pl-10 pr-4 w-full focus:outline-none focus:border-blue-500 transition-colors"
                     />
                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />

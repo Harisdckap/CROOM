@@ -12,8 +12,8 @@ const PropertyPage = () => {
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams();
-    const [search, setSearch] = useState("");
-    const [gender, setGender] = useState("all");
+    const [search, setSearch] = useState(searchParams.get("address") || "");
+    const [gender, setGender] = useState(searchParams.get("gender") || "all");
     const [sortOrder, setSortOrder] = useState(searchParams.get("sort") || "ASC");
 
     useEffect(() => {
@@ -33,7 +33,13 @@ const PropertyPage = () => {
                 "http://127.0.0.1:8000/api/properties",
                 { params }
             );
-            setListings(response.data.data);
+            setListings([]); // Clear previous listings
+            setListings(response.data.data); // Set new listings
+            console.log(response.data.data);
+            
+            // console.log("Roommates listing: " + JSON.stringify(response.data.roomates, null, 2));
+            // console.log("Rooms listing: " + JSON.stringify(response.data.listings, null, 2));
+            // console.log("PG listings: " + JSON.stringify(response.data.pg_listings, null, 2));
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
@@ -55,7 +61,7 @@ const PropertyPage = () => {
     const handleSearchSubmit = (event) => {
         event.preventDefault();
         setSearchParams({
-            address: search,// Pass the handleSortChange function
+            address: search,
             t: searchParams.get("t") || "a",
             p: 1,
             gender: gender,
@@ -65,32 +71,26 @@ const PropertyPage = () => {
 
     const handleSortChange = (order) => {
         setSortOrder(order);
-        setSearchParams({
-            address: searchParams.get("address") || "",
-            t: searchParams.get("t") || "a",
-            p: 1,
-            gender: searchParams.get("gender") || "all",
-            sort: order,
+        setSearchParams((prev) => {
+            const newParams = new URLSearchParams(prev);
+            newParams.set("sort", order);
+            return newParams;
         });
     };
 
-    const handleNavClick = (type) => {
+    const setListingType = (type) => {
         setSearchParams({
             address: searchParams.get("address") || "",
             t: type,
             p: 1,
-            gender: searchParams.get("gender") || "all",
+            gender: gender,
             sort: sortOrder,
         });
     };
 
     const handleViewClick = (id, location, listingType) => {
         const trimmedLocation = location.trim();
-        navigate(
-            `/property/${btoa(id)}/${encodeURIComponent(
-                trimmedLocation
-            )}/${listingType}`
-        );
+        navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}/${listingType}`);
     };
 
     const renderSlider = (photos) => {
@@ -142,21 +142,22 @@ const PropertyPage = () => {
                     )}
                 </div>
                 <div className="px-2">
-                    <h2 className="text-xl font-semibold mb-1 flex items-center gradient-text">
-                        {listing.title || listing.pg_name || listing.post}
-                    </h2>
-                    <p className="text-green-600 mb-1 flex items-center">
-                        <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
-                        {listing.type}  {listing.location}
-                    </p>
-                    <hr className="my-2 " />
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-semibold gradient-text">
+                            {listing.title || listing.pg_name || listing.post}
+                        </h2>
+                        <p className="text-green-600 flex items-center">
+                            <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+                            {listing.location}
+                        </p>
+                    </div>
+                    <hr className="my-2" />
                     <div
-                        className="flex items-center justify-between mt-2 cursor-pointer hover:bg-slate-300 rounded p-1"
+                        className="flex justify-between items-center mt-2 cursor-pointer hover:bg-slate-300 rounded p-1"
                         onClick={() => handleViewClick(listing.id, listing.location, listing.listing_type)}
                     >
-                        <div className="text-gray-700 mb-2 flex items-center">
-                            <p className="grid">
-                                Starts at{" "}
+                        <div className="text-gray-700">
+                            <p>
                                 <span className="font-semibold">
                                     ₹{listing.price || listing.occupancy_amount || listing.approx_rent}
                                 </span>
@@ -164,7 +165,7 @@ const PropertyPage = () => {
                         </div>
                         <p className="text-gray-700 flex items-center">
                             <FontAwesomeIcon icon={faHome} className="mr-2" />
-                            Room Type: {listing.room_type||listing.pg_type}
+                            Room Type: {listing.room_type || listing.pg_type}
                         </p>
                     </div>
                 </div>
@@ -176,13 +177,13 @@ const PropertyPage = () => {
         <div>
             <HomeNavBar />
             <Navbar
-                search={search}
-                onSearchChange={handleSearchChange}
-                onSearchSubmit={handleSearchSubmit}
-                gender={gender}
-                onGenderChange={handleGenderChange}
-                setListingType={handleNavClick} 
-                onSortChange={handleSortChange}  
+              search={search}
+              onSearchChange={handleSearchChange}
+              onSearchSubmit={handleSearchSubmit}
+              gender={gender}
+              onGenderChange={handleGenderChange}
+              setListingType={setListingType}
+              onSortChange={handleSortChange}
             />
             <div className="flex justify-center mt-6">
                 <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
