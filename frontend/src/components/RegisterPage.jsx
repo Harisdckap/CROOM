@@ -5,7 +5,7 @@ import { RotatingLines } from "react-loader-spinner";
 import img from "../assets/reg.png";
 import { register } from "../js/api/auth";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-// import Auth_navbar from "./RentPageComponent/Auth_navbar";
+import Auth_navbar from "./RentPageComponent/Auth_navbar";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -131,7 +131,7 @@ const Register = () => {
                 </div>
             )}
             {/* navbar */}
-            {/* <Auth_navbar /> */}
+            <Auth_navbar />
 
             <div className="main flex flex-grow items-center justify-center">
                 <div className="bg-gray-100 mt-20 rounded-md max-w-3xl flex">
