@@ -5,6 +5,8 @@ import img from "../assets/forgotpwd2.png";
 import { RotatingLines } from 'react-loader-spinner';
 import logo from "../assets/logo.png";
 
+
+
 function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
@@ -95,7 +97,6 @@ function ForgotPasswordPage() {
                                         id="email"
                                         value={email}
                                         onChange={handleChange}
-                                        required
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                     />
                                 </div>
@@ -111,7 +112,7 @@ function ForgotPasswordPage() {
                             </form>
                             {/* Message Display */}
                             {message && (
-                                <p className="mt-4 text-green-600">{message}</p>
+                                <p className="mt-4 fixed  text-red-500">{message}</p>
                             )}
                         </div>
                     </div>

@@ -70,3 +70,10 @@ npm install @vitejs/plugin-react
 npm install vite
 composer install
 npm i
+
+
+<!-- created -->
+<!-- Merge-Branch -->
+
+
+<!-- OTP PAGE npm i react-otp-input -->
