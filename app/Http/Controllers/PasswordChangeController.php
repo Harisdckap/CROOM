@@ -2,38 +2,50 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
 class PasswordChangeController extends Controller
 {
     public function changePassword(Request $request)
     {
-        $user = JWTAuth::parseToken()->authenticate();
-
         $validator = Validator::make($request->all(), [
-            'existingPassword' => 'required|string|min:8',
-            'newPassword' => 'required|string|min:8|confirmed',
-        ], [
-            'existingPassword.required' => 'The existing password is required.',
-            'newPassword.required' => 'The new password is required.',
-            'newPassword.confirmed' => 'The new password confirmation does not match.',
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
+            return response()->json(['error' => 'Validation failed', 'messages' => $validator->errors()], 422);
         }
 
-        if (Hash::check($request->existingPassword, $user->password)) {
-            return response()->json(['errors' => ['existingPassword' => 'The existing password is incorrect.']], 400);
+        $jwt = $request->header('Authorization');
+        $key = env('JWT_SECRET');
+
+        if (strpos($jwt, 'Bearer ') === 0) {
+            $jwt = substr($jwt, 7);
         }
 
-        $user->password = Hash::make($request->newPassword);
-        $user->save();
+        try {
+            $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 
-        return response()->json(['message' => 'Password changed successfully.'], 200);
+            $user = User::find($decoded->sub);
+
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+
+            if (!Hash::check($request->input('current_password'), $user->password)) {
+                return response()->json(['error' => 'Current password is incorrect'], 400);
+            }
+            $user->password = Hash::make($request->input('new_password'));
+            $user->save();
+
+            return response()->json(['message' => 'Password changed successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to decode JWT', 'message' => $e->getMessage()], 400);
+        }
     }
 }
