@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
-        user_id: localStorage.getItem("user_id"),
         title: "",
         location:'',
         price: "",
@@ -19,13 +18,18 @@ const AddRoomForm = () => {
         highlighted_features: [],
         amenities: [],
         description: "",
-        listing_type: "room",
-
+        listing_type: "room"
+        
     });
 
 
     const [images, setImages] = useState([]);
     const [message, setMessage] = useState('');
+    const [countryData,setcountryData] = useState()
+
+
+
+
     const fileInputRef = useRef(null);
     // const navigate = useNavigate();
 
@@ -75,6 +79,23 @@ const deleteIMG = (index) => {
         "Refrigerator",
         "Microwave",
     ];
+     
+
+    //   useEffect(() => {
+    //     const fetchData = async () => {
+    //        try{
+              
+    //         const res = await fetch("./JSON/countries.json")
+    //         const cuntry = await res.json()
+    //         console.log(cuntry)
+    //        } catch{
+
+    //        }
+    //     };
+    //     fetchData();
+    // }, []);
+    
+
 
 
     const handleFileChange = (e) => {
@@ -140,10 +161,12 @@ const deleteIMG = (index) => {
             return false;
         }
 
+
         if (!formData.room_type) {
             showToast("Room type is required");
             return false;
         }
+
 
         if (!formData.contact) {
             showToast("Contact is required");
@@ -158,7 +181,6 @@ const deleteIMG = (index) => {
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-
 
         const locationAdd = `${PIN} ${address_1} ${address_2} ${state}`;
  
@@ -182,10 +204,10 @@ const deleteIMG = (index) => {
         });
 
         // Log the FormData entries to verify images are being appended correctly
-        for (let pair of uploadData.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
+        // for (let pair of uploadData.entries()) {
+        //     console.log(pair[0] + ', ' + pair[1]);
            
-        }
+        // }
         try {
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/listings",
@@ -223,6 +245,7 @@ const deleteIMG = (index) => {
     };
 
     return (
+        
         <div className="max-w-6xl mx-auto p-8 bg-white rounded-md shadow-md mt-4">
             <div className="absolute top-6 right-[3.5rem]">
                 <Link to="/PostRequirementPage">
@@ -271,6 +294,10 @@ const deleteIMG = (index) => {
                                     className="mt-1 block  px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div>
+
+         
+
+
                         </div>
                         <fieldset className="border text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
@@ -307,7 +334,7 @@ const deleteIMG = (index) => {
                                     name="address_1"
                                     value={address_1}
                                     onChange={handleChangeAddress_1}
-                                    placeholder="Address 1"
+                                    placeholder="example( door no , street , area )"
                                     className="mt-1 w-96 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div> 
@@ -346,10 +373,10 @@ const deleteIMG = (index) => {
                                     address 2
                                 </label>
                                 <input
-                                    name="contact"
+                                    name="  address_2"
                                     value={address_2}
                                     onChange={handleChangeAddress_2}
-                                    placeholder="address 2"
+                                    placeholder="example( city , district )"
                                     className="mt-1 block px-3 w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div>
@@ -393,7 +420,7 @@ const deleteIMG = (index) => {
                                     name="contact"
                                     value={formData.contact}
                                     onChange={handleChange}
-                                    placeholder="PIN code"
+                                    placeholder="Mobile Number"
                                     className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div>
@@ -406,24 +433,28 @@ const deleteIMG = (index) => {
                                     name="pincode"
                                     value={PIN}
                                     onChange={handleChangePIN}
-                                    placeholder="Location"
+                                    placeholder="PIN code"
                                     className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
 </div>
                                 
                             </div>
 
-                            <label className="block  text-sm font-medium text-gray-700">
+<div>
+ <label className="block  text-sm font-medium text-gray-700">
                                     state
-                                </label>
+                                </label>                               
                                 <input
                                     name="state"
                                     value={state}
                                     onChange={handleChangeState}
-                                    placeholder="Location"
+                                    placeholder="state"
                                     className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                                />
-                            
+                                    // className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                                /> 
+       
+</div>
+                           
 
                 <div className="flex  items-center gap-48">
 
@@ -443,8 +474,8 @@ const deleteIMG = (index) => {
                                         className={`px-4 py-2 border rounded-md text-sm font-medium${formData.highlighted_features.includes(
                                             feature
                                         )
-                                                ? "bg-blue-400 text-blue-400"
-                                                : "bg-gray-800"
+                                                ? "bg-blue-500 bg-blue-500 text-white"
+                                                : "text-white"
                                             }`}
                                     >
                                         {feature}
@@ -472,8 +503,8 @@ const deleteIMG = (index) => {
                                         className={`px-4 py-2 border rounded-md text-sm font-medium${formData.amenities.includes(
                                             amenity
                                         )
-                                                ? "bg-blue-900 text-blue-400"
-                                                : "text-red-500"
+                                                ? "bg-blue-500 bg-blue-500 text-white"
+                                                : "text-white"
                                             }`}
                                     >
                                         {amenity}
@@ -567,7 +598,7 @@ const deleteIMG = (index) => {
                 <div className="text-center">
                     <button
                         type="submit"
-                        className=" py-3 px-6 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
+                        className=" py-3 px-6 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none"
                     >
                         Add Room
                     </button>

@@ -271,6 +271,7 @@ const AddRequirement = () => {
                        <input
                            type="text"
                            name="number_of_people"
+                           placeholder="No people"
                            value={formData.number_of_people}
                            onChange={handleInputChange}
                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
@@ -283,6 +284,7 @@ const AddRequirement = () => {
                        </label>
                        <input
                            type="text"
+                           placeholder="Occupancy"
                            name="occupancy"
                            value={formData.occupancy}
                            onChange={handleInputChange}
@@ -328,8 +330,8 @@ const AddRequirement = () => {
                                 <input
                                 value={address_1}
                                 onChange={handleChangeAddress_1}
-                                    name="  address_1"
-                                    placeholder="Address 1"
+                                    name="address_1"
+                                    placeholder="example( door no , street , area )"
                                     className="mt-1 block px-3 w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div> 
@@ -374,7 +376,7 @@ const AddRequirement = () => {
                                     name="  address_2"
                                     value={address_2}
                                     onChange={handleChangeAddress_2}
-                                    placeholder="Address 1"
+                                    placeholder="example( city , district )"
                                     className="mt-1 block px-3 min-w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div> 
@@ -391,10 +393,11 @@ const AddRequirement = () => {
 <div className="flex mt-5 gap-14">
 <div>
                        <label className="block text-sm font-medium text-gray-700">
-                           Mobile Number
-                       </label>
+                       contact
+                                              </label>
                        <input
                            type="tel"
+                           placeholder="Mobile Number"
                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm "
                        />
                    </div>  
@@ -427,6 +430,7 @@ const AddRequirement = () => {
         onChange={handleChangeState}
         value={state}
         name="state"
+        placeholder="state"
         className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
     />
 </div>
@@ -438,6 +442,7 @@ const AddRequirement = () => {
     <input
         type="text"
         name="approx_rent"
+        placeholder="approx_rent"
         value={formData.approx_rent}
         onChange={handleInputChange}
         className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
@@ -460,7 +465,7 @@ const AddRequirement = () => {
                                        formData.highlighted_features.includes(
                                            feature
                                        )
-                                           ? "bg-blue-500"
+                                           ? "bg-blue-500 "
                                            : "hover:bg-gray-100"
                                    }`}
                                    onClick={() =>

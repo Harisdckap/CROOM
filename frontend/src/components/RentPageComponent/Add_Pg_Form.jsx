@@ -253,6 +253,7 @@ console.log(PIN,address_1,address_2,state)
                            value={pg_name}
                            onChange={(e) => setPgName(e.target.value)}
                            type="text"
+                           placeholder="PG Name"
                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                            />
         </div>
@@ -263,6 +264,7 @@ console.log(PIN,address_1,address_2,state)
                            value={occupancy_amount}
                            onChange={(e) => setOccupancyAmount(e.target.value)}
                            type="number"
+                           placeholder="Amount"
                                     className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                        />
                    </div>
@@ -301,7 +303,7 @@ console.log(PIN,address_1,address_2,state)
                                 value={address_1}
                                 onChange={handleChangeAddress_1}
                                     name="  address_1"
-                                    placeholder="Address 1"
+                                    placeholder="example( door no , street , area )"
                                     className="mt-1 block px-3 w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div> 
@@ -356,10 +358,10 @@ console.log(PIN,address_1,address_2,state)
                                     address 2
                                 </label>
                                 <input
-                                    name="  address_2"
+                                    name="address_2"
+                                    placeholder="example( city , district )"
                                     value={address_2}
                                     onChange={handleChangeAddress_2}
-                                    placeholder="Address 1"
                                     className="mt-1 block px-3 min-w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div> 
@@ -386,12 +388,13 @@ console.log(PIN,address_1,address_2,state)
                             </div>
                                     <div>
                        <label className="block text-sm font-medium text-gray-700">
-                           Mobile Number
+                       contact
                        </label>
                        <input
                            value={mobile_num}
                            onChange={(e) => setMobileNum(e.target.value)}
                            type="tel"
+                           placeholder="Mobile Number"
                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm "
                        />
                    </div>  
