@@ -69,4 +69,8 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 npm install @vitejs/plugin-react
 npm install vite
 composer install
-npm i
+npm i 
+
+
+
+
