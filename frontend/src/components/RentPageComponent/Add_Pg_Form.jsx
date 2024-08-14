@@ -395,10 +395,7 @@ const Add_PG = () => {
                 </div>
                 {/* Buttons */}
                 <div className="flex justify-between mt-6">
-                    <button
-                        onClick={handleCancel}
-                        className="px-4 py-2 bg-gray-500 text-white rounded-md"
-                    >
+                    <button onClick={handleCancel}className="px-4 py-2 bg-gray-500 text-white rounded-md">
                         Cancel
                     </button>
                     <button
