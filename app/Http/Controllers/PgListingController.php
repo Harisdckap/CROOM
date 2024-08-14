@@ -28,7 +28,7 @@ class PgListingController extends Controller
             'looking_for_gender' => 'nullable|string|max:255',
             'mobile_num' => 'required|numeric',
             'pg_name' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
+            'location' => 'required|json',
             'occupancy_type' => 'required|string|max:255',
             'occupancy_amount' => 'required|numeric',
             'pg_post_content' => 'required|string',

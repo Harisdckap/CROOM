@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -42,6 +43,22 @@ const PropertyDetail = () => {
         }
     };
 
+    let locationData = {};
+
+    if (property && property.location) {
+        try {
+            // Parse the location JSON string
+            const OuterData = JSON.parse(property.location);
+            locationData = JSON.parse(OuterData);
+        } catch (error) {
+            console.error("Failed to parse location data:", error);
+            property.location = "Unknown Location"; // Fallback in case of parsing error
+        }
+    }
+
+    const city = (typeof locationData.city === 'string' && locationData.city.trim()) || "Unknown City";
+    const district = (typeof locationData.district === 'string' && locationData.district.trim()) || "Unknown District";
+
     if (!property) {
         return <p>Loading property details...</p>;
     }
@@ -64,7 +81,7 @@ const PropertyDetail = () => {
                         <DetailItem
                             icon={<FaMapMarkerAlt />}
                             label="Location"
-                            value={property.location}
+                            value={city}
                         />
                         <DetailItem
                             icon={<FaDollarSign />}

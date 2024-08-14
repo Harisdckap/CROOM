@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('roommates', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('location');
+            $table->json('location');
             $table->string('looking_for');
             $table->string('looking_for_gender')->nullable();
             $table->decimal('approx_rent', 10, 2);

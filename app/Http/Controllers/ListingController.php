@@ -17,7 +17,7 @@ class ListingController extends Controller
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
+            'location' => 'required|json',
             'price' => 'required|numeric',
             'room_type' => 'required|string',
             'contact' => 'required|string|max:255',
@@ -48,6 +48,7 @@ class ListingController extends Controller
         }
     
         $validatedData['photos'] = json_encode($imagePaths);
+        $validatedData['location'] = json_encode($validatedData['location']);
     
         // Decode JSON strings back to arrays with error handling
         try {

@@ -6,7 +6,7 @@ const DistrictModal = ({ isOpen, onClose, districts, onSelectDistrict }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
             <div className="bg-white rounded-lg shadow-lg p-8">
-                <h2 className="text-2xl font-bold mb-4">Select a District</h2>
+                <h2 className="text-2xl font-bold mb-4">Select a Popular Cities</h2>
                 <div className="grid grid-cols-2 gap-4">
                     {districts.map((district) => (
                         <button

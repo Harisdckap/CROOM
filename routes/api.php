@@ -28,7 +28,7 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('reset-password', [ResetPasswordController::class, 'reset']);
 Route::get('/password/reset/', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 
-Route::middleware('auth')->post('/listings', [ListingController::class, 'store']);
+Route::post('/listings', [ListingController::class, 'store']);
 Route::get('/properties', [PropertyController::class, 'index']);
 Route::get('/property/{id}/{location}/{listingType}', [PropertyController::class, 'show']);
 Route::post('/upload', [ImageController::class, 'upload']);

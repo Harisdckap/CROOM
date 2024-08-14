@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id'); 
             $table->string('title');
-            $table->string('location');
+            $table->json('location');
             $table->decimal('price', 10, 2);
             $table->string('room_type');
             $table->string('contact');
