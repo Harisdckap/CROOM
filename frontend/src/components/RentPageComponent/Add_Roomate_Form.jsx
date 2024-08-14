@@ -11,7 +11,7 @@ const AddRequirement = () => {
        looking_for_gender: "Male",
        room_type: "1RK",
        highlighted_features: [],
-       location:'',
+       location:{},
        approx_rent: "",
        post: "",
        occupancy: "",
@@ -28,6 +28,8 @@ const AddRequirement = () => {
    const [address_2,setaddress_2 ] = useState("")
    const [PIN,setPIN ] = useState("")
    const [state,setstate ] = useState("")
+   const [countryData,setcountryData ] = useState("")
+
 
 
   const handleChangeAddress_1 = (e) =>{
@@ -40,6 +42,9 @@ const AddRequirement = () => {
 
   const handleChangeState = (e) =>{
    setstate(e.target.value)
+  }
+  const handleChangeCuntry = (e)=>{
+    setcountryData(e.target.value)
   }
 
   const handleChangePIN = (e) =>{
@@ -118,79 +123,112 @@ const AddRequirement = () => {
    };
 
 
-   const validateInputs = () => {
-       const {
-           approx_rent,
-           post,
-           occupancy,
-           number_of_people,
-           highlighted_features,
-           amenities,
-           looking_for_gender,
-           room_type,
-       } = formData;
+//    const validateInputs = () => {
+//        const {
+//            approx_rent,
+//            post,
+//            occupancy,
+//            number_of_people,
+//            highlighted_features,
+//            amenities,
+//            looking_for_gender,
+//            room_type,
+//        } = formData;
 
-       if (!approx_rent) {
-           showToast("Valid approx rent amount is required");
-           return false;
-       }
-       if (!room_type) {
-           showToast("Room type is required");
-           return false;
-       }
-       if (highlighted_features.length === 0) {
-           showToast("At least one highlight is required");
-           return false;
-       }
-       if (!occupancy) {
-           showToast("Valid occupancy is required");
-           return false;
-       }
-       if (!number_of_people) {
-           showToast("Valid number of people is required");
-           return false;
-       }
-       if (images.length === 0) {
-           showToast("House image is required");
-           return false;
-       }
-       if (!looking_for_gender) {
-           showToast("Looking for gender is required");
-           return false;
-       }
+//        if (!approx_rent) {
+//            showToast("Valid approx rent amount is required");
+//            return false;
+//        }
+//        if (!room_type) {
+//            showToast("Room type is required");
+//            return false;
+//        }
+//        if (highlighted_features.length === 0) {
+//            showToast("At least one highlight is required");
+//            return false;
+//        }
+//        if (!occupancy) {
+//            showToast("Valid occupancy is required");
+//            return false;
+//        }
+//        if (!number_of_people) {
+//            showToast("Valid number of people is required");
+//            return false;
+//        }
+//        if (images.length === 0) {
+//            showToast("House image is required");
+//            return false;
+//        }
+//        if (!looking_for_gender) {
+//            showToast("Looking for gender is required");
+//            return false;
+//        }
 
 
-       return true;
-   };
+//        return true;
+//    };
 
 
    const handleSubmit = async (e) => {
        e.preventDefault();
-       if (!validateInputs()) return;
+    //    if (!validateInputs()) return;
+
 
        const formDataObj = new FormData();
 
+       const address_1_Value = address_1.split(",")
+       const addres_2_Value = address_2.split(",")
 
-       const locationAdd = ` ${address_1} ${address_2} ${PIN} ${state}`;
-    formDataObj.append('location', locationAdd);
-    // formDataObj.append('post', formData.post);
+       const doorNoValue = address_1_Value[0]
+       const streetValue = address_1_Value[1]
+       const areaValue = address_1_Value[2]
 
-    for (const key in formData) {
-        if (key !== "location") { 
-            if (Array.isArray(formData[key])) {
-                formDataObj.append(key, JSON.stringify(formData[key]));
-            } else {
+
+// console.log(addres_2_Value)
+
+// console.log(address_1_Value)
+    //    console.log("door no :"+ doorNoValue + " "+" streetValue :"+streetValue +" "+"area : "+areaValue)
+
+           const cityValue = addres_2_Value[0]
+           const districtValue = addres_2_Value[1]
+
+// console.log("cityValue : "+cityValue +" "+"districtValue : "+districtValue)
+
+     
+   
+    for(const key in formData){
+        for (const key in formData) {
+            if (key !== "location") {
                 formDataObj.append(key, formData[key]);
             }
         }
+
+        formDataObj.append("location", JSON.stringify({
+        doorNo: doorNoValue,
+        street: streetValue,
+        area: areaValue,
+        city: cityValue,
+        district: districtValue,
+        state: state,
+        county: countryData,
+        pin: PIN
+    }));
     }
-     
+
+
+      // Log the location field
+    //   for (const [key, value] of formDataObj.entries()) {
+    //     if (key === "location") {
+    //         console.log("Location:", value);
+    //     }
+    // }
 
 
 
-       for(const [key , value] of formDataObj.entries()){
-        console.log(key + " "  + value)
-       }
+    //    for(const [key , value] of formDataObj.entries()){
+    //     console.log(key + " "  + value)
+    //    }
+
 
 
        images.forEach((image, index) => {
@@ -448,6 +486,19 @@ const AddRequirement = () => {
         className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
     />
 </div>
+</div>
+<div>
+    <label className="block text-sm font-medium text-gray-700">
+       country
+    </label>
+    <input
+        type="text"
+        onChange={handleChangeCuntry}
+        value={countryData}
+        name="country"
+        placeholder="country"
+        className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+    />
 </div>
                
                <div className="flex  items-center gap-48">

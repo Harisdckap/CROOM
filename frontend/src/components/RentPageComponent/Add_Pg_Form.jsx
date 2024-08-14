@@ -25,7 +25,7 @@ const Add_PG = () => {
    const [address_2,setaddress_2 ] = useState("")
    const [PIN,setPIN ] = useState("")
    const [state,setstate ] = useState("")
-
+   const [countryData,setcountryData] = useState()
 
 
   const handleChangeAddress_1 = (e) =>{
@@ -43,11 +43,16 @@ const Add_PG = () => {
    setstate(e.target.value)
   }
 
+  const handleChangeCuntry = (e)=>{
+    
+    setcountryData(e.target.value)
+}
+
+
   const handleChangePIN = (e) =>{
     setPIN(e.target.value)
    }
 
-   const location = ` ${address_1} ${address_2} ${PIN} ${state}`;
 
 
 
@@ -105,74 +110,109 @@ const Add_PG = () => {
    };
 
 
-   const validateInputs = () => {
+//    const validateInputs = () => {
 
-       if (!pg_name) {
-           showToastMessage("PG name is required");
-           return false;
-       }
+//        if (!pg_name) {
+//            showToastMessage("PG name is required");
+//            return false;
+//        }
 
-       if (!address_1) {
-        showToastMessage("address_1 is required");
-        return false;
-    }
-    if (!address_2) {
-        showToastMessage("address_2 is required");
-        return false;
-    }
-    if (!PIN) {
-        showToastMessage("PIN name is required");
-        return false;
-    }
-    if (!state) {
-        showToastMessage("state is required");
-        return false;
-    }
+//        if (!address_1) {
+//         showToastMessage("address_1 is required");
+//         return false;
+//     }
+//     if (!address_2) {
+//         showToastMessage("address_2 is required");
+//         return false;
+//     }
+//     if (!PIN) {
+//         showToastMessage("PIN name is required");
+//         return false;
+//     }
+//     if (!state) {
+//         showToastMessage("state is required");
+//         return false;
+//     }
 
-       if (!mobile_num) {
-           showToastMessage("Valid Mobile Number is required");
-           return false;
-       }
+//        if (!mobile_num) {
+//            showToastMessage("Valid Mobile Number is required");
+//            return false;
+//        }
 
 
-       if (!occupancy_type) {
-           showToastMessage(
-               "Please select an occupancy type and provide a valid amount"
-           );
-           return false;
-       }
+//        if (!occupancy_type) {
+//            showToastMessage(
+//                "Please select an occupancy type and provide a valid amount"
+//            );
+//            return false;
+//        }
 
-       if (images.length === 0) {
-           showToastMessage("Please upload at least 1 photo of your room");
-           return false;
-       }
+//        if (images.length === 0) {
+//            showToastMessage("Please upload at least 1 photo of your room");
+//            return false;
+//        }
 
-       if (!pg_post_content) {
-           showToastMessage("PG post content is required");
-           return false;
-       }
-       return true;
-   };
+//        if (!pg_post_content) {
+//            showToastMessage("PG post content is required");
+//            return false;
+//        }
+//        return true;
+//    };
 
 
    const handleSubmit = async (e) => {
        e.preventDefault();
-       if (!validateInputs()) return;
+    //    if (!validateInputs()) return;
 
+
+       const address_1_Value = address_1.split(",")
+       const addres_2_Value = address_2.split(",")
+
+       const doorNoValue = address_1_Value[0]
+       const streetValue = address_1_Value[1]
+       const areaValue = address_1_Value[2]
+
+
+
+// console.log(address_1_Value)
+       // console.log("door no :"+ doorNoValue + " "+" streetValue :"+streetValue +" "+"area : "+areaValue)
+
+           const cityValue = addres_2_Value[0]
+           const districtValue = addres_2_Value[1]
 
        const formData = new FormData();
        formData.append("pg_type", pg_type);
        formData.append("mobile_num", mobile_num);
        formData.append("pg_name", pg_name);
-       formData.append("location", location);
        formData.append("occupancy_type", occupancy_type);
        formData.append("occupancy_amount", occupancy_amount);
        formData.append("pg_post_content", pg_post_content);
+
+       formData.append("location", JSON.stringify({
+        doorNo: doorNoValue,
+        street: streetValue,
+        area: areaValue,
+        city: cityValue,
+        district: districtValue,
+        state: state,
+        county: countryData,
+        pin: PIN
+    }));
+
        formData.append("highlighted_features", JSON.stringify(highlighted_features));
        formData.append("amenities", JSON.stringify(amenities));
        images.forEach((image, index) => {
            formData.append(`photos[${index}]`, image);
        });
+
+
+
+         //   for (const [key, value] of formDataObj.entries()) {
+    //     for (const [key, value] of formData.entries()) {
+    //     if (key === "location") {
+    //         console.log("Location:", value);
+    //     }
+    // }
 
 
        for (let [key, value] of formData.entries()) {
@@ -202,7 +242,7 @@ const Add_PG = () => {
        }
    };
 
-console.log(PIN,address_1,address_2,state)
+
 
 
    const handleCancel = () => {
@@ -401,7 +441,8 @@ console.log(PIN,address_1,address_2,state)
 </div>
 
 </div>
-                       
+
+             <div className="flex gap-14">
              <div className="mt-5" >
                                         <label className="block text-sm font-medium text-gray-700">
                                             state
@@ -413,7 +454,22 @@ console.log(PIN,address_1,address_2,state)
                                             placeholder="state"
                                             className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                         />
-                                    </div>                        
+                                    </div>   
+                                    <div className="mt-5">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                            country
+                                        </label>
+                                        <input
+                                        value={countryData}
+                                        onChange={handleChangeCuntry}
+                                            name="cuntry"
+                                            placeholder="cuntry"
+                                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                                        />
+
+                                    </div>
+                </div>          
+                               
                  
 <div className="flex  items-center gap-48">
     <div className="w-1/2">

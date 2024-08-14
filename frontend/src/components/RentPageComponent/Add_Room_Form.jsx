@@ -186,7 +186,7 @@ const handleChangeCuntry = (e)=>{
 
         e.preventDefault();
 
-        const locationAdd = `${PIN} ${address_1} ${address_2} ${state}`;
+       
 
         const address_1_Value = address_1.split(",")
         const addres_2_Value = address_2.split(",")
