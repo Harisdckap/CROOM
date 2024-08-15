@@ -1,12 +1,12 @@
 // tailwind.config.js
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'customBlue': '#1E40AF',    // Custom blue color
+        'customGreen': '#10B981',  
+         'buttonPrimary':'#1F293B' // Custom green color
+      },
+    },
   },
-  plugins: [],
-}
+};

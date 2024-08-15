@@ -5,6 +5,8 @@ import img from "../assets/forgotpwd2.png";
 import { RotatingLines } from 'react-loader-spinner';
 import Auth_navbar from "./RentPageComponent/Auth_navbar";
 
+
+
 function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
@@ -90,8 +92,12 @@ function ForgotPasswordPage() {
                                         id="email"
                                         value={email}
                                         onChange={handleChange}
+<<<<<<< HEAD
                                         autoComplete="off"
                                         className="block w-full p-1 border-2 rounded-2"
+=======
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+>>>>>>> 79382a85fe44040c0f6a78df305bd65558c30cb6
                                     />
                                 </div>
                                 {/* Submit Button */}
@@ -107,6 +113,7 @@ function ForgotPasswordPage() {
                                 </div>
                             </form>
                             {/* Message Display */}
+<<<<<<< HEAD
                             {showPopup && (
                                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
                                     <div className="bg-white p-8 rounded-lg shadow-lg w-80">
@@ -120,6 +127,10 @@ function ForgotPasswordPage() {
                                         </div>
                                     </div>
                                 </div>
+=======
+                            {message && (
+                                <p className="mt-4 fixed  text-red-500">{message}</p>
+>>>>>>> 79382a85fe44040c0f6a78df305bd65558c30cb6
                             )}
                         </div>
                     </div>
