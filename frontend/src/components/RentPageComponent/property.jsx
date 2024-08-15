@@ -9,7 +9,7 @@ import {
     faMapMarkerAlt,
     faHome,
     faArrowUp,
-   faHeart 
+   faHeart
 } from "@fortawesome/free-solid-svg-icons";
 import "../../slider.css";
 
@@ -40,14 +40,23 @@ const PropertyPage = () => {
                 "http://127.0.0.1:8000/api/properties",
                 { params }
             );
-    
+
             setListings([]);
             setListings(response.data.data);
+
+
+            setListings([]); // Clear previous listings
+            setListings(response.data.data); // Set new listings
+            console.log(response.data.data);
+
+            // console.log("Roommates listing: " + JSON.stringify(response.data.roomates, null, 2));
+            // console.log("Rooms listing: " + JSON.stringify(response.data.listings, null, 2));
+            // console.log("PG listings: " + JSON.stringify(response.data.pg_listings, null, 2));
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
     };
-    
+
 
     const handleSearchChange = (event) => {
         setSearch(event.target.value);
@@ -95,7 +104,7 @@ const PropertyPage = () => {
             `/property/${btoa(id)}/${encodeURIComponent(
                 trimmedLocation
             )}/${listingType}`
-        );
+        );handleViewClick
     };
 
     const renderSlider = (photos) => {
@@ -128,11 +137,12 @@ const PropertyPage = () => {
             </Slider>
         );
     };
-    
+
     const renderListing = (listing, index) => {
         let photos = [];
         let locationData = {};
-    
+
+        // Handle photos parsing
         if (listing.photos) {
             try {
                 photos = JSON.parse(listing.photos).map(photo => photo.replace("/", "/"));
@@ -141,18 +151,24 @@ const PropertyPage = () => {
             }
         }
 
+        // Handle location parsing
         if (listing.location) {
             try {
-                const outerJson = JSON.parse(listing.location); 
-                locationData = JSON.parse(outerJson); 
+                const outerJson = JSON.parse(listing.location);
+                locationData = JSON.parse(outerJson);
             } catch (error) {
                 console.error("Failed to parse location data:", error);
             }
         }
-    
+
+
+        // Access and log individual properties with default values
         const city = (typeof locationData.city === 'string' && locationData.city.trim()) || "Unknown City";
         const district = (typeof locationData.district === 'string' && locationData.district.trim()) || "Unknown District";
-    
+
+        console.log("City:", city);
+        console.log("District:", district);
+
         return (
             <div
                 key={`${listing.id}-${index}`}
@@ -193,14 +209,13 @@ const PropertyPage = () => {
             </div>
         );
     };
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
 
     return (
         <div>
@@ -218,7 +233,7 @@ const PropertyPage = () => {
                 <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {listings.map(renderListing)}
                 </div>
-                
+
             </div>
         </div>
     );

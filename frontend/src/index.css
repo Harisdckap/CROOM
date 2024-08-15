@@ -21,18 +21,23 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e3a8a; 
+  background: #1e3a8a;
   border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1e3a8a; 
+  background: #1e3a8a;
 }
 
 ::-webkit-scrollbar-thumb:active {
   background: #1e3a8a;
 } */
+.custom-drawer .ant-drawer-content {
+    z-index: -300 !important;
+    position: relative;
+}
+
