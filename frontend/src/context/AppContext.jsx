@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axiosClient from "../axios-client";
+// import axiosClient from "../axios-client";
+import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 const AppContext = createContext();

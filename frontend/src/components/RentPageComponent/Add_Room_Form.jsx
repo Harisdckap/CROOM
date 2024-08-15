@@ -3,10 +3,11 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
+// import { MyContextProvider } from "../../context/AppContext";
 
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
-        user_id: localStorage.getItem('user_id'),
+        user_id: localStorage.getItem("user_id"),
         title: "",
         location: "",
         price: "",
@@ -23,7 +24,7 @@ const AddRoomForm = () => {
     });
 
     const [images, setImages] = useState([]);
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState("");
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
@@ -48,11 +49,11 @@ const AddRoomForm = () => {
         const files = Array.from(e.target.files);
 
         if (images.length + files.length > 3) {
-            setMessage('You can only upload up to 3 images in total.');
+            setMessage("You can only upload up to 3 images in total.");
             return;
         }
 
-        setImages(prevImages => [...prevImages, ...files]);
+        setImages((prevImages) => [...prevImages, ...files]);
     };
 
     const handleChange = (e) => {
@@ -117,33 +118,35 @@ const AddRoomForm = () => {
         return true;
     };
 
+    // Inside your component
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (!validateInputs()) return;
-    
+
         const uploadData = new FormData();
-    
+
         // Convert arrays to JSON strings
         const formattedFormData = {
             ...formData,
             highlighted_features: JSON.stringify(formData.highlighted_features),
             amenities: JSON.stringify(formData.amenities),
         };
-    
+
         Object.keys(formattedFormData).forEach((key) => {
             uploadData.append(key, formattedFormData[key]);
         });
-    
+
         images.forEach((image, index) => {
             uploadData.append(`photos[${index}]`, image); // Ensure correct field name
         });
-    
+
         //log the FormData entries to verify images are being appended correctly
         for (let pair of uploadData.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
+            console.log(pair[0] + ", " + pair[1]);
         }
-    
+
         try {
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/listings",
@@ -170,7 +173,7 @@ const AddRoomForm = () => {
             });
             setImages([]);
             if (fileInputRef.current) fileInputRef.current.value = "";
-            // Navigate to the image display route
+        
         } catch (error) {
             console.error(
                 "There was an error adding the room:",
@@ -179,7 +182,6 @@ const AddRoomForm = () => {
             setMessage("There was an error adding the room.");
         }
     };
-    
 
     return (
         <div className="max-w-6xl mx-auto p-8 bg-white rounded-md shadow-md mt-4">
@@ -263,20 +265,7 @@ const AddRoomForm = () => {
                             className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-black">
-                            Looking For
-                        </label>
-                        <select
-                            name="looking_for"
-                            value={formData.looking_for}
-                            onChange={handleChange}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
-                        >
-                            <option value="Roommate">Roommate</option>
-                            <option value="Tenant">Tenant</option>
-                        </select>
-                    </div>
+
                     <div>
                         <label className="block text-sm font-medium text-black">
                             Looking For Gender
@@ -333,9 +322,7 @@ const AddRoomForm = () => {
                             <button
                                 key={feature}
                                 type="button"
-                                onClick={() =>
-                                    handleFeatureClick(feature)
-                                }
+                                onClick={() => handleFeatureClick(feature)}
                                 className={`py-2 px-3 rounded-md ${
                                     formData.highlighted_features.includes(
                                         feature
@@ -358,13 +345,9 @@ const AddRoomForm = () => {
                             <button
                                 key={amenity}
                                 type="button"
-                                onClick={() =>
-                                    handleAmenityClick(amenity)
-                                }
+                                onClick={() => handleAmenityClick(amenity)}
                                 className={`py-2 px-3 rounded-md ${
-                                    formData.amenities.includes(
-                                        amenity
-                                    )
+                                    formData.amenities.includes(amenity)
                                         ? "bg-green-500 text-white"
                                         : "bg-gray-200"
                                 }`}

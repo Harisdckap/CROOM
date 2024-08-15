@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../js/api/auth";
 import apartmentIMG from "../assets/log3.png";
-import logo from "../assets/logo.png";
+// import logo from "../assets/logo.png";
 import FacebookLogo from "../assets/facebook.png";
 import GoogleLogo from "../assets/google.png";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import Auth_navbar from "./RentPageComponent/Auth_navbar";
 
 function LoginPage() {
     const navigate = useNavigate();
@@ -61,27 +62,23 @@ function LoginPage() {
             style={{ backgroundColor: "rgb(31, 41, 59)" }}
         >
             {/* Navbar with Logo */}
-            <nav className="bg-gray-100 px-3 py-2">
-                <div className="flex items-center">
-                    <img src={logo} alt="Logo" className="w-30 h-10" />
-                </div>
-            </nav>
+            <Auth_navbar />
 
             {/* Main Content */}
-            <div className="mt-12 w-full flex items-center justify-center">
-                <div className="bg-gray-100 rounded-md flex">
+            <div className="flex flex-grow items-center justify-center">
+                <div className="bg-gray-100 h-auto mt-14 max-w-3xl p-4 rounded-md flex">
                     {/* Image Section */}
-                    <div className="hidden md:flex md:w-1/2 items-center justify-center">
+                    <div className="flex w-1/2 items-center justify-between">
                         <img
                             src={apartmentIMG}
-                            className="max-h-96"
+                            className="w-full h-auto"
                             alt="Apartment"
                         />
                     </div>
 
                     {/* Form Section */}
-                    <div className="flex items-center mt-2 mb-2 p-2 justify-between">
-                        <div>
+                    <div className="flex items-center w-1/2 items-center justify-center">
+                        <div className="w-full max-w-md">
                             <h1 className="text-center text-2xl font-bold mb-4">
                                 Login to your account
                             </h1>
@@ -90,16 +87,22 @@ function LoginPage() {
                             </p>
 
                             <form onSubmit={handleSubmit} autoComplete="off">
+                                {errorMessage && (
+                                    <div className="bg-red-300 rounded-sm p-1 text-center text-red-500 mb-4 relative text-sm">
+                                        {errorMessage}
+                                    </div>
+                                )}
+
                                 <div className="mb-3">
                                     <label
                                         htmlFor="email"
-                                        className="block text-gray-700"
+                                        className="block text-gray-700 text-sm font-medium"
                                     >
                                         Email:
                                     </label>
                                     <input
                                         type="email"
-                                        className={`mt-1 block w-full p-2 border ${
+                                        className={`mt-1 block w-full p-1 border ${
                                             errorMessage
                                                 ? "border-red-500"
                                                 : "border-gray-300"
@@ -108,13 +111,13 @@ function LoginPage() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        required
+                                        placeholder="Email"
                                     />
                                 </div>
                                 <div className="mb-3 relative">
                                     <label
                                         htmlFor="password"
-                                        className="block text-gray-700"
+                                        className="block text-sm font-medium text-gray-700"
                                     >
                                         Password:
                                     </label>
@@ -128,11 +131,10 @@ function LoginPage() {
                                                 : "border-gray-300"
                                         } rounded-md`}
                                         id="password"
-                                        placeholder="password"
+                                        placeholder="Password"
                                         name="password"
                                         value={formData.password}
                                         onChange={handleChange}
-                                        required
                                         autoComplete="off"
                                     />
                                     <p
@@ -159,40 +161,37 @@ function LoginPage() {
                                         )}
                                     </p>
                                 </div>
-                                <div className="mb-3 flex items-center">
+                                <div className="flex items-center">
                                     <input
                                         type="checkbox"
                                         className="h-4 w-4 text-blue-600"
                                         id="rememberMe"
                                     />
                                     <label
-                                        className="ml-2 block text-gray-700"
+                                        className="ml-2 block text-sm font-medium text-gray-700"
                                         htmlFor="rememberMe"
                                     >
                                         Remember me
                                     </label>
                                 </div>
-                                <div className="mb-3 flex justify-between items-center">
+                                <div className="relative bottom-6 left-52 flex justify-between items-center">
                                     <div>
                                         <Link
-                                            to="/forgot-password"
-                                            className="text-blue-500 hover:underline"
+                                            to="/forgot-Password"
+                                            className="text-blue-500 text-sm font-medium hover:underline"
                                         >
                                             Forgot password?
                                         </Link>
                                     </div>
                                 </div>
-                                <button
-                                    type="submit"
-                                    className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none"
-                                >
-                                    Login
-                                </button>
-                                {errorMessage && (
-                                    <div className="text-red-500 text-sm mt-4">
-                                        {errorMessage}
-                                    </div>
-                                )}
+                                <div className="text-center">
+                                    <button
+                                        type="submit"
+                                        className="inline-flex items-center px-4 py-2 mt-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    >
+                                        Login
+                                    </button>
+                                </div>
                                 <div className="flex gap-4 justify-center pt-4">
                                     <Link className="transform transition-transform duration-200 hover:scale-110">
                                         <img

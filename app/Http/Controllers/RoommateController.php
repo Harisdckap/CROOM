@@ -28,6 +28,8 @@ class RoommateController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'title' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'looking_for' => 'required|string|max:255',
             'looking_for_gender' => 'nullable|string|max:255',
@@ -39,7 +41,7 @@ class RoommateController extends Controller
             'listing_type' => 'required|string|max:255|in:roommates',
             'occupancy' => 'required|integer',
             'number_of_people' => 'required|integer',
-            'photos.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
+            'photos.*' => 'image|mimes:jpg,png,jpeg,gif,webp|max:2048',
         ]);
 
         // Handle file upload
@@ -62,6 +64,7 @@ class RoommateController extends Controller
 
         // Convert image paths to JSON for storage
         $validatedData['photos'] = json_encode($imagePaths);
+    
         Log::info('Uploaded files:', $imagePaths);
 
         // Create a new Roommate record
@@ -83,6 +86,7 @@ class RoommateController extends Controller
         $roommate = Roommate::findOrFail($id);
 
         $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
             'location' => 'sometimes|required|string|max:255',
             'looking_for' => 'sometimes|required|string|max:255',
             'looking_for_gender' => 'nullable|string|max:255',

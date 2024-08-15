@@ -120,6 +120,9 @@ return [
     | Supported drivers: "file", "cache"
     |
     */
+    'jwt' => [
+    'secret' => env('JWT_SECRET', 'IbiG5ZAhUAXp48ZqyxcPwpriIded2QaTkhVxq5B2znfyxHV5L1i8oTlGjWcaZZgs '),
+],
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),

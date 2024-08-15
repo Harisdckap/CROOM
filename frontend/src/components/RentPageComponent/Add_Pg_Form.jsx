@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import "./Roomate.css";
 
 const Add_PG = () => {
-    const [pg_type, setPgType] = useState("Both");
+    const [pg_type, setPgType] = useState("");
+    const [looking_for_gender, setLookingForGender] = useState("Both");
     const [mobile_num, setMobileNum] = useState("");
     const [pg_name, setPgName] = useState("");
     const [location, setLocation] = useState("");
@@ -105,14 +106,19 @@ const Add_PG = () => {
         if (!validateInputs()) return;
 
         const formData = new FormData();
+        formData.append("user_id", localStorage.getItem("user_id"));
         formData.append("pg_type", pg_type);
+        formData.append("looking_for_gender", looking_for_gender);
         formData.append("mobile_num", mobile_num);
         formData.append("pg_name", pg_name);
         formData.append("location", location);
         formData.append("occupancy_type", occupancy_type);
         formData.append("occupancy_amount", occupancy_amount);
         formData.append("pg_post_content", pg_post_content);
-        formData.append("highlighted_features", JSON.stringify(highlighted_features));
+        formData.append(
+            "highlighted_features",
+            JSON.stringify(highlighted_features)
+        );
         formData.append("amenities", JSON.stringify(amenities));
         images.forEach((image, index) => {
             formData.append(`photos[${index}]`, image);
@@ -142,7 +148,8 @@ const Add_PG = () => {
     };
 
     const handleCancel = () => {
-        setPgType("Both");
+        setPgType("");
+        setLookingForGender("Both");
         setMobileNum("");
         setPgName("");
         setLocation("");
@@ -215,11 +222,32 @@ const Add_PG = () => {
                 {/* PG Type */}
                 <fieldset className="border p-4 rounded-md">
                     <legend className="text-base font-medium text-gray-900">
-                        PG Type
+                        looking_for_gender
                     </legend>
                     <div className="flex gap-4 mt-2">
                         {["Boys", "Girls", "Both"].map((option) => (
                             <button
+                                key={option}
+                                className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                    looking_for_gender === option
+                                        ? "bg-blue-500 text-white"
+                                        : "hover:bg-gray-100"
+                                }`}
+                                onClick={() => setLookingForGender(option)}
+                            >
+                                {option}
+                            </button>
+                        ))}
+                    </div>
+                </fieldset>
+                <fieldset className="border p-4 rounded-md">
+                    <legend className="text-base font-medium text-gray-900">
+                        Pg Type
+                    </legend>
+                    <div className="mt-2 space-x-4">
+                        {["1RK", "1BHK", "2BHK", "3BHK"].map((option) => (
+                            <button
+                                type="button"
                                 key={option}
                                 className={`px-4 py-2 border rounded-md text-sm font-medium ${
                                     pg_type === option
@@ -335,6 +363,7 @@ const Add_PG = () => {
                     </label>
                     <input
                         type="file"
+                        accept="image/*"
                         multiple
                         onChange={handleFileChange}
                         ref={fileInputRef}
