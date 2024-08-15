@@ -3,13 +3,8 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyOtp } from "../js/api/auth";
 import img from '../assets/otp.png';
-<<<<<<< HEAD
-import Auth_navbar from "./RentPageComponent/Auth_navbar";
-// import logo from "../assets/logo.png";
-=======
 import logo from "../assets/logo.png";
 import OtpInput from 'react-otp-input';
->>>>>>> 79382a85fe44040c0f6a78df305bd65558c30cb6
 
 const OTPPage = () => {
     const [otp, setOtp] = useState("");
@@ -38,15 +33,6 @@ const OTPPage = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-100" style={{ backgroundColor: 'rgb(31, 41, 59)' }}>
-<<<<<<< HEAD
-           {/* navbar with logo */}
-           <Auth_navbar />
-
-            <div className="main flex-grow flex items-center justify-center">
-                <div className="flex max-w-3xl p-4 rounded-md bg-gray-100">
-                    <div className="flex w-1/2 items-center justify-between">
-                        <img src={img} className="w-full" alt="OTP Logo" />
-=======
             <nav className="bg-gray-100 px-3 py-4">
                 <div className="flex items-center">
                     <img src={logo} alt="Logo" className="w-20 h-auto" />
@@ -56,7 +42,6 @@ const OTPPage = () => {
                 <div className="flex mx-auto rounded-md bg-gray-100">
                     <div className="hidden md:flex items-center justify-between">
                         <img src={img} alt="OTP Logo" />
->>>>>>> 79382a85fe44040c0f6a78df305bd65558c30cb6
                     </div>
                     <div className="w-1/2 flex items-center justify-between">
                         <div className="w-full max-w-md">
@@ -64,26 +49,12 @@ const OTPPage = () => {
                             <p className="text-center text-gray-600 mb-4">Please check your email for the OTP and enter it below:</p>
 
                             <form onSubmit={handleSubmit}>
-<<<<<<< HEAD
-                                <div className="mb-4">
-                                    <label htmlFor="otp" className="block text-gray-700">OTP</label>
-                                    <input
-                                        type="text"
-                                        className={`mt-1 block w-full px-3 py-2 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-md`}
-                                        id="otp"
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value)}
-                                    />
-                                    {error && <div className="text-red-500 fixed text-sm mt-2">{error}</div>}
-                                </div>
-=======
                                 <div className="mb-4 ml-16" >
->>>>>>> 79382a85fe44040c0f6a78df305bd65558c30cb6
 
                                     <OtpInput
                                         value={otp}
                                         onChange={setOtp}
-                                        numInputs={4}
+                                        numInputs={6}
                                         renderSeparator={<span className="ml-2 mr-2">-</span>}
                                         renderInput={(props) => <input {...props}
 
@@ -92,7 +63,7 @@ const OTPPage = () => {
                                             width: '3rem',
 
                                             color: '#1a202c',
-                                            width: '4rem', /* w-16 */
+                                            // width: '4rem', /* w-16 */
                                             height: '4rem', /* h-16 */
                                             display: 'flex', /* flex */
                                             flexDirection: 'column', /* flex-col */

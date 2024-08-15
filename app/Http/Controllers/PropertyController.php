@@ -21,19 +21,19 @@ class PropertyController extends Controller
         $type = $request->input('t', 'a'); // Default to 'a' (all types)
         $gender = $request->input('gender', 'all'); // Default to 'all'
         $sortOrder = $request->input('sort', 'ASC'); // Default to 'asc'
-    
+
         // Initialize queries for roommates, listings, and PGs
         $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
         $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
         $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
-    
+
         // Apply gender filter if specified
         if ($gender !== 'all') {
             $roommateQuery->where('looking_for_gender', $gender);
             $listingQuery->where('looking_for_gender', $gender);
             $pgQuery->where('looking_for_gender', $gender);
         }
-    
+
         // Fetch data based on type
         switch ($type) {
             case 'r':
@@ -53,32 +53,32 @@ class PropertyController extends Controller
                 break;
             default:
                 $roommates = $roommateQuery->get();
-                $listings = $listingQuery->get(); 
+                $listings = $listingQuery->get();
                 $pglistings = $pgQuery->get();
                 break;
         }
-    
+
         // Combine collections
         $combinedListings = $pglistings->merge($roommates)->merge($listings);
-    
+
         // Debug: Check combined data
         Log::info('Combined Listings:', $combinedListings->toArray());
-    
+
         // Sort the combined collection based on the sortOrder
         $combinedListings = $combinedListings->sort(function ($a, $b) use ($sortOrder) {
             $aPrice = $a->price ?? $a->approx_rent ?? $a->occupancy_amount;
             $bPrice = $b->price ?? $b->approx_rent ?? $b->occupancy_amount;
-    
+
             if ($aPrice === $bPrice) {
                 return 0;
             }
-    
+
             return ($sortOrder === 'ASC') ? ($aPrice < $bPrice ? -1 : 1) : ($aPrice > $bPrice ? -1 : 1);
         });
-    
+
         // Paginate the combined collection
         $paginatedListings = $this->paginate($combinedListings, $itemsPerPage, $page,$request);
-    
+
         // Return the response
         return response()->json([
             'roommates' => $roommates,
@@ -90,7 +90,7 @@ class PropertyController extends Controller
             'total' => $paginatedListings->total(),
         ]);
     }
-    
+
 
     /**
      * Custom pagination function for a collection
@@ -160,3 +160,24 @@ class PropertyController extends Controller
         return response()->json(['error' => 'Property not found'], 404);
     }
 }
+
+//Favourite Page
+public function getFavoriteListings(Request $request)
+{
+    // Retrieve the 'ids' parameter from the query string
+    $ids = $request->query('ids');
+
+    // Validate that 'ids' is an array
+    if (!is_array($ids)) {
+        return response()->json(['error' => 'Invalid input'], 400);
+    }
+
+    // Fetch properties where IDs are in the array
+    $listings = Property::whereIn('id', $ids)->get();
+
+    // Return the listings as a JSON response
+    return response()->json([
+        'data' => $listings
+    ]);
+}
+

@@ -6,8 +6,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
+        user_id: localStorage.getItem("user_id"),
         title: "",
-        location:'',
+        location: [],
         price: "",
         room_type: "1RK",
         contact: "",
@@ -18,50 +19,40 @@ const AddRoomForm = () => {
         highlighted_features: [],
         amenities: [],
         description: "",
-        listing_type: "room"
-        
+        listing_type: "room",
     });
 
-
     const [images, setImages] = useState([]);
-    const [message, setMessage] = useState('');
-    const [countryData,setcountryData] = useState()
-
-
-
+    const [message, setMessage] = useState("");
+    const [countryData, setcountryData] = useState();
 
     const fileInputRef = useRef(null);
     // const navigate = useNavigate();
 
-    const [address_1,setaddress_1 ] = useState("")
-    const [address_2,setaddress_2 ] = useState("")
-    const [PIN,setPIN ] = useState("")
-    const [state,setstate ] = useState("")
+    const [address_1, setaddress_1] = useState("");
+    const [address_2, setaddress_2] = useState("");
+    const [PIN, setPIN] = useState("");
+    const [state, setstate] = useState("");
 
-   const handleChangeAddress_1 = (e) =>{
-    setaddress_1(e.target.value)
-   }
-   
-   const handleChangeAddress_2 = (e) =>{
-    setaddress_2(e.target.value)
-     }
-   
-   const handleChangeState = (e) =>{
-    setstate(e.target.value)
+    const handleChangeAddress_1 = (e) => {
+        setaddress_1(e.target.value);
+    };
 
-   }
+    const handleChangeAddress_2 = (e) => {
+        setaddress_2(e.target.value.trim());
+    };
 
-   const handleChangePIN = (e) =>{
-    setPIN(e.target.value)
-  
-   }
+    const handleChangeState = (e) => {
+        setstate(e.target.value);
+    };
 
+    const handleChangePIN = (e) => {
+        setPIN(e.target.value);
+    };
 
-const deleteIMG = (index) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
-};
-
-
+    const deleteIMG = (index) => {
+        setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    };
 
     const allHighlightedFeatures = [
         "Attached washroom",
@@ -79,12 +70,11 @@ const deleteIMG = (index) => {
         "Refrigerator",
         "Microwave",
     ];
-     
 
     //   useEffect(() => {
     //     const fetchData = async () => {
     //        try{
-              
+
     //         const res = await fetch("./JSON/countries.json")
     //         const cuntry = await res.json()
     //         console.log(cuntry)
@@ -94,42 +84,38 @@ const deleteIMG = (index) => {
     //     };
     //     fetchData();
     // }, []);
-    
 
-
+    const handleChangeCuntry = (e) => {
+        setcountryData(e.target.value);
+    };
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
 
-
         if (images.length + files.length > 3) {
-            setMessage('You can only upload up to 3 images in total.');
+            setMessage("You can only upload up to 3 images in total.");
             return;
         }
 
-
-        setImages(prevImages => [...prevImages, ...files]);
+        setImages((prevImages) => [...prevImages, ...files]);
     };
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({ ...prevState, [name]: value }));
     };
 
-
     const handleFeatureClick = (feature) => {
         setFormData((prevState) => {
             const highlighted_features =
                 prevState.highlighted_features.includes(feature)
                     ? prevState.highlighted_features.filter(
-                        (f) => f !== feature
-                    )
+                          (f) => f !== feature
+                      )
                     : [...prevState.highlighted_features, feature];
             return { ...prevState, highlighted_features };
         });
     };
-
 
     const handleAmenityClick = (amenity) => {
         setFormData((prevState) => {
@@ -140,7 +126,6 @@ const deleteIMG = (index) => {
         });
     };
 
-
     const showToast = (message, type = "error") => {
         if (type === "success") {
             toast.success(message, { position: "top-center" });
@@ -149,50 +134,64 @@ const deleteIMG = (index) => {
         }
     };
 
-
     const validateInputs = () => {
         if (!formData.title) {
             showToast("Title is required");
             return false;
         }
-      
+
         if (!formData.price || isNaN(formData.price)) {
             showToast("Valid rent amount is required");
             return false;
         }
-
 
         if (!formData.room_type) {
             showToast("Room type is required");
             return false;
         }
 
-
         if (!formData.contact) {
             showToast("Contact is required");
             return false;
         }
 
-
         return true;
     };
 
-
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
-        const locationAdd = `${PIN} ${address_1} ${address_2} ${state}`;
- 
+        const address_1_Value = address_1.split(",");
+        const addres_2_Value = address_2.split(",");
+
+        const doorNoValue = address_1_Value[0];
+        const streetValue = address_1_Value[1];
+        const areaValue = address_1_Value[2];
+
+        console.log(addres_2_Value);
+
+
+        const cityValue = addres_2_Value[0];
+        const districtValue = addres_2_Value[1];
+
+        // console.log("cityValue : "+cityValue +" "+"districtValue : "+districtValue)
 
         if (!validateInputs()) return;
-        const uploadData = new FormData()
-        // Convert arrays to JSON strings
+        const uploadData = new FormData();
         const formattedFormData = {
             ...formData,
+            location: JSON.stringify({
+                doorNo: doorNoValue,
+                street: streetValue,
+                area: areaValue,
+                city: cityValue,
+                district: districtValue,
+                pin: PIN,
+                state: state,
+                country: countryData,
+            }),
             highlighted_features: JSON.stringify(formData.highlighted_features),
             amenities: JSON.stringify(formData.amenities),
-            location:locationAdd
         };
 
         Object.keys(formattedFormData).forEach((key) => {
@@ -204,10 +203,11 @@ const deleteIMG = (index) => {
         });
 
         // Log the FormData entries to verify images are being appended correctly
-        // for (let pair of uploadData.entries()) {
-        //     console.log(pair[0] + ', ' + pair[1]);
-           
-        // }
+        for (let pair of uploadData.entries()) {
+            console.log(pair[0] + ", " + pair[1]);
+        }
+
+
         try {
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/listings",
@@ -245,7 +245,6 @@ const deleteIMG = (index) => {
     };
 
     return (
-        
         <div className="max-w-6xl mx-auto p-8 bg-white rounded-md shadow-md mt-4">
             <div className="absolute top-6 right-[3.5rem]">
                 <Link to="/PostRequirementPage">
@@ -261,12 +260,9 @@ const deleteIMG = (index) => {
                 <h1 className="text-3xl font-bold text-gray-800">Add Room</h1>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
-
                 <div>
                     <div className="flex items-center justify-between">
-
                         <div className="flex items-center gap-14">
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
                                     Title
@@ -279,7 +275,6 @@ const deleteIMG = (index) => {
                                     className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div>
-
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
@@ -294,10 +289,6 @@ const deleteIMG = (index) => {
                                     className="mt-1 block  px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div>
-
-         
-
-
                         </div>
                         <fieldset className="border text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
@@ -308,11 +299,20 @@ const deleteIMG = (index) => {
                                     <button
                                         type="button"
                                         key={gender}
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium  ${formData.looking_for_gender === gender.toLowerCase()
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium  ${
+                                            formData.looking_for_gender ===
+                                            gender.toLowerCase()
                                                 ? "bg-blue-500 text-primary"
                                                 : "hover:bg-gray-100"
-                                            }`}
-                                        onClick={() => handleChange({ target: { name: "looking_for_gender", value: gender.toLowerCase() } })}
+                                        }`}
+                                        onClick={() =>
+                                            handleChange({
+                                                target: {
+                                                    name: "looking_for_gender",
+                                                    value: gender.toLowerCase(),
+                                                },
+                                            })
+                                        }
                                     >
                                         {gender}
                                     </button>
@@ -321,11 +321,8 @@ const deleteIMG = (index) => {
                         </fieldset>
                     </div>
 
-            
-
                     <div className="flex justify-between">
                         <div className="flex   items-center gap-14">
-                        
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
                                     address 1
@@ -337,10 +334,7 @@ const deleteIMG = (index) => {
                                     placeholder="example( door no , street , area )"
                                     className="mt-1 w-96 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
-                            </div> 
-
-                            
-                          
+                            </div>
                         </div>
 
                         <fieldset className="border text-center w-96 p-4 rounded-md">
@@ -352,11 +346,19 @@ const deleteIMG = (index) => {
                                     <button
                                         type="button"
                                         key={room}
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${formData.room_type === room
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                            formData.room_type === room
                                                 ? "bg-blue-500 text-white"
                                                 : "hover:bg-gray-100"
-                                            }`}
-                                        onClick={() => handleChange({ target: { name: "room_type", value: room } })}
+                                        }`}
+                                        onClick={() =>
+                                            handleChange({
+                                                target: {
+                                                    name: "room_type",
+                                                    value: room,
+                                                },
+                                            })
+                                        }
                                     >
                                         {room}
                                     </button>
@@ -364,10 +366,9 @@ const deleteIMG = (index) => {
                             </div>
                         </fieldset>
                     </div>
-           
+
                     <div className="flex  items-center justify-between">
                         <div className="flex items-center gap-14">
-                     
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
                                     address 2
@@ -380,8 +381,6 @@ const deleteIMG = (index) => {
                                     className="mt-1 block px-3 w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div>
-                          
-                           
                         </div>
                         <fieldset className="border text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
@@ -393,71 +392,86 @@ const deleteIMG = (index) => {
                                     <button
                                         type="button"
                                         key={option}
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${formData.occupancy === option
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                            formData.occupancy === option
                                                 ? "bg-blue-500  "
                                                 : "hover:bg-gray-100"
-                                            }`}
-                                        onClick={() => handleChange({ target: { name: "occupancy", value: option } })}
+                                        }`}
+                                        onClick={() =>
+                                            handleChange({
+                                                target: {
+                                                    name: "occupancy",
+                                                    value: option,
+                                                },
+                                            })
+                                        }
                                     >
                                         {option}
                                     </button>
                                 ))}
                             </div>
                         </fieldset>
-
+                    </div>
+                </div>
+                <div className="flex gap-14">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            contact
+                        </label>
+                        <input
+                            name="contact"
+                            value={formData.contact}
+                            onChange={handleChange}
+                            placeholder="Mobile Number"
+                            className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
                     </div>
 
+                    <div>
+                        <label className="block  text-sm font-medium text-gray-700">
+                            PIN code
+                        </label>
+                        <input
+                            name="pincode"
+                            type="number"
+                            value={PIN}
+                            onChange={handleChangePIN}
+                            placeholder="PIN code"
+                            className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
+                    </div>
                 </div>
-                <div  className="flex gap-14">
 
-
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    contact
-                                </label>
-                                <input
-                                    name="contact"
-                                    value={formData.contact}
-                                    onChange={handleChange}
-                                    placeholder="Mobile Number"
-                                    className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                                />
-                            </div>
-
-<div>
-<label className="block  text-sm font-medium text-gray-700">
-                                    PIN code
-                                </label>
-                                <input
-                                    name="pincode"
-                                    value={PIN}
-                                    onChange={handleChangePIN}
-                                    placeholder="PIN code"
-                                    className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                                />
-</div>
-                                
-                            </div>
-
-<div>
- <label className="block  text-sm font-medium text-gray-700">
-                                    state
-                                </label>                               
-                                <input
-                                    name="state"
-                                    value={state}
-                                    onChange={handleChangeState}
-                                    placeholder="state"
-                                    className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                                    // className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                                /> 
-       
-</div>
-                           
+                <div className="flex gap-14">
+                    <div>
+                        <label className="block  text-sm font-medium text-gray-700">
+                            state
+                        </label>
+                        <input
+                            name="state"
+                            value={state}
+                            onChange={handleChangeState}
+                            placeholder="state"
+                            className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            // className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block  text-sm font-medium text-gray-700">
+                            country
+                        </label>
+                        <input
+                            name="country"
+                            value={countryData}
+                            onChange={handleChangeCuntry}
+                            placeholder="country"
+                            className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            // className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
+                    </div>
+                </div>
 
                 <div className="flex  items-center gap-48">
-
                     <div className="w-1/2">
                         <fieldset className="border  text-center w p-4 rounded-md mt-12">
                             <legend className="text-base font-medium text-gray-900">
@@ -471,12 +485,13 @@ const deleteIMG = (index) => {
                                         onClick={() =>
                                             handleFeatureClick(feature)
                                         }
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium${formData.highlighted_features.includes(
-                                            feature
-                                        )
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium${
+                                            formData.highlighted_features.includes(
+                                                feature
+                                            )
                                                 ? "bg-blue-500 bg-blue-500 text-white"
                                                 : "text-white"
-                                            }`}
+                                        }`}
                                     >
                                         {feature}
                                     </button>
@@ -485,9 +500,7 @@ const deleteIMG = (index) => {
                         </fieldset>
                     </div>
 
-
                     <div className="w-1/2">
-
                         <fieldset className="border  text-center w p-4 rounded-md mt-12">
                             <legend className="text-base font-medium text-gray-900">
                                 Amenities
@@ -500,12 +513,11 @@ const deleteIMG = (index) => {
                                         onClick={() =>
                                             handleAmenityClick(amenity)
                                         }
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium${formData.amenities.includes(
-                                            amenity
-                                        )
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium${
+                                            formData.amenities.includes(amenity)
                                                 ? "bg-blue-500 bg-blue-500 text-white"
                                                 : "text-white"
-                                            }`}
+                                        }`}
                                     >
                                         {amenity}
                                     </button>
@@ -513,16 +525,12 @@ const deleteIMG = (index) => {
                             </div>
                         </fieldset>
                     </div>
-
                 </div>
-
-
 
                 <div>
                     <label className="block text-sm font-medium text-black">
                         Upload Photos (up to 3)
                     </label>
-                   
 
                     <label
                         htmlFor="uploadFile1"
@@ -557,28 +565,25 @@ const deleteIMG = (index) => {
                         </p>
                     </label>
 
-
-
                     {images.length > 0 && (
-    <div className="mt-4 flex flex-wrap gap-4">
-        {images.map((image, index) => (
-            <div key={index} className="relative">
-                <img
-                    src={URL.createObjectURL(image)}
-                    alt={`Preview ${index}`}
-                    className="w-32 h-32 object-cover rounded-md shadow-md"
-                />
-                <span
-                    onClick={() => deleteIMG(index)}
-                    className="absolute top-1 right-1 text-white bg-red-600 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
-                >
-                    X
-                </span>
-            </div>
-        ))}
-    </div>
-)}
-
+                        <div className="mt-4 flex flex-wrap gap-4">
+                            {images.map((image, index) => (
+                                <div key={index} className="relative">
+                                    <img
+                                        src={URL.createObjectURL(image)}
+                                        alt={`Preview ${index}`}
+                                        className="w-32 h-32 object-cover rounded-md shadow-md"
+                                    />
+                                    <span
+                                        onClick={() => deleteIMG(index)}
+                                        className="absolute top-1 right-1 text-white bg-red-600 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
+                                    >
+                                        X
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div>
@@ -588,7 +593,7 @@ const deleteIMG = (index) => {
                     <textarea
                         name="description"
                         value={formData.description}
-                        onChange={handleChange} raaa
+                        onChange={handleChange}
                         placeholder="Description"
                         className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         rows={4}
@@ -611,6 +616,5 @@ const deleteIMG = (index) => {
         </div>
     );
 };
-
 
 export default AddRoomForm;

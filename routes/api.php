@@ -35,6 +35,8 @@ Route::post('/roommates', [RoommateController::class,'store']);
 Route::post('/pg_listings', [PgListingController::class, 'store']);
 Route::get('/userDetail', [UserController::class, 'decodeToken']);
 Route::get('/user-ads/{id}/', [AdsController::class, 'getUserAds']);
+Route::get('/properties/favorites', [PropertyController::class, 'getFavoriteListings']);
+
 
 use App\Http\Controllers\PasswordChangeController;
 
