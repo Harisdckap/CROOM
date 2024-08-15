@@ -1,95 +1,42 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DistrictModal from "./DistrictModel"; // New District Modal
-import Modal from "./LocationModel"; // Existing City Modal
-
-// Import images correctly
-import adyar from "../../assets/adyar.webp";
-import alandur from "../../assets/alandur.webp";
-import alwarpet from "../../assets/alwarpet.webp";
-import annanagar from "../../assets/annanagar.webp";
-import arumbakkam from "../../assets/arumbakkam.webp";
-import mogapar from "../../assets/mogapar.webp";
-
-
-// Hyderbad images
-
-import gachibowli from "../../assets/gachibowli.webp";
-import gowlidoddy from "../../assets/gowlidoddy.webp";
-import hitec_city from "../../assets/hitec_city.webp";
-import kondapur from "../../assets/kondapur.webp";
-
-// Delhi images
-
-import dwarka from "../../assets/dwarka.webp";
-import laxmi_nagar from "../../assets/laxmi_nagar.webp";
-
-
-// mumbai images
-import bhandup_west from "../../assets/bhandup_west.webp";
-import chembur from "../../assets/chembur.webp";
-import andheri_east from "../../assets/andheri_east.webp";
+import DistrictModal from "./DistrictModel"; // Adjust import name to match the file name
 
 // Import district images
 import chennai from "../../assets/chennai.webp";
-import hyderabad from "../../assets/hyderbad.webp";
-import delhi from "../../assets/delhi.webp";
-import mumbai from "../../assets/mumbai.webp";
+import Coimbatore from "../../assets/coimbatore.jpeg";
+import Erode from "../../assets/erode.png";
+import Dindigul from "../../assets/dindigul.jpeg";
+import Madurai from "../../assets/madurai.jpg";
+import Salem from "../../assets/salem.jpg";
+import Thoothukudi from "../../assets/thoothukudi.jpeg";
+import Tiruppur from "../../assets/tiruppur.jpeg";
+import Vellore from "../../assets/vellore.jpg";
+import Tirunelveli from "../../assets/tirunelveli.jpeg";
 
 const ExploreButton = () => {
     const navigate = useNavigate();
     const [isDistrictModalOpen, setIsDistrictModalOpen] = useState(false);
-    const [isCityModalOpen, setIsCityModalOpen] = useState(false);
-    const [selectedDistrict, setSelectedDistrict] = useState("");
-    const [selectedLocation, setSelectedLocation] = useState(""); 
+    const [selectedDistrict, setSelectedDistrict] = useState(null); // State to store selected district
 
     // Districts data
     const districts = [
-        { name: "Chennai", image: chennai },
-        { name: "Hyderabad", image: hyderabad },
-        { name: "Delhi", image: delhi },
-        { name: "Mumbai", image: mumbai },
+        { name: "chennai", image: chennai },
+        { name: "Coimbatore", image: Coimbatore },
+        { name: "Madurai", image: Madurai },
+        { name: "Salem", image: Salem },
+        { name: "Tiruppur", image: Tiruppur },
+        { name: "Erode", image: Erode },
+        { name: "Vellore", image: Vellore },
+        { name: "Thoothukudi", image: Thoothukudi },
+        { name: "Tirunelveli", image: Tirunelveli },
+        { name: "Dindigul", image: Dindigul }
     ];
-
-    // Cities data for each district
-    const cities = {
-        Chennai: [
-            { name: "Adyar", image: adyar },
-            { name: "Alandur", image: alandur },
-            { name: "Alwarpet", image: alwarpet },
-            { name: "Anna Nagar", image: annanagar },
-            { name: "Arumbakkam", image: arumbakkam },
-            { name: "Mogapar", image: mogapar },
-        ],
-        Hyderabad: [
-            {name:"gachibowli",image: gachibowli},
-             {name:"gowlidoddy",image: gowlidoddy},
-             {name:"hitec_city",image: hitec_city},
-             {name:"kondapur",image: kondapur}
-        ],
-        Delhi: [  
-            {name: "Dwarka", image: dwarka},
-            {name: "Laxmi Nagar", image: laxmi_nagar},
-        ],
-        Mumbai: [
-            {name: "Bhandup West", image: bhandup_west},
-            {name: "Chembur", image: chembur},
-            {name: "Andheri East", image: andheri_east},
-        ]
-    };
-
     const handleSelectDistrict = (district) => {
         setSelectedDistrict(district.name);
-        setIsDistrictModalOpen(false);
-        setIsCityModalOpen(true);
-    };
-
-    const handleSelectLocation = (location) => {
-        setIsCityModalOpen(false);
-        setSelectedLocation(location.name); // Store selected location
-        console.log(`Selected location: ${location.name}`);
-        // Navigate to the room listing page with selected location params
-        const url = `/property?address=${encodeURIComponent(location.name)}&p=0&t=a`;
+        const formattedAddress = encodeURIComponent(district.name);
+        const url = `/property?address=${formattedAddress}&p=0&t=a`;
+        // console.log(`Navigating to: ${url}`);
         navigate(url);
     };
 
@@ -120,13 +67,6 @@ const ExploreButton = () => {
                 onClose={() => setIsDistrictModalOpen(false)}
                 districts={districts}
                 onSelectDistrict={handleSelectDistrict}
-            />
-            {/* City Modal */}
-            <Modal
-                isOpen={isCityModalOpen}
-                onClose={() => setIsCityModalOpen(false)}
-                locations={cities[selectedDistrict]}
-                onSelectLocation={handleSelectLocation}
             />
         </div>
     );

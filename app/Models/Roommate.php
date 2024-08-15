@@ -29,5 +29,6 @@ class Roommate extends Model
         'photos' => 'array',
         'highlighted_features' => 'array',
         'amenities' => 'array',
+        'location' => 'array',
     ];
 }

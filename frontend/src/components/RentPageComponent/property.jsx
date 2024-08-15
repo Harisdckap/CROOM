@@ -38,19 +38,20 @@ const PropertyPage = () => {
                 "http://127.0.0.1:8000/api/properties",
                 { params }
             );
-
-            
+    
             setListings([]); // Clear previous listings
             setListings(response.data.data); // Set new listings
-            console.log(response.data.data);
+            console.log("properties:", response.data.data);
+            console.log("listings:", response.data.listings);
+            console.log("roommates:", response.data.roommates);
+            console.log("pg:", response.data.pg_listings);
 
-            // console.log("Roommates listing: " + JSON.stringify(response.data.roomates, null, 2));
-            // console.log("Rooms listing: " + JSON.stringify(response.data.listings, null, 2));
-            // console.log("PG listings: " + JSON.stringify(response.data.pg_listings, null, 2));
+
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
     };
+    
 
     const handleSearchChange = (event) => {
         setSearch(event.target.value);
@@ -150,7 +151,7 @@ const PropertyPage = () => {
             try {
                 const outerJson = JSON.parse(listing.location); // Parse the outer JSON string
                 locationData = JSON.parse(outerJson); // Parse the inner JSON string
-                console.log(locationData);
+                // console.log(locationData);
             } catch (error) {
                 console.error("Failed to parse location data:", error);
             }
@@ -160,11 +161,16 @@ const PropertyPage = () => {
         const city = (typeof locationData.city === 'string' && locationData.city.trim()) || "Unknown City";
         const district = (typeof locationData.district === 'string' && locationData.district.trim()) || "Unknown District";
     
-        console.log("City:", city);
-        console.log("District:", district);
+        // console.log("City:", city);
+        // console.log("District:", district);
     
         return (
-            <div key={listing.id} className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4">
+            <div
+            key={listing.id}
+            className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4 cursor-pointer hover:bg-gray-200"
+            onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
+        >
+        
                 <div className="relative">
                     {photos.length > 0 ? renderSlider(photos) : <p className="text-gray-500 text-center">No photo available.</p>}
                 </div>
@@ -178,8 +184,7 @@ const PropertyPage = () => {
                     </div>
                     <hr className="my-2" />
                     <div
-                        className="flex justify-between items-center mt-2 cursor-pointer hover:bg-slate-300 rounded p-1"
-                        onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
+                        className="flex justify-between items-center mt-2  p-1"
                     >
                         <div className="text-gray-700">
                             <p><span className="font-semibold">₹{listing.price || listing.occupancy_amount || listing.approx_rent}</span></p>

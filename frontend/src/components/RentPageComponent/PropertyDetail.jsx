@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -18,6 +17,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import HomeNavBar from "../Header";
 import { CustomNextArrow, CustomPrevArrow } from "./ArrowComponent";
+import wifi from "../../assets/wifi.png";
+import fridge from "../../assets/fridge.png"; // Example image for fridge
+import air_conditioner from "../../assets/air_conditioner.png"; // Example image for Microwave
+import kitchen from "../../assets/kitchen.png"; // Example image for Kitchen
+import washingMachine from "../../assets/washing_machine.png"; // Example image for Washing Machine
 
 const PropertyDetail = () => {
     const { id, location, listingType } = useParams();
@@ -43,25 +47,57 @@ const PropertyDetail = () => {
         }
     };
 
+    if (!property) {
+        return <p>Loading property details...</p>;
+    }
+
+    const amenitiesImages = {
+        "WiFi": wifi,
+        "Air Condition": air_conditioner,
+        "Fridge": fridge,
+        "Kitchen": kitchen,
+        "Washing_machine": washingMachine,
+    };
+
     let locationData = {};
 
     if (property && property.location) {
         try {
-            // Parse the location JSON string
             const OuterData = JSON.parse(property.location);
             locationData = JSON.parse(OuterData);
+            console.log(locationData);
         } catch (error) {
             console.error("Failed to parse location data:", error);
-            property.location = "Unknown Location"; // Fallback in case of parsing error
+            locationData = { city: "Unknown Location", district: "" };
         }
     }
 
-    const city = (typeof locationData.city === 'string' && locationData.city.trim()) || "Unknown City";
-    const district = (typeof locationData.district === 'string' && locationData.district.trim()) || "Unknown District";
+    const city =
+        (typeof locationData.city === "string" && locationData.city.trim()) ||
+        "Unknown City";
+    const district =
+        (typeof locationData.district === "string" &&
+            locationData.district.trim()) ||
+        "Unknown District";
+    const street =
+        (typeof locationData.street === "string" &&
+            locationData.street.trim()) ||
+        "Unknown District";
+
+    console.log(street);
+    const Doorno =
+        (typeof locationData.doorNo === "string" &&
+            locationData.doorNo.trim()) ||
+        "Unknown District";
+
+    console.log(Doorno);
 
     if (!property) {
         return <p>Loading property details...</p>;
     }
+
+    const location_name = encodeURIComponent(`${Doorno} ${street} ${location}`);
+    const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
 
     const renderPropertyDetails = (type) => {
         switch (type) {
@@ -81,7 +117,7 @@ const PropertyDetail = () => {
                         <DetailItem
                             icon={<FaMapMarkerAlt />}
                             label="Location"
-                            value={city}
+                            value={`${city},${district}`}
                         />
                         <DetailItem
                             icon={<FaDollarSign />}
@@ -106,7 +142,7 @@ const PropertyDetail = () => {
                         <DetailItem
                             icon={<FaMapMarkerAlt />}
                             label="Location"
-                            value={property.location}
+                            value={`${city},${district}`}
                         />
                         <DetailItem
                             icon={<FaUser />}
@@ -156,7 +192,7 @@ const PropertyDetail = () => {
                         <DetailItem
                             icon={<FaMapMarkerAlt />}
                             label="Location"
-                            value={property.location}
+                            value={`${city}, ${district}`}
                         />
                         <DetailItem
                             icon={<FaStar />}
@@ -255,6 +291,19 @@ const PropertyDetail = () => {
                                 </Link>
                             </motion.button>
                         </div>
+                        {mapUrl && (
+                            <motion.iframe
+                                src={mapUrl}
+                                width="100%"
+                                height="450"
+                                className="rounded-lg mt-4 shadow-lg"
+                                allowFullScreen
+                                title="Property Location"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 1 }}
+                            ></motion.iframe>
+                        )}
                     </motion.div>
 
                     {/* Details Section */}
@@ -320,10 +369,26 @@ const PropertyDetail = () => {
                                                     (amenity, index) => (
                                                         <li
                                                             key={index}
-                                                            className="flex items-start"
+                                                            className="flex items-center"
                                                         >
-                                                            <FaStar className="mr-2 text-green-500" />
-                                                            {amenity}
+                                                            {amenitiesImages[
+                                                                amenity
+                                                            ] && (
+                                                                <img
+                                                                    src={
+                                                                        amenitiesImages[
+                                                                            amenity
+                                                                        ]
+                                                                    }
+                                                                    alt={
+                                                                        amenity
+                                                                    }
+                                                                    className="w-6 h-6 mr-2"
+                                                                />
+                                                            )}
+                                                            <span>
+                                                                {amenity}
+                                                            </span>
                                                         </li>
                                                     )
                                                 )}
@@ -355,10 +420,9 @@ const PropertyDetail = () => {
         </div>
     );
 };
-
 const DetailItem = ({ icon, label, value }) => (
     <div className="flex items-center mb-4">
-        <div className="text-blue-700 text-2xl mr-4">{icon}</div>
+        <div className="text-blue-900 text-2xl mr-4">{icon}</div>
         <div>
             <h4 className="text-lg font-semibold text-gray-800">{label}</h4>
             <p className="text-gray-700">{value}</p>

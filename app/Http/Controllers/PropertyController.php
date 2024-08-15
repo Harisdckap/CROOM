@@ -26,7 +26,8 @@ class PropertyController extends Controller
         $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
         $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
         $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
-    
+       
+
         // Apply gender filter if specified
         if ($gender !== 'all') {
             $roommateQuery->where('looking_for_gender', $gender);
@@ -59,7 +60,7 @@ class PropertyController extends Controller
         }
     
         // Combine collections
-        $combinedListings = $pglistings->merge($roommates)->merge($listings);
+        $combinedListings = $pglistings->concat($roommates)->concat($listings);
     
         // Debug: Check combined data
         Log::info('Combined Listings:', $combinedListings->toArray());

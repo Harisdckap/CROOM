@@ -29,6 +29,7 @@ class PgListing extends Model
         'photos' => 'array',
         'highlighted_features' => 'array',
         'amenities' => 'array',
+        'location' => 'array',
     ];
 
 }

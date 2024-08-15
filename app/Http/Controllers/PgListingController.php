@@ -49,6 +49,7 @@ class PgListingController extends Controller
 
         // Convert image paths to JSON for storage
         $validated['photos'] = json_encode($imagePaths);
+        $validated['location'] = json_encode($validated['location']);
       
         Log::info('Uploaded files:', $imagePaths);
 

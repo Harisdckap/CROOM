@@ -64,6 +64,7 @@ class RoommateController extends Controller
 
         // Convert image paths to JSON for storage
         $validatedData['photos'] = json_encode($imagePaths);
+        $validatedData['location'] = json_encode($validatedData['location']);
     
         Log::info('Uploaded files:', $imagePaths);
 
