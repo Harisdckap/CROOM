@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
 import Navbar from "./Navbar";
@@ -12,7 +12,7 @@ import "../../slider.css";
 const PropertyPage = () => {
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
-    const [favorites, setFavorites] = useState({});
+    const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem("favorites")) || {});
     const [searchParams, setSearchParams] = useSearchParams();
     const [search, setSearch] = useState(searchParams.get("address") || "");
     const [gender, setGender] = useState(searchParams.get("gender") || "all");
@@ -34,10 +34,8 @@ const PropertyPage = () => {
                 "http://127.0.0.1:8000/api/properties",
                 { params }
             );
-            // setListings([]); // Clear previous listings
             setListings(response.data.data); // Set new listings
             console.log(response.data.data);
-
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
@@ -47,6 +45,7 @@ const PropertyPage = () => {
         setFavorites((prev) => {
             const newFavorites = { ...prev, [id]: !prev[id] };
             localStorage.setItem("favorites", JSON.stringify(newFavorites));
+            // navigate("/my-fav"); // Redirect to "My Favorite" page
             return newFavorites;
         });
     };
@@ -212,6 +211,11 @@ const PropertyPage = () => {
                 <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {listings.map(renderListing)}
                 </div>
+            </div>
+            <div className="fixed bottom-0 right-0 p-4">
+                <Link to="/my-fav">
+                    <a href="#" className="block hover:bg-blue-300 rounded p-2">My Favourite</a>
+                </Link>
             </div>
         </div>
     );
