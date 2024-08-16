@@ -29,7 +29,7 @@ const Navbar = ({
         const updatedParams = new URLSearchParams(location.search);
         Object.keys(params).forEach((key) => {
             if (params[key] !== undefined && params[key] !== null) {
-                updatedParams.set(key, decodeURIComponent(params[key]));
+                updatedParams.set(key, (params[key]));
             } else {
                 updatedParams.delete(key);
             }

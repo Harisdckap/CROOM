@@ -55,7 +55,7 @@ const AddRoomForm = () => {
     };
 
     const allHighlightedFeatures = [
-        "Attached washroom",
+        "Attached Bathroom",
         "Balcony",
         "Swimming pool",
         "Gym",

@@ -18,10 +18,17 @@ import "slick-carousel/slick/slick-theme.css";
 import HomeNavBar from "../Header";
 import { CustomNextArrow, CustomPrevArrow } from "./ArrowComponent";
 import wifi from "../../assets/wifi.png";
-import fridge from "../../assets/fridge.png"; // Example image for fridge
-import air_conditioner from "../../assets/air_conditioner.png"; // Example image for Microwave
-import kitchen from "../../assets/kitchen.png"; // Example image for Kitchen
-import washingMachine from "../../assets/washing_machine.png"; // Example image for Washing Machine
+import fridge from "../../assets/fridge.png";
+import air_conditioner from "../../assets/air_conditioner.png";
+import kitchen from "../../assets/kitchen.png";
+import washingMachine from "../../assets/washing_machine.png";
+
+// features
+import swiming_pool from "../../assets/swiming_pool.jpeg";
+import balcony from "../../assets/balcony.jpeg";
+import parking from "../../assets/parking.png";
+import gym from "../../assets/gym.png";
+import bathroom from "../../assets/bathroom.jpg";
 
 const PropertyDetail = () => {
     const { id, location, listingType } = useParams();
@@ -52,11 +59,19 @@ const PropertyDetail = () => {
     }
 
     const amenitiesImages = {
-        "WiFi": wifi,
+        WiFi: wifi,
         "Air Condition": air_conditioner,
-        "Fridge": fridge,
-        "Kitchen": kitchen,
-        "Washing_machine": washingMachine,
+        Fridge: fridge,
+        Kitchen: kitchen,
+        Washing_machine: washingMachine,
+    };
+
+    const featuresImages = {
+        "Attached Bathroom": bathroom,
+        Balcony: balcony,
+        "Swimming pool": swiming_pool,
+        Gym: gym,
+        Parking: parking,
     };
 
     let locationData = {};
@@ -326,9 +341,8 @@ const PropertyDetail = () => {
                                 property.listing_type
                             ) && (
                                 <>
-                                    {/* Highlighted Features Section */}
                                     <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md col-span-2">
-                                        <h3 className="text-2xl font-semibold mb-4  gradient-text">
+                                        <h3 className="text-2xl font-semibold mb-4 gradient-text">
                                             Highlighted Features
                                         </h3>
                                         {Array.isArray(
@@ -336,14 +350,22 @@ const PropertyDetail = () => {
                                         ) &&
                                         property.highlighted_features.length >
                                             0 ? (
-                                            <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
+                                            <ul className="grid grid-cols-2 gap-x-8 gap-y-4 text-gray-700 pl-5">
                                                 {property.highlighted_features.map(
                                                     (feature, index) => (
                                                         <li
                                                             key={index}
-                                                            className="flex items-start"
+                                                            className="flex items-center"
                                                         >
-                                                            <FaStar className="mr-2 text-yellow-500" />
+                                                            <img
+                                                                src={
+                                                                    featuresImages[
+                                                                        feature
+                                                                    ]
+                                                                }
+                                                                alt={feature}
+                                                                className="w-6 h-6 mr-2"
+                                                            />
                                                             {feature}
                                                         </li>
                                                     )
@@ -364,7 +386,7 @@ const PropertyDetail = () => {
                                         </h3>
                                         {Array.isArray(property.amenities) &&
                                         property.amenities.length > 0 ? (
-                                            <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
+                                            <ul className="grid grid-cols-2 gap-x-8 gap-y-4 text-gray-700 pl-5">
                                                 {property.amenities.map(
                                                     (amenity, index) => (
                                                         <li

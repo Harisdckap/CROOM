@@ -59,7 +59,7 @@ const Add_PG = () => {
     ];
 
     const handleFeatureClick = (feature) => {
-        setHighlightedFeatures((prevFeatures) =>
+        sethighlighted_features((prevFeatures) =>
             prevFeatures.includes(feature)
                 ? prevFeatures.filter((f) => f !== feature)
                 : [...prevFeatures, feature]
@@ -201,7 +201,7 @@ const Add_PG = () => {
 
         try {
             const response = await axios.post(
-                "http://127.0.0.1:8000/api/handleChangePINpg_listings",
+                "http://127.0.0.1:8000/api/pg_listings",
                 formData,
                 {
                     headers: {
@@ -230,7 +230,7 @@ const Add_PG = () => {
         setOccupancyType("");
         setOccupancyAmount("");
         setImages([]);
-        setHighlightedFeatures([]);
+        sethighlighted_features([]);
         setAmenities([]);
         setPgPostContent("");
     };
@@ -450,7 +450,7 @@ const Add_PG = () => {
                                             highlighted_features.includes(
                                                 feature
                                             )
-                                                ? "bg-blue-500 text-white"
+                                                ? "bg-blue-500 bg-blue-500 text-white"
                                                 : "hover:bg-gray-100"
                                         }`}
                                         onClick={() =>
@@ -476,7 +476,7 @@ const Add_PG = () => {
                                         key={amenity}
                                         className={`px-4 py-2 border rounded-md text-sm font-medium$ ${
                                             amenities.includes(amenity)
-                                                ? "bg-blue-500 text-white"
+                                                ? "bg-blue-500 bg-blue-500 text-white"
                                                 : "hover:bg-gray-100"
                                         }`}
                                         onClick={() =>

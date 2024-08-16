@@ -67,7 +67,6 @@ const PropertyPage = () => {
     };
 
     const handleSearchSubmit = (event) => {
-        event.preventDefault();
         setSearchParams({
             address: search,
             t: searchParams.get("t") || "a",

@@ -18,17 +18,21 @@ class PropertyController extends Controller
         $address = $request->input('address', '');
         $page = $request->input('p', 1);
         $itemsPerPage = 8;
-        $type = $request->input('t', 'a'); // Default to 'a' (all types)
-        $gender = $request->input('gender', 'all'); // Default to 'all'
-        $sortOrder = $request->input('sort', 'ASC'); // Default to 'asc'
+        $type = $request->input('t', 'a'); 
+        $gender = $request->input('gender', 'all'); 
+        $sortOrder = $request->input('sort', 'ASC'); 
     
-        // Initialize queries for roommates, listings, and PGs
-        $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
-        $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
-        $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
-       
-
-        // Apply gender filter if specified
+        // Queries
+        $roommateQuery = Roommate::query()
+            ->whereRaw('LOWER(location) LIKE ?', ["%".strtolower($address)."%"]);
+    
+        $listingQuery = Rooms::query()
+            ->whereRaw('LOWER(location) LIKE ?', ["%".strtolower($address)."%"]);
+    
+        $pgQuery = PgListing::query()
+            ->whereRaw('LOWER(location) LIKE ?', ["%".strtolower($address)."%"])
+            ->where('listing_type', 'pg');
+    
         if ($gender !== 'all') {
             $roommateQuery->where('looking_for_gender', $gender);
             $listingQuery->where('looking_for_gender', $gender);
@@ -39,18 +43,18 @@ class PropertyController extends Controller
         switch ($type) {
             case 'r':
                 $listings = $listingQuery->where('listing_type', 'room')->get();
-                $roommates = collect();
-                $pglistings = collect();
+                $roommates = [];
+                $pglistings = [];
                 break;
             case 'rm':
                 $roommates = $roommateQuery->where('listing_type', 'roommates')->get();
-                $listings = collect();
-                $pglistings = collect();
+                $listings = [];
+                $pglistings = [];
                 break;
             case 'pg':
                 $pglistings = $pgQuery->get();
-                $roommates = collect();
-                $listings = collect();
+                $roommates = [];
+                $listings = [];
                 break;
             default:
                 $roommates = $roommateQuery->get();
@@ -59,16 +63,22 @@ class PropertyController extends Controller
                 break;
         }
     
-        // Combine collections
-        $combinedListings = $pglistings->concat($roommates)->concat($listings);
+        // Combine arrays using array_push
+        $combinedArray = [];
+        array_push($combinedArray, ...$roommates);
+        array_push($combinedArray, ...$listings);
+        array_push($combinedArray, ...$pglistings);
     
-        // Debug: Check combined data
-        Log::info('Combined Listings:', $combinedListings->toArray());
+        $combinedCollection = collect($combinedArray);
     
-        // Sort the combined collection based on the sortOrder
-        $combinedListings = $combinedListings->sort(function ($a, $b) use ($sortOrder) {
-            $aPrice = $a->price ?? $a->approx_rent ?? $a->occupancy_amount;
-            $bPrice = $b->price ?? $b->approx_rent ?? $b->occupancy_amount;
+        // Sorting
+        $sortedCollection = $combinedCollection->sort(function ($a, $b) use ($sortOrder) {
+            $aPrice = $a['price'] ?? $a['approx_rent'] ?? $a['occupancy_amount'];
+            $bPrice = $b['price'] ?? $b['approx_rent'] ?? $b['occupancy_amount'];
+    
+            if ($sortOrder === 'NEWEST') {
+                return $b['created_at'] <=> $a['created_at']; 
+            }
     
             if ($aPrice === $bPrice) {
                 return 0;
@@ -77,20 +87,22 @@ class PropertyController extends Controller
             return ($sortOrder === 'ASC') ? ($aPrice < $bPrice ? -1 : 1) : ($aPrice > $bPrice ? -1 : 1);
         });
     
-        // Paginate the combined collection
-        $paginatedListings = $this->paginate($combinedListings, $itemsPerPage, $page,$request);
+        // Paginate the sorted collection
+        $paginatedListings = $this->paginate($sortedCollection, $itemsPerPage, $page, $request);
     
         // Return the response
         return response()->json([
             'roommates' => $roommates,
             'listings' => $listings,
             'pg_listings' => $pglistings,
-            'data' => $paginatedListings->all(),
+            'data'=>$combinedCollection,
+            // 'data' => $paginatedListings->items(),
             'current_page' => $paginatedListings->currentPage(),
             'last_page' => $paginatedListings->lastPage(),
             'total' => $paginatedListings->total(),
         ]);
     }
+    
     
 
     /**
@@ -126,12 +138,6 @@ class PropertyController extends Controller
         // Decode the base64 encoded id
         $decodedId = base64_decode($id);
 
-        // Log the decoded ID, location, and listing type for debugging
-        // Log::info('Decoded ID:', ['id' => $decodedId]);
-        // Log::info('Location:', ['location' => $location]);
-        // Log::info('Listing Type:', ['listing_type' => $listing_type]);
-
-        // Query the appropriate table based on the listing type
         if ($listing_type === 'roommates') {
             $roommate = Roommate::find($decodedId);
             if ($roommate) {
@@ -147,17 +153,15 @@ class PropertyController extends Controller
                 return response()->json(['data' => $pgListing, 'location' => $location]);
             }
         } else {
-            // Assuming 'listing' type
+        
             $listing = Rooms::find($decodedId);
             if ($listing) {
-                // Log::info('Listing found:', ['listing' => $listing]);
-                // Return the listing data with location
+              
                 return response()->json(['data' => $listing, 'location' => $location]);
             }
         }
 
-        // If no property is found, return a 404 error
-        // Log::error('Property not found:', ['id' => $decodedId]);
+     
         return response()->json(['error' => 'Property not found'], 404);
     }
 }

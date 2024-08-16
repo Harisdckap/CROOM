@@ -16,6 +16,7 @@ import PlanPage from "./components/RentPageComponent/PlanPage";
 import Profile from "./components/Profile";
 import UserAds from "./components/UserAdsomponent";
 import CountryDropdown from "./components/RentPageComponent/CountryDropdown";
+import UserAdsPage from "./components/RentPageComponent/UserAdsPage";
 
 function App() {
     return (
@@ -46,8 +47,9 @@ function App() {
 
                 <Route path="/PlanPage" element={<PlanPage />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/my-ads" element={<UserAds />} />
+                {/* <Route path="/my-ads" element={<UserAds />} /> */}
                 <Route path="/country-dropdown" element={<CountryDropdown />} />
+                <Route path="/user-ads" element={<UserAdsPage />} />
             </Routes>
         </Router>
     );
