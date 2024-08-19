@@ -49,7 +49,7 @@ class PgListingController extends Controller
 
         // Convert image paths to JSON for storage
         $validated['photos'] = json_encode($imagePaths);
-      
+
         Log::info('Uploaded files:', $imagePaths);
 
         $validated['highlighted_features'] = isset($validated['highlighted_features'])
@@ -70,4 +70,5 @@ class PgListingController extends Controller
             return response()->json(['message' => 'Failed to add PG Listing', 'error' => $e->getMessage()], 500);
         }
     }
+   
 }

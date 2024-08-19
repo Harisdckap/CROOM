@@ -15,9 +15,7 @@ import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
 import PlanPage from "./components/RentPageComponent/PlanPage";
 import Profile from "./components/User";
 import UserAds from "./components/UserAdsomponent";
-import MyFavoritePage from "./components/RentPageComponent/MyFavouritePage";
-
-
+// import FavouritesPage from "./components/RentPageComponent/FavouritesPage";
 
 function App() {
     return (
@@ -49,7 +47,7 @@ function App() {
                 <Route path="/PlanPage" element={<PlanPage />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/my-ads" element={<UserAds />} />
-                <Route path="my-fav" element={<MyFavoritePage/>} />
+                {/* <Route path="/my-fav" element={<FavouritesPage />} /> */}
             </Routes>
         </Router>
     );

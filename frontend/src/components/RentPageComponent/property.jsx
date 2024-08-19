@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
 import Navbar from "./Navbar";
 import HomeNavBar from "../Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkerAlt, faHome, faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
-import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
+import { faMapMarkerAlt,faHome,faArrowUp,} from "@fortawesome/free-solid-svg-icons";
 import "../../slider.css";
 
 const PropertyPage = () => {
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
-    const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem("favorites")) || {});
     const [searchParams, setSearchParams] = useSearchParams();
     const [search, setSearch] = useState(searchParams.get("address") || "");
     const [gender, setGender] = useState(searchParams.get("gender") || "all");
-    const [sortOrder, setSortOrder] = useState(searchParams.get("sort") || "ASC");
+    const [sortOrder, setSortOrder] = useState(
+        searchParams.get("sort") || "ASC"
+    );
 
     useEffect(() => {
         fetchListings();
@@ -34,20 +34,18 @@ const PropertyPage = () => {
                 "http://127.0.0.1:8000/api/properties",
                 { params }
             );
+
+
+            setListings([]); // Clear previous listings
             setListings(response.data.data); // Set new listings
             console.log(response.data.data);
+
+            // console.log("Roommates listing: " + JSON.stringify(response.data.roomates, null, 2));
+            // console.log("Rooms listing: " + JSON.stringify(response.data.listings, null, 2));
+            // console.log("PG listings: " + JSON.stringify(response.data.pg_listings, null, 2));
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
-    };
-
-    const toggleFavorite = (id) => {
-        setFavorites((prev) => {
-            const newFavorites = { ...prev, [id]: !prev[id] };
-            localStorage.setItem("favorites", JSON.stringify(newFavorites));
-            // navigate("/my-fav"); // Redirect to "My Favorite" page
-            return newFavorites;
-        });
     };
 
     const handleSearchChange = (event) => {
@@ -93,7 +91,11 @@ const PropertyPage = () => {
 
     const handleViewClick = (id, location, listingType) => {
         const trimmedLocation = location.trim();
-        navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}/${listingType}`);
+        navigate(
+            `/property/${btoa(id)}/${encodeURIComponent(
+                trimmedLocation
+            )}/${listingType}`
+        );handleViewClick
     };
 
     const renderSlider = (photos) => {
@@ -126,96 +128,91 @@ const PropertyPage = () => {
             </Slider>
         );
     };
-
     const renderListing = (listing) => {
         let photos = [];
+        let locationData = {};
+
+        // Handle photos parsing
         if (listing.photos) {
-            photos = JSON.parse(listing.photos).map((photo) =>
-                photo.replace("/", "/")
-            );
+            try {
+                photos = JSON.parse(listing.photos).map(photo => photo.replace("/", "/"));
+            } catch (error) {
+                console.error("Failed to parse photos:", error);
+            }
         }
 
+        // Handle location parsing
+        if (listing.location) {
+            try {
+                const outerJson = JSON.parse(listing.location); // Parse the outer JSON string
+                locationData = JSON.parse(outerJson); // Parse the inner JSON string
+                console.log(locationData);
+            } catch (error) {
+                console.error("Failed to parse location data:", error);
+            }
+        }
+
+        // Access and log individual properties with default values
+        const city = (typeof locationData.city === 'string' && locationData.city.trim()) || "Unknown City";
+        const district = (typeof locationData.district === 'string' && locationData.district.trim()) || "Unknown District";
+
+        console.log("City:", city);
+        console.log("District:", district);
+
         return (
-            <div
-                key={listing.id}
-                className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4"
-            >
+            <div key={listing.id} className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4">
                 <div className="relative">
-                    {photos.length > 0 ? (
-                        renderSlider(photos)
-                    ) : (
-                        <p className="text-gray-500 text-center">
-                            No photo available.
-                        </p>
-                    )}
+                    {photos.length > 0 ? renderSlider(photos) : <p className="text-gray-500 text-center">No photo available.</p>}
                 </div>
                 <div className="px-2">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-semibold gradient-text">
-                            {listing.title || listing.pg_name || listing.post}
-                        </h2>
+                        <h2 className="text-xl font-semibold gradient-text">{listing.title || listing.pg_name || listing.post}</h2>
                         <p className="text-green-600 flex items-center">
                             <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
-                            {listing.location}
+                            {city}, {district}
                         </p>
                     </div>
-                    <div className="flex justify-between items-center mt-2">
-                        <div
-                            className="cursor-pointer text-gray-700 hover:text-red-500"
-                            onClick={() => toggleFavorite(listing.id)}
-                        >
-                            <FontAwesomeIcon
-                                icon={favorites[listing.id] ? solidHeart : regularHeart}
-                                className="text-xl"
-                            />
+                    <hr className="my-2" />
+                    <div
+                        className="flex justify-between items-center mt-2 cursor-pointer hover:bg-slate-300 rounded p-1"
+                        onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
+                    >
+                        <div className="text-gray-700">
+                            <p><span className="font-semibold">₹{listing.price || listing.occupancy_amount || listing.approx_rent}</span></p>
                         </div>
                         <p className="text-gray-700 flex items-center">
                             <FontAwesomeIcon icon={faHome} className="mr-2" />
                             Room Type: {listing.room_type || listing.pg_type}
                         </p>
                     </div>
-                    <hr className="my-2" />
-                    <div
-                        className="flex justify-between items-center mt-2 cursor-pointer hover:bg-slate-300 rounded p-1"
-                        onClick={() => handleViewClick(listing.id, listing.location, listing.listing_type)}
-                    >
-                        <div className="text-gray-700">
-                            <p>
-                                <span className="font-semibold">
-                                    ₹
-                                    {listing.price ||
-                                        listing.occupancy_amount ||
-                                        listing.approx_rent}
-                                </span>
-                            </p>
-                        </div>
-                    </div>
                 </div>
             </div>
         );
     };
 
+
+
+
+
+
+
+
     return (
         <div>
             <HomeNavBar />
             <Navbar
-              search={search}
-              onSearchChange={handleSearchChange}
-              onSearchSubmit={handleSearchSubmit}
-              gender={gender}
-              onGenderChange={handleGenderChange}
-              setListingType={setListingType}
-              onSortChange={handleSortChange}
+                search={search}
+                onSearchChange={handleSearchChange}
+                onSearchSubmit={handleSearchSubmit}
+                gender={gender}
+                onGenderChange={handleGenderChange}
+                setListingType={setListingType}
+                onSortChange={handleSortChange}
             />
             <div className="flex justify-center mt-6">
                 <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {listings.map(renderListing)}
                 </div>
-            </div>
-            <div className="fixed bottom-0 right-0 p-4">
-                <Link to="/my-fav">
-                    <a href="#" className="block hover:bg-blue-300 rounded p-2">My Favourite</a>
-                </Link>
             </div>
         </div>
     );

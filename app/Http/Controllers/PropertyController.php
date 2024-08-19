@@ -159,25 +159,8 @@ class PropertyController extends Controller
         // Log::error('Property not found:', ['id' => $decodedId]);
         return response()->json(['error' => 'Property not found'], 404);
     }
+  
+
 }
 
-//Favourite Page
-public function getFavoriteListings(Request $request)
-{
-    // Retrieve the 'ids' parameter from the query string
-    $ids = $request->query('ids');
-
-    // Validate that 'ids' is an array
-    if (!is_array($ids)) {
-        return response()->json(['error' => 'Invalid input'], 400);
-    }
-
-    // Fetch properties where IDs are in the array
-    $listings = Property::whereIn('id', $ids)->get();
-
-    // Return the listings as a JSON response
-    return response()->json([
-        'data' => $listings
-    ]);
-}
 

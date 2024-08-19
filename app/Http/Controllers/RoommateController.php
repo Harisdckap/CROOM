@@ -64,7 +64,7 @@ class RoommateController extends Controller
 
         // Convert image paths to JSON for storage
         $validatedData['photos'] = json_encode($imagePaths);
-    
+
         Log::info('Uploaded files:', $imagePaths);
 
         // Create a new Roommate record
@@ -124,4 +124,5 @@ class RoommateController extends Controller
         $roommate->delete();
         return response()->json(null, 204);
     }
+ 
 }
