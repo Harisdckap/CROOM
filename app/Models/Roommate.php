@@ -11,6 +11,7 @@ class Roommate extends Model
 
     protected $fillable = [
         'user_id',
+        'title', 
         'location',
         'looking_for',
         'looking_for_gender',

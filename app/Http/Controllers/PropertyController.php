@@ -8,8 +8,7 @@ use App\Models\PgListing;
 
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class PropertyController extends Controller
 {
@@ -17,7 +16,7 @@ class PropertyController extends Controller
     {
         $address = $request->input('address', '');
         $page = $request->input('p', 1);
-        $itemsPerPage = 8;
+        $itemsPerPage = 9;
         $type = $request->input('t', 'a'); 
         $gender = $request->input('gender', 'all'); 
         $sortOrder = $request->input('sort', 'ASC'); 
@@ -43,18 +42,18 @@ class PropertyController extends Controller
         switch ($type) {
             case 'r':
                 $listings = $listingQuery->where('listing_type', 'room')->get();
-                $roommates = [];
-                $pglistings = [];
+                $roommates = collect();
+                $pglistings = collect();
                 break;
             case 'rm':
                 $roommates = $roommateQuery->where('listing_type', 'roommates')->get();
-                $listings = [];
-                $pglistings = [];
+                $listings = collect();
+                $pglistings = collect();
                 break;
             case 'pg':
                 $pglistings = $pgQuery->get();
-                $roommates = [];
-                $listings = [];
+                $roommates = collect();
+                $listings = collect();
                 break;
             default:
                 $roommates = $roommateQuery->get();
@@ -63,11 +62,10 @@ class PropertyController extends Controller
                 break;
         }
     
-        // Combine arrays using array_push
-        $combinedArray = [];
-        array_push($combinedArray, ...$roommates);
-        array_push($combinedArray, ...$listings);
-        array_push($combinedArray, ...$pglistings);
+        // Combine arrays
+        $combinedArray = $roommates->toArray();
+        $combinedArray = array_merge($combinedArray, $listings->toArray());
+        $combinedArray = array_merge($combinedArray, $pglistings->toArray());
     
         $combinedCollection = collect($combinedArray);
     
@@ -95,19 +93,15 @@ class PropertyController extends Controller
             'roommates' => $roommates,
             'listings' => $listings,
             'pg_listings' => $pglistings,
-            'data'=>$combinedCollection,
-            // 'data' => $paginatedListings->items(),
+            'data' => $paginatedListings->items(),
             'current_page' => $paginatedListings->currentPage(),
             'last_page' => $paginatedListings->lastPage(),
             'total' => $paginatedListings->total(),
         ]);
     }
     
-    
-
     /**
-     * Custom pagination function for a collection
-     * Paginate a given collection.
+     * Custom pagination function for a collection.
      *
      * @param \Illuminate\Support\Collection $items
      * @param int $perPage
@@ -115,12 +109,12 @@ class PropertyController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    protected function paginate($items, $perPage, $page, $request)
+    protected function paginate(Collection $items, $perPage, $page, $request)
     {
         $offset = ($page - 1) * $perPage;
         $paginatedItems = $items->slice($offset, $perPage)->values();
 
-        return new \Illuminate\Pagination\LengthAwarePaginator(
+        return new LengthAwarePaginator(
             $paginatedItems,
             $items->count(),
             $perPage,
@@ -128,6 +122,7 @@ class PropertyController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
     }
+
 
 
 
@@ -148,7 +143,7 @@ class PropertyController extends Controller
         } elseif ($listing_type === 'pg') {
             $pgListing = PgListing::find($decodedId);
             if ($pgListing) {
-                Log::info('PG Listing found:', ['pgListing' => $pgListing]);
+    
                 // Return the PG listing data with location
                 return response()->json(['data' => $pgListing, 'location' => $location]);
             }

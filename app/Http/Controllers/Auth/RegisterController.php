@@ -65,11 +65,6 @@ class RegisterController extends Controller
         ], 201);
     }
 
-    public function details()
-    {
-        $user = Auth::guard('api')->user();
-        return response()->json(['user' => $user], 200);
-    }
 
     public function logout(Request $request)
     {

@@ -9,6 +9,7 @@ import {
     faMapMarkerAlt,
     faHome,
     faArrowUp,
+   faHeart 
 } from "@fortawesome/free-solid-svg-icons";
 import "../../slider.css";
 
@@ -24,6 +25,7 @@ const PropertyPage = () => {
 
     useEffect(() => {
         fetchListings();
+        console.log("Listings data:", listings);
     }, [searchParams]);
 
     const fetchListings = async () => {
@@ -39,14 +41,8 @@ const PropertyPage = () => {
                 { params }
             );
     
-            setListings([]); // Clear previous listings
-            setListings(response.data.data); // Set new listings
-            console.log("properties:", response.data.data);
-            console.log("listings:", response.data.listings);
-            console.log("roommates:", response.data.roommates);
-            console.log("pg:", response.data.pg_listings);
-
-
+            setListings([]);
+            setListings(response.data.data);
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
@@ -132,11 +128,11 @@ const PropertyPage = () => {
             </Slider>
         );
     };
-    const renderListing = (listing) => {
+    
+    const renderListing = (listing, index) => {
         let photos = [];
         let locationData = {};
     
-        // Handle photos parsing
         if (listing.photos) {
             try {
                 photos = JSON.parse(listing.photos).map(photo => photo.replace("/", "/"));
@@ -144,33 +140,35 @@ const PropertyPage = () => {
                 console.error("Failed to parse photos:", error);
             }
         }
-    
-        // Handle location parsing
+
         if (listing.location) {
             try {
-                const outerJson = JSON.parse(listing.location); // Parse the outer JSON string
-                locationData = JSON.parse(outerJson); // Parse the inner JSON string
-                // console.log(locationData);
+                const outerJson = JSON.parse(listing.location); 
+                locationData = JSON.parse(outerJson); 
             } catch (error) {
                 console.error("Failed to parse location data:", error);
             }
         }
     
-        // Access and log individual properties with default values
         const city = (typeof locationData.city === 'string' && locationData.city.trim()) || "Unknown City";
         const district = (typeof locationData.district === 'string' && locationData.district.trim()) || "Unknown District";
     
-        // console.log("City:", city);
-        // console.log("District:", district);
-    
         return (
             <div
-            key={listing.id}
-            className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4 cursor-pointer hover:bg-gray-200"
-            onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
-        >
-        
+                key={`${listing.id}-${index}`}
+                className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4 cursor-pointer hover:bg-gray-200"
+                onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
+            >
                 <div className="relative">
+                    {/* Heart Icon */}
+                    <FontAwesomeIcon
+                        icon={faHeart}
+                        className="absolute top-2 right-2 text-red-500 text-2xl cursor-pointer"
+                        onClick={(e) => {
+                            e.stopPropagation(); // Prevent click event from propagating to parent div
+                            // Handle the like action here
+                        }}
+                    />
                     {photos.length > 0 ? renderSlider(photos) : <p className="text-gray-500 text-center">No photo available.</p>}
                 </div>
                 <div className="px-2">
@@ -182,9 +180,7 @@ const PropertyPage = () => {
                         </p>
                     </div>
                     <hr className="my-2" />
-                    <div
-                        className="flex justify-between items-center mt-2  p-1"
-                    >
+                    <div className="flex justify-between items-center mt-2 p-1">
                         <div className="text-gray-700">
                             <p><span className="font-semibold">₹{listing.price || listing.occupancy_amount || listing.approx_rent}</span></p>
                         </div>
@@ -197,6 +193,7 @@ const PropertyPage = () => {
             </div>
         );
     };
+    
     
     
     
@@ -221,6 +218,7 @@ const PropertyPage = () => {
                 <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {listings.map(renderListing)}
                 </div>
+                
             </div>
         </div>
     );
