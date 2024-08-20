@@ -17,6 +17,8 @@ import Profile from "./components/Profile";
 // import UserAds from "./components/UserAdsomponent";
 import CountryDropdown from "./components/RentPageComponent/CountryDropdown";
 // import UserAdsPage from "./components/RentPageComponent/UserAdsPage";
+import Profile from "./components/User";
+import UserAds from "./components/UserAdsomponent";
 
 function App() {
     return (

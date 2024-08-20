@@ -54,22 +54,22 @@ const Header = () => {
           <div className="relative">
             {isLoggedIn ? (
               <>
-                <button onClick={toggleAccount} className="flex items-center">
-                  <FaUser className="mr-1" />
+                <button onClick={toggleAccount} className=" text-blue-500 flex items-center">
+                  <FaUser className="mr-1 text-blue-500" />
                   My Account
                   <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 {accountOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg">
+                  <div className="absolute left-2 top-8 w-40 text-center bg-zinc-100 p-2 shadow-md text-black rounded">
                     <Link to="/profile">
-                    <a href="#" className="block px-4 py-2">Profile</a>
+                    <a href="#" className="block hover:bg-blue-300 rounded p-2">Profile</a>
                     </Link>
                     <Link to="/my-ads">
-                    <a href="#" className="block px-4 py-2">My Ads</a>
+                    <a href="#" className="block hover:bg-blue-300 rounded p-2">My Ads</a>
                     </Link>
-                    <button onClick={onLogout} className="block px-4 py-2 w-full text-left">
+                    <button onClick={onLogout} className="block text-center hover:bg-blue-300 rounded p-2 w-full text-left">
                       Logout
                     </button>
                   </div>

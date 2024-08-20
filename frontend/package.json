@@ -29,7 +29,8 @@
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.5",
     "slick-carousel": "^1.8.1",
-    "world-countries": "^5.0.0"
+    "world-countries": "^5.0.0",
+    "react-tooltip": "^5.28.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
@@ -42,6 +43,6 @@
     "eslint-plugin-react-refresh": "^0.4.7",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",
-    "vite": "^5.3.4"
+    "vite": "^5.4.0"
   }
 }
