@@ -14,6 +14,7 @@ use App\Http\Controllers\RoommateController;
 use App\Http\Controllers\PgListingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdsController;
+use App\Http\Controllers\UserListController;
 
 // routes/api
 
@@ -34,4 +35,10 @@ Route::post('/upload', [ImageController::class, 'upload']);
 Route::post('/roommates', [RoommateController::class,'store']);
 Route::post('/pg_listings', [PgListingController::class, 'store']);
 Route::get('/userDetail', [UserController::class, 'decodeToken']);
+Route::post('/userDetail', [UserController::class, 'updateProfile']);
 Route::get('user/{userId}/ads', [AdsController::class, 'getUserAds']);
+Route::get('/usersList', [UserListController::class, 'getUserList']);
+Route::get('/adminList', [UserListController::class, 'getAdminList']);
+
+
+

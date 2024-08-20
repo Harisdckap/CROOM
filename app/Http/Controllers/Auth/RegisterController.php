@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\OTPVerification;
 use App\Mail\OTPMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Laravel\Socialite\Facades\Socialite;
+use Exception;
+
 
 class RegisterController extends Controller
 {
@@ -24,6 +27,7 @@ class RegisterController extends Controller
             'gender' => 'required|string',
             'mobile' => 'required|string|max:10',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'user_type' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -38,20 +42,20 @@ class RegisterController extends Controller
             'mobile' => $request->mobile,
         ]);
 
-        // Generate OTP
+        //generate OTP
         $otp = rand(100000, 999999);
 
-        // Store OTP in database
+        //store OTP in database
         OTPVerification::create([
             'user_id' => $user->id,
             'otp' => $otp,
             'otp_expire_at' => now()->addMinutes(10),
         ]);
 
-        // Generate JWT token
+        //generate JWT token
         $token = JWTAuth::fromUser($user);
 
-        // Send OTP via email
+        //send OTP via email
         Mail::send('auth.emails.otp', ['otp' => $otp, 'auth_token' => $token], function ($message) use ($user) {
             $message->to($user->email);
             $message->subject('Your OTP Code');
@@ -65,10 +69,57 @@ class RegisterController extends Controller
         ], 201);
     }
 
-    public function details()
+
+    public function redirectToGoogle()
     {
-        $user = Auth::guard('api')->user();
-        return response()->json(['user' => $user], 200);
+
+        return Socialite::driver('google')->redirect();
+    }
+    public function handleGoogleCallback()
+    {
+        try {
+
+            //create a user using socialite driver google
+            $user = Socialite::driver('google')->user();
+
+            $profile = $user->getAvatar();
+            // if the user exits, use that user and login
+            $finduser = User::where('google_id', $user->getId())->first();
+
+            if ($finduser) {
+                //if the user exists, login and show dashboard
+                Auth::login($finduser);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User logged in successfully.'
+                ]);
+            } else {
+                //user is not yet created, so create first
+                $newUser = User::create([
+                    'name' => $user->getName(),
+                    'email' => $user->getEmail(),
+                    'google_id' => $user->getId(),
+                    'user_type' => 3,
+                ]);
+
+
+                //generate JWT token
+                $token = JWTAuth::fromUser($newUser);
+
+                Auth::login($newUser);
+                //go to the dashboard
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User registered successfully.',
+                    'access_token' => $token,
+                    'user_id' => $newUser->id,
+                ], 201);
+            }
+            //catch exceptions
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
+
     }
 
     public function logout(Request $request)
@@ -87,7 +138,7 @@ class RegisterController extends Controller
                     'message' => 'Authorization token not found.'
                 ], 401);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to log out, please try again.'

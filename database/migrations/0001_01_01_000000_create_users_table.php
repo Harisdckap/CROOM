@@ -15,11 +15,14 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
+            $table->string('google_id')->nullable();
+            $table->string('facebook_id')->nullable();
             $table->rememberToken();
-            $table->string('gender');
-            $table->string('mobile');
+            $table->string('gender')->nullable();
+            $table->string('mobile')->nullable();
             $table->string('photo')->nullable();
+            $table->string('user_type')->default(3);
             $table->timestamps();
         });
 
@@ -47,5 +50,8 @@ return new class extends Migration {
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('google_id');
+        });
     }
 };

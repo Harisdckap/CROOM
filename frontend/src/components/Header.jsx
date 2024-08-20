@@ -31,6 +31,7 @@ const Header = () => {
 
         if (response.ok) {
           localStorage.removeItem('auth_token');
+          localStorage.removeItem('user_id');
           setIsLoggedIn(false);
           navigate('/login');
         } else {

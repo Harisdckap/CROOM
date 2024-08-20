@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../js/api/auth";
+import { googleLogin } from "../js/api/auth";
 import apartmentIMG from "../assets/log3.png";
 import logo from "../assets/logo.png";
 import FacebookLogo from "../assets/facebook.png";
@@ -31,9 +32,11 @@ function LoginPage() {
 
             if (response && response.access_token) {
                 const { access_token } = response;
+                const user_id = response.user_id;
 
-                // Store the token in localStorage
+                //storing the token and user_id in localStorage
                 localStorage.setItem("auth_token", access_token);
+                localStorage.setItem("user_id", user_id);
 
                 // Redirect to home page
                 navigate("/");
@@ -42,6 +45,35 @@ function LoginPage() {
             }
         } catch (error) {
             console.error("Login error:", error);
+            setErrorMessage(
+                "Login failed. Please check your credentials and try again."
+            );
+        }
+    };
+
+    const handleGoogleAuth = async (e) => {
+        // e.preventDefault();
+        // window.location.href = "http://localhost:8000/auth/google";
+        e.preventDefault();
+
+        try {
+            const response = await googleLogin();
+
+            if (response && response.access_token) {
+                const { access_token } = response;
+                const user_id = response.user_id;
+
+                //storing the token and user_id in localStorage
+                localStorage.setItem("auth_token", access_token);
+                localStorage.setItem("user_id", user_id);
+
+                // Redirect to home page
+                navigate("/");
+            } else {
+                throw new Error("No access token received from the server");
+            }
+        } catch (error) {
+            // console.error("Login error:", error);/
             setErrorMessage(
                 "Login failed. Please check your credentials and try again."
             );
@@ -206,6 +238,7 @@ function LoginPage() {
                                             className="w-10 h-10 hover:animate-tilt-shake"
                                             src={GoogleLogo}
                                             alt="Google Logo"
+                                            onClick={handleGoogleAuth}
                                         />
                                     </Link>
                                 </div>
