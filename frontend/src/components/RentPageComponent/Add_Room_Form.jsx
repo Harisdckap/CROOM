@@ -197,10 +197,9 @@ const AddRoomForm = () => {
         });
 
         images.forEach((image, index) => {
-            uploadData.append(`photos[${index}]`, image); // Ensure correct field name
+            uploadData.append(`photos[${index}]`, image);
         });
 
-        // Log the FormData entries to verify images are being appended correctly
         for (let pair of uploadData.entries()) {
             console.log(pair[0] + ", " + pair[1]);
         }
