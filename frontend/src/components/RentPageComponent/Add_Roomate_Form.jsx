@@ -1,9 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 
+// import { data } from "autoprefixer";
+// import { countrDataesJSON } from "./country JSON/countries+states.json";
+
+
+
+// console.log(countrDataesJSON)
 
 const AddRequirement = () => {
    const [formData, setFormData] = useState({
@@ -29,8 +35,7 @@ const AddRequirement = () => {
    const [PIN,setPIN ] = useState("")
    const [state,setstate ] = useState("")
    const [countryData,setcountryData ] = useState("")
-
-
+   const [contryJSON,setcontryJSON] = useState("")
 
   const handleChangeAddress_1 = (e) =>{
    setaddress_1(e.target.value)
@@ -121,6 +126,11 @@ const AddRequirement = () => {
            return { ...prevState, amenities };
        });
    };
+
+
+
+
+
 
 
 //    const validateInputs = () => {
@@ -625,6 +635,8 @@ const AddRequirement = () => {
             </div>
         ))}
     </div>
+
+
                </div>
                <div>
                        <label className="block text-sm font-medium text-gray-700">
@@ -651,6 +663,7 @@ const AddRequirement = () => {
            </form>
            <ToastContainer />
        </div>
+       
    );
 };
 

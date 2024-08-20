@@ -29,7 +29,6 @@ const AddRoomForm = () => {
    
 
     const fileInputRef = useRef(null);
-    // const navigate = useNavigate();
 
     const [address_1,setaddress_1 ] = useState("")
     const [address_2,setaddress_2 ] = useState("")
@@ -83,20 +82,7 @@ const deleteIMG = (index) => {
     ];
      
 
-    //   useEffect(() => {
-    //     const fetchData = async () => {
-    //        try{
-              
-    //         const res = await fetch("./JSON/countries.json")
-    //         const cuntry = await res.json()
-    //         console.log(cuntry)
-    //        } catch{
-
-    //        }
-    //     };
-    //     fetchData();
-    // }, []);
-    
+   
 
 const handleChangeCuntry = (e)=>{
     
@@ -156,6 +142,7 @@ const handleChangeCuntry = (e)=>{
 
 
     const validateInputs = () => {
+
         if (!formData.title) {
             showToast("Title is required");
             return false;
@@ -165,7 +152,30 @@ const handleChangeCuntry = (e)=>{
             showToast("Valid rent amount is required");
             return false;
         }
+        if (!address_1) {
+            showToast("Address_1 is required");
+            return false;
+        }
 
+        if (!address_2) {
+            showToast("Address_1 is required");
+            return false;
+        }
+
+        if (!PIN) {
+            showToast("PIN is required");
+            return false;
+        }
+
+        if (!state) {
+            showToast("state is required");
+            return false;
+        }
+
+        if (!countryData) {
+            showToast("state is required");
+            return false;
+        }
 
         if (!formData.room_type) {
             showToast("Room type is required");
@@ -177,6 +187,37 @@ const handleChangeCuntry = (e)=>{
             showToast("Contact is required");
             return false;
         }
+        if (!formData.photos) {
+            showToast("image is required");
+            return false;
+        }
+        if (!formData.highlighted_features) {
+            showToast("highlighted_features is required");
+            return false;
+        }
+        if (!formData.amenities) {
+            showToast("highlighted_features is required");
+            return false;
+        }
+        if (!formData.description) {
+            showToast("description is required");
+            return false;
+        }
+
+        // title: "",
+        // location:{},
+        // price: "",
+        // room_type: "1RK",
+        // contact: "",
+        // looking_for_gender: "any",
+        // looking_for: "Roommate",
+        // occupancy: "Single Occupancy",
+        // photos: [],
+        // highlighted_features: [],
+        // amenities: [],
+        // description: "",
+        // listing_type: "room"
+        
 
         return true;
     };
@@ -241,9 +282,7 @@ console.log(addres_2_Value)
 
         console.log(formattedFormData.location)
 
-        
-
-      
+    
         
         // try {
         //     const response = await axios.post(
@@ -279,6 +318,12 @@ console.log(addres_2_Value)
         //     );
         //     setMessage("There was an error adding the room.");
         // }
+
+
+
+
+
+
     };
 
     return (
