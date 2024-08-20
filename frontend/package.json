@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.4.0",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@heroicons/react": "^2.1.5",
+    "antd": "^5.20.1",
     "axios": "^1.7.2",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
@@ -23,9 +25,11 @@
     "react-icons": "^5.2.1",
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.25.1",
+    "react-select": "^5.8.0",
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.5",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "world-countries": "^5.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

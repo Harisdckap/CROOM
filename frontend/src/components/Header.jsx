@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FaHeart, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from "../assets/logo.png";
@@ -21,15 +22,14 @@ const Header = () => {
 
     if (token) {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/logout', {
-          method: 'POST',
+        const response = await axios.post('http://127.0.0.1:8000/api/logout', {}, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (response.ok) {
+        if (response.status === 200) {
           localStorage.removeItem('auth_token');
           setIsLoggedIn(false);
           navigate('/login');
@@ -40,14 +40,14 @@ const Header = () => {
         console.error('Error:', error);
       }
     }
-  };
+};
 
   return (
     <nav className="fixed top-0 z-[9999] w-full bg-white text-gray-900 p-2 border-b-2">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-10">
           <Link to="/">
-            <img src={logo} alt="Logo" className="w-34 h-12" />
+          <img src={logo} alt="Logo" className="w-34 h-10" />
           </Link>
         </div>
         <div className="flex items-center space-x-4">
@@ -63,8 +63,11 @@ const Header = () => {
                 </button>
                 {accountOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg">
-                    <Link to="/Profile">
+                    <Link to="/profile">
                     <a href="#" className="block px-4 py-2">Profile</a>
+                    </Link>
+                    <Link to="/my-ads">
+                    <a href="#" className="block px-4 py-2">My Ads</a>
                     </Link>
                     <button onClick={onLogout} className="block px-4 py-2 w-full text-left">
                       Logout

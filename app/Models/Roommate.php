@@ -10,7 +10,8 @@ class Roommate extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
+        'user_id',
+        'title', 
         'location',
         'looking_for',
         'looking_for_gender',
@@ -29,5 +30,6 @@ class Roommate extends Model
         'photos' => 'array',
         'highlighted_features' => 'array',
         'amenities' => 'array',
+        'location' => 'array',
     ];
 }

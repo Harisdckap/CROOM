@@ -551,6 +551,7 @@ class ComposerStaticInit7177aeaf81feb4e445e5323037010d7c
         'App\\Http\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileController.php',
         'App\\Http\\Controllers\\PropertyController' => __DIR__ . '/../..' . '/app/Http/Controllers/PropertyController.php',
         'App\\Http\\Controllers\\RoommateController' => __DIR__ . '/../..' . '/app/Http/Controllers/RoommateController.php',
+        'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Mail\\OTPMail' => __DIR__ . '/../..' . '/app/Mail/OTPMail.php',
         'App\\Models\\OTPVerification' => __DIR__ . '/../..' . '/app/Models/OTPVerification.php',
         'App\\Models\\PgListing' => __DIR__ . '/../..' . '/app/Models/PgListing.php',

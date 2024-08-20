@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Rooms extends Model
 {
     protected $fillable = [
+        'user_id',
         'title',
         'location',
         'price',
@@ -28,5 +29,6 @@ class Rooms extends Model
         'photos' => 'array',
         'highlighted_features' => 'array',
         'amenities' => 'array',
+        'location' => 'array',
     ];
 }

@@ -6,15 +6,20 @@ use Illuminate\Http\Request;
 use App\Models\Rooms;
 use Illuminate\Support\Facades\Storage;
 
+
 class ListingController extends Controller
 {
+
+
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
+            'location' => 'required|json',
             'price' => 'required|numeric',
-            'room_type' => 'required|string', 
+            'room_type' => 'required|string',
             'contact' => 'required|string|max:255',
             'looking_for' => 'nullable|string|max:255',
             'occupancy' => 'nullable|string|max:255',
@@ -25,33 +30,50 @@ class ListingController extends Controller
             'looking_for_gender' => 'nullable|string|max:255',
             'photos.*' => 'image|mimes:jpg,png,jpeg,gif,webp|max:2048',
         ]);
-
+    
         // Handle file upload
         $imagePaths = [];
-
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $file) {
-                // Generate a unique file name
-                $path = $file->store('photos', 'public');
-                $imagePaths[] = $path;
+    
+        try {
+            if ($request->hasFile('photos')) {
+                foreach ($request->file('photos') as $file) {
+                    // Validate and store each file
+                   
+                    $path = $file->store('photos', 'public');
+                    $imagePaths[] = $path;
+                }
             }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'File upload failed: ' . $e->getMessage()], 500);
         }
-
+    
         $validatedData['photos'] = json_encode($imagePaths);
-
-        // Decode JSON strings back to arrays
-        $validatedData['highlighted_features'] = isset($validatedData['highlighted_features'])
-            ? json_decode($validatedData['highlighted_features'], true)
-            : [];
-        $validatedData['amenities'] = isset($validatedData['amenities'])
-            ? json_decode($validatedData['amenities'], true)
-            : [];
-
+        $validatedData['location'] = json_encode($validatedData['location']);
+    
+        // Decode JSON strings back to arrays with error handling
+        try {
+            $validatedData['highlighted_features'] = isset($validatedData['highlighted_features'])
+                ? json_decode($validatedData['highlighted_features'], true)
+                : [];
+            $validatedData['amenities'] = isset($validatedData['amenities'])
+                ? json_decode($validatedData['amenities'], true)
+                : [];
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid JSON data: ' . $e->getMessage()], 400);
+        }
+    
         // Create a new listing
-        $listing = Rooms::create($validatedData);
-
+        try {
+            $listing = Rooms::create($validatedData);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to create listing: ' . $e->getMessage()], 500);
+        }
+    
         return response()->json($listing, 201);
     }
+    
+
+    
 
     public function show($id)
     {

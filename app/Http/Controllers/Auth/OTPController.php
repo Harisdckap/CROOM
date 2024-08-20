@@ -7,29 +7,38 @@ use Illuminate\Http\Request;
 use App\Models\OTPVerification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 class OTPController extends Controller
 {
-    public function verifyOTP(Request $request)
+    public function verifyOtp(Request $request)
     {
-        $otp = $request->otp;
+        $request->validate([
+            'otp' => 'required|numeric',
+        ]);
 
-        $otpRecord = OTPVerification::where('otp', $otp)
-            ->where('otp_expire_at', '>', Carbon::now())
-            ->first();
+        $otpVerification = OTPVerification::where('otp', $request->otp)
+                                            ->where('otp_expire_at', '>', now())
+                                            ->first();
 
-        if ($otpRecord) {
-            return response()->json(['success' => true, 'message' => 'OTP verified successfully']);
-        } else {
-            return response()->json(['success' => false, 'message' => 'Invalid or expired OTP'], 422);
+        if (!$otpVerification) {
+            return response()->json(['error' => 'Invalid or expired OTP.'], 422);
         }
+
+        $user = User::find($otpVerification->user_id);
+        $user->email_verified_at = now();
+        $user->save();
+
+        $otpVerification->delete();
+
+        return response()->json(['success' => true, 'message' => 'Email verified successfully.']);
     }
 
     public function getOTP(Request $request)
     {
         $user_id = $request->user_id;
 
-        Log::info('Fetching OTP for user_id: ' . $user_id); // Add this line
+        Log::info('Fetching OTP for user_id: ' . $user_id); 
 
         $otpRecord = OTPVerification::where('user_id', $user_id)
             ->orderBy('created_at', 'desc')

@@ -9,28 +9,28 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id'); 
             $table->string('title');
-            $table->string('location');
+            $table->json('location');
             $table->decimal('price', 10, 2);
             $table->string('room_type');
             $table->string('contact');
             $table->string('looking_for_gender')->nullable();
             $table->string('looking_for')->nullable();
             $table->string('occupancy')->nullable();
-            $table->json('photos')->nullable();  // Use json type for photo paths
-            $table->json('highlighted_features')->nullable();  // Use json type for features
-            $table->json('amenities')->nullable();  // Use json type for amenities
+            $table->json('photos')->nullable();  //using json type for photo paths
+            $table->json('highlighted_features')->nullable();  
+            $table->json('amenities')->nullable();  
             $table->text('description')->nullable();
             $table->string('listing_type')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); //foreign key constraint
+
         });
     }
 
