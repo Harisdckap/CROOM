@@ -162,8 +162,13 @@ const UserAds = () => {
                             </div>
                             <h3 className="text-base font-bold mt-2">Price: {selectedAd.price}</h3>
                             <h3 className="text-base font-bold">Room Type: {selectedAd.room_type}</h3>
+                            <h3 className="text-base font-bold">Contact: {selectedAd.contact}</h3>
+                            <h3 className="text-base font-bold">Gender: {selectedAd.looking_for_gender}</h3>
+                            <h3 className="text-base font-bold">Looking: {selectedAd.looking_for}</h3>
+                            <h3 className="text-base font-bold">Occupancy: {selectedAd.occupancy}</h3>
                             <h3 className="text-base font-bold">Features: {selectedAd.highlighted_features.join(", ")}</h3>
                             <h3 className="text-base font-bold">Location: {selectedAd.formattedLocation}</h3>
+                            <h3 className="text-base font-bold">Amenitties: {selectedAd.amenities.join(", ")}</h3>
 
                             <Button onClick={showEditModal} className="mr-2">Edit</Button>
                             <Button onClick={() => handleDelete(selectedAd.id)} className="bg-red-500 text-white">Delete</Button>

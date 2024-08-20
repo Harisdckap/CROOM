@@ -90,4 +90,57 @@ class RegisterController extends Controller
         }
     }
 
+    public function update(Request $request, $id)
+{
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+        'gender' => 'required|string',
+        'mobile' => 'required|string|max:10',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
+
+    // Find the user by ID
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json(['error' => 'User not found.'], 404);
+    }
+
+    // Update user details
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->gender = $request->gender;
+    $user->mobile = $request->mobile;
+
+    // // Check if password is being updated
+    // if ($request->filled('password')) {
+    //     $user->password = Hash::make($request->password);
+    // }
+
+    // Check if the image is uploaded
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path('images'), $imageName);
+
+        // Save the image path to the user record
+        $user->image = $imageName;
+    }
+
+    $user->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'User updated successfully.',
+        'user' => $user
+    ]);
+}
+
+
+
 }

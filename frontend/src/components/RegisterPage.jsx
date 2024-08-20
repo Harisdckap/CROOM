@@ -142,7 +142,7 @@ const Register = () => {
             <Auth_navbar />
 
             <div className="main flex flex-grow items-center justify-center">
-                <div className="bg-gray-100 mt-20 rounded-md max-w-3xl flex">
+                <div className="bg-gray-100 relative top-20 rounded-md max-w-3xl flex">
                     <div className="w-1/2 flex items-center justify-between">
                         <img className="w-full h-auto" src={img} alt="house" />
                     </div>
