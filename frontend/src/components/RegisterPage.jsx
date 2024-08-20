@@ -139,7 +139,7 @@ const Register = () => {
                 </div>
             )}
             {/* navbar */}
-            {/* <Auth_navbar /> */}
+            <Auth_navbar />
 
             <div className="main flex flex-grow items-center justify-center">
                 <div className="bg-gray-100 mt-20 rounded-md max-w-3xl flex">
