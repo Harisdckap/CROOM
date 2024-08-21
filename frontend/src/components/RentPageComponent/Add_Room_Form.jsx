@@ -3,6 +3,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
+import countryDataJSON from "../RentPageComponent/country JSON/countries+states.json"
 
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ const AddRoomForm = () => {
 
     const [images, setImages] = useState([]);
     const [message, setMessage] = useState('');
-    const [countryData,setcountryData] = useState()
+    const [countryData,setcountryData] = useState('')
    
 
     const fileInputRef = useRef(null);
@@ -39,21 +40,26 @@ const AddRoomForm = () => {
 
 
    const handleChangeAddress_1 = (e) =>{
-    setaddress_1(e.target.value)
+    setaddress_1(e.target.value.trim())
     
    }
 
    const handleChangeAddress_2 = (e) =>{
     setaddress_2(e.target.value.trim())
      }
-   
+
+     const handleChangeCuntry = (e)=>{
+        setcountryData(e.target.value)
+    }
+
    const handleChangeState = (e) =>{
     setstate(e.target.value)
+    
 
    }
 
    const handleChangePIN = (e) =>{
-    setPIN(e.target.value)
+    setPIN(e.target.value.trim())
   
    }
 
@@ -84,13 +90,10 @@ const deleteIMG = (index) => {
 
    
 
-const handleChangeCuntry = (e)=>{
-    
-    setcountryData(e.target.value)
-}
+
 
     const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
+        const files = Array.from(e.target.files.trim());
 
 
         if (images.length + files.length > 3) {
@@ -105,7 +108,7 @@ const handleChangeCuntry = (e)=>{
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevState) => ({ ...prevState, [name]: value }));
+        setFormData((prevState) => ({ ...prevState, [name]: value.trim() }));
     };
 
 
@@ -143,7 +146,7 @@ const handleChangeCuntry = (e)=>{
 
     const validateInputs = () => {
 
-        if (!formData.title) {
+        if (!formData.title.trim()) {
             showToast("Title is required");
             return false;
         }
@@ -152,28 +155,28 @@ const handleChangeCuntry = (e)=>{
             showToast("Valid rent amount is required");
             return false;
         }
-        if (!address_1) {
+        if (!address_1.trim()) {
             showToast("Address_1 is required");
             return false;
         }
 
-        if (!address_2) {
-            showToast("Address_1 is required");
+        if (!address_2.trim()) {
+            showToast("Address_2 is required");
             return false;
         }
 
-        if (!PIN) {
+        if (!PIN.trim()) {
             showToast("PIN is required");
             return false;
         }
 
-        if (!state) {
+        if (!state.trim()) {
             showToast("state is required");
             return false;
         }
 
-        if (!countryData) {
-            showToast("state is required");
+        if (!countryData.trim()) {
+            showToast("country is required");
             return false;
         }
 
@@ -181,7 +184,6 @@ const handleChangeCuntry = (e)=>{
             showToast("Room type is required");
             return false;
         }
-
 
         if (!formData.contact) {
             showToast("Contact is required");
@@ -191,33 +193,22 @@ const handleChangeCuntry = (e)=>{
             showToast("image is required");
             return false;
         }
-        if (!formData.highlighted_features) {
+        if (!formData.highlighted_features.length == 0) {
             showToast("highlighted_features is required");
             return false;
         }
-        if (!formData.amenities) {
-            showToast("highlighted_features is required");
+        if (!formData.amenities.length == 0) {
+            showToast("amenities is required");
             return false;
         }
         if (!formData.description) {
             showToast("description is required");
             return false;
         }
-
-        // title: "",
-        // location:{},
-        // price: "",
-        // room_type: "1RK",
-        // contact: "",
-        // looking_for_gender: "any",
-        // looking_for: "Roommate",
-        // occupancy: "Single Occupancy",
-        // photos: [],
-        // highlighted_features: [],
-        // amenities: [],
-        // description: "",
-        // listing_type: "room"
-        
+        if (images.length == 0) {
+            showToast("Atleast 1 image is required");
+            return false;
+        }
 
         return true;
     };
@@ -237,7 +228,6 @@ const handleChangeCuntry = (e)=>{
         const areaValue = address_1_Value[2]
 
 
-console.log(addres_2_Value)
 
 // console.log(address_1_Value)
         // console.log("door no :"+ doorNoValue + " "+" streetValue :"+streetValue +" "+"area : "+areaValue)
@@ -323,7 +313,6 @@ console.log(addres_2_Value)
 
 
 
-
     };
 
     return (
@@ -374,10 +363,17 @@ console.log(addres_2_Value)
                                     onChange={handleChange}
                                     placeholder="Price"
                                     className="mt-1 block  px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
-                                />
+                                
+                                >
+                               
+                                </input>
+                            <span>
+                            {countryData && 
+                                countryDataJSON.find((c)=>c.name == countryData)?.currency_symbol
+                                }
+                            </span>
+                              
                             </div>
-
-         
 
 
                         </div>
@@ -403,8 +399,6 @@ console.log(addres_2_Value)
                         </fieldset>
                     </div>
 
-            
-
                     <div className="flex justify-between">
                         <div className="flex   items-center gap-14">
                         
@@ -419,9 +413,7 @@ console.log(addres_2_Value)
                                     placeholder="example( door no , street , area )"
                                     className="mt-1 w-96 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
-                            </div> 
-
-                            
+                            </div>
                           
                         </div>
 
@@ -502,6 +494,7 @@ console.log(addres_2_Value)
                                     name="contact"
                                     value={formData.contact}
                                     onChange={handleChange}
+                                    type="tel"
                                     placeholder="Mobile Number"
                                     className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
@@ -525,37 +518,57 @@ console.log(addres_2_Value)
 
 
 <div className="flex gap-14">
+    
 <div>
- <label className="block  text-sm font-medium text-gray-700">
-                                    state
-                                </label>                               
-                                <input
-                                    name="state"
-                                    value={state}
-                                    onChange={handleChangeState}
-                                    placeholder="state"
-                                    className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                                    // className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                                /> 
-       
+  <label className="block text-sm font-medium text-gray-700">
+    State
+  </label>
+  <select
+    name="state"
+    value={state}
+    onChange={handleChangeState}
+    placeholder="state"
+    className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+    disabled={!countryData}
+  >
+    <option >
+      Select state
+    </option>
+    
+    {countryData &&
+    countryDataJSON.find((cl)=>cl.name == countryData)?.states.map((sn)=>(
+      <option key={sn.name}>{sn.name}</option>
+    ))
+}
+  </select>
 </div>
+
+
 <div>
  <label className="block  text-sm font-medium text-gray-700">
                                     country
                                 </label>                               
-                                <input
+                                <select
                                     name="country"
                                     value={countryData}
                                     onChange={handleChangeCuntry}
                                     placeholder="country"
                                     className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                                    // className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                                /> 
+>
+    <option>
+        select country
+    </option>
+
+{countryDataJSON.map((country)=>( 
+<option value={country.name} key={country.name}>{country.name+country.emoji}</option>
+  
+))}
+</select>
        
 </div>
 </div>
 
-                     
+        
 
                 <div className="flex  items-center gap-48">
 
