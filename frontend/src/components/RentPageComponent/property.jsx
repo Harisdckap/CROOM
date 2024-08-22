@@ -160,15 +160,7 @@ const PropertyPage = () => {
                 onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
             >
                 <div className="relative">
-                    {/* Heart Icon */}
-                    <FontAwesomeIcon
-                        icon={faHeart}
-                        className="absolute top-2 right-2 text-red-500 text-2xl cursor-pointer"
-                        onClick={(e) => {
-                            e.stopPropagation(); // Prevent click event from propagating to parent div
-                            // Handle the like action here
-                        }}
-                    />
+                  
                     {photos.length > 0 ? renderSlider(photos) : <p className="text-gray-500 text-center">No photo available.</p>}
                 </div>
                 <div className="px-2">

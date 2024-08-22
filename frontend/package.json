@@ -26,11 +26,12 @@
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.25.1",
     "react-select": "^5.8.0",
+    "react-share": "^5.1.0",
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.5",
+    "react-tooltip": "^5.28.0",
     "slick-carousel": "^1.8.1",
-    "world-countries": "^5.0.0",
-    "react-tooltip": "^5.28.0"
+    "world-countries": "^5.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

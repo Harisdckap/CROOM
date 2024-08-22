@@ -4,6 +4,7 @@ import { FaHeart, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from "../assets/logo.png";
 import AddListingButton from './AddListingBtn';
+import UserAds from './UserAds';
 
 const Header = () => {
   const [accountOpen, setAccountOpen] = useState(false);
@@ -66,9 +67,7 @@ const Header = () => {
                     <Link to="/profile">
                     <a href="#" className="block hover:bg-blue-300 rounded p-2">Profile</a>
                     </Link>
-                    <Link to="/my-ads">
-                    <a href="#" className="block hover:bg-blue-300 rounded p-2">My Ads</a>
-                    </Link>
+                   <UserAds/>
                     <button onClick={onLogout} className="block text-center hover:bg-blue-300 rounded p-2 w-full text-left">
                       Logout
                     </button>
@@ -78,7 +77,7 @@ const Header = () => {
             ) : (
               <div className="flex space-x-1">
                 <Link to="/register" className="text-blue-500 hover:underline">
-                  Register /
+                  Register 
                 </Link>
                 <Link to="/login" className="text-blue-500 hover:underline">
                   Login

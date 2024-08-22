@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import logo from "../assets/logo.png";
+import { Tooltip } from "react-tooltip";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import Auth_navbar from "./RentPageComponent/Auth_navbar";
 
 const Profile = () => {
     const [user, setUser] = useState(null);
-    // const [profileImage, setProfileImage] = useState(null);
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -47,23 +47,20 @@ const Profile = () => {
         }
     };
 
-
-    // useEffect(() => {
-    //     const savedImage = localStorage.getItem("profileImage");
-    //     if (savedImage) {
-    //         setProfileImage(savedImage);
-    //     }
-    // }, []);
-
     const fetchUser = async () => {
         try {
-            const response = await axios.get("http://127.0.0.1:8000/api/userDetail", {
-                headers: {
-                    Authorization: `Bearer ${authToken}`,
-                },
-            });
+            const response = await axios.get(
+                "http://127.0.0.1:8000/api/userDetail",
+                {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                }
+            );
 
             setUser(response.data.user);
+            console.log(response.data.user);
+            
             setFormData({
                 username: response.data.user.username,
                 email: response.data.user.email,
@@ -73,23 +70,6 @@ const Profile = () => {
             console.error("Error fetching user detail:", error);
         }
     };
-
-    // const handleImageUpload = (event) => {
-    //     const file = event.target.files[0];
-    //     if (!file) {
-    //         console.error("No file selected.");
-    //         return;
-    //     }
-
-    //     const reader = new FileReader();
-    //     reader.onloadend = () => {
-    //         setProfileImage(reader.result);
-    //         localStorage.setItem("profileImage", reader.result);
-    //     };
-
-    //     reader.readAsDataURL(file);
-    // };
-
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setFormData({ ...formData, [id]: value });
@@ -99,7 +79,7 @@ const Profile = () => {
         const { id, value } = e.target;
         setPasswordData({ ...passwordData, [id]: value });
     };
-
+    password
     const handleSubmit = (e) => {
         e.preventDefault();
         const { username, email, mobile } = formData;
@@ -129,13 +109,17 @@ const Profile = () => {
                 setIsEditing(false);
             })
             .catch((error) => {
-                setError("Error updating profile: " + (error.response ? error.response.data : error.message));
+                setError(
+                    "Error updating profile: " +
+                        (error.response ? error.response.data : error.message)
+                );
             });
     };
 
     const handlePasswordSubmit = (e) => {
         e.preventDefault();
-        const { existingPassword, newPassword, confirmNewPassword } = passwordData;
+        const { existingPassword, newPassword, confirmNewPassword } =
+            passwordData;
         if (!existingPassword || !newPassword || !confirmNewPassword) {
             alert("All password fields are required.");
             return;
@@ -160,7 +144,10 @@ const Profile = () => {
                 setShowPopup(false);
             })
             .catch((error) => {
-                alert("Error changing password: " + (error.response ? error.response.data : error.message));
+                alert(
+                    "Error changing password: " +
+                        (error.response ? error.response.data : error.message)
+                );
             });
     };
 
@@ -177,15 +164,20 @@ const Profile = () => {
                                 Profile
                             </h1>
                             <div className="flex align-center justify-center">
-                                {error && <p className="text-red-600 w-60 flex align-center justify-center text-center rounded-md fixed bg-red-300 mb-4">{error}</p>}
+                                {error && (
+                                    <p className="text-red-600 w-60 flex align-center justify-center text-center rounded-md fixed bg-red-300 mb-4">
+                                        {error}
+                                    </p>
+                                )}
                             </div>
                             <div className="flex justify-between items-center">
                                 <div
                                     className="w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-cover bg-center bg-no-repeat"
                                     style={{
-                                        backgroundImage: `url(${profileImage ||
+                                        backgroundImage: `url(${
+                                            profileImage ||
                                             "https://mighty.tools/mockmind-api/content/cartoon/32.jpg"
-                                            })`,
+                                        })`,
                                     }}
                                 >
                                     <div className="bg-white/90 rounded-full w-6 h-6 text-center ml-24 mt-28">
@@ -227,7 +219,9 @@ const Profile = () => {
                                         <button
                                             type="button"
                                             className="p-2 mx-auto rounded-xl"
-                                            onClick={() => setIsEditing(!isEditing)}
+                                            onClick={() =>
+                                                setIsEditing(!isEditing)
+                                            }
                                         >
                                             {isEditing ? "Cancel" : "Edit"}
                                         </button>
@@ -250,10 +244,11 @@ const Profile = () => {
                                             value={formData.username}
                                             onChange={handleInputChange}
                                             disabled={!isEditing}
-                                            className={`p-2 border rounded-lg w-5/6 ${isEditing
+                                            className={`p-2 border rounded-lg w-5/6 ${
+                                                isEditing
                                                     ? "border-gray-300"
                                                     : "bg-gray-100"
-                                                }`}
+                                            }`}
                                         />
                                     </div>
                                     <div className="flex justify-between items-center mb-4">
@@ -270,10 +265,11 @@ const Profile = () => {
                                             value={formData.email}
                                             onChange={handleInputChange}
                                             disabled={!isEditing}
-                                            className={`p-2 border rounded-lg w-5/6 ${isEditing
+                                            className={`p-2 border rounded-lg w-5/6 ${
+                                                isEditing
                                                     ? "border-gray-300"
                                                     : "bg-gray-100"
-                                                }`}
+                                            }`}
                                         />
                                     </div>
                                     <div className="flex justify-between items-center mb-4">
@@ -290,10 +286,11 @@ const Profile = () => {
                                             value={formData.mobile}
                                             onChange={handleInputChange}
                                             disabled={!isEditing}
-                                            className={`p-2 border rounded-lg w-5/6 ${isEditing
+                                            className={`p-2 border rounded-lg w-5/6 ${
+                                                isEditing
                                                     ? "border-gray-300"
                                                     : "bg-gray-100"
-                                                }`}
+                                            }`}
                                         />
                                     </div>
                                 </form>
@@ -321,149 +318,132 @@ const Profile = () => {
 
             {/* Password Change Popup */}
             {showPopup && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-                    <div className="bg-white p-4 rounded-lg shadow-lg w-96">
-                        <h2 className="text-lg text-center font-bold mb-4">Change Password</h2>
-                        <form onSubmit={handlePasswordSubmit}>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="existingPassword"
-                                    className="block text-md font-medium text-gray-700"
-                                >
-                                    Existing Password
-                                </label>
-                                <input
-                                    type={passwordData.showExisting ? "text" : "password"}
-                                    id="existingPassword"
-                                    autoComplete="off"
-                                    value={passwordData.existingPassword}
-                                    onChange={handlePasswordChange}
-                                    className="p-2 border rounded-lg w-full"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setPasswordData({
-                                            ...passwordData,
-                                            showExisting: !passwordData.showExisting,
-                                        })
-                                    }
-                                >
-                                    <div className="relative bottom-8 left-80">
-                                    {passwordData.showExisting ? (
-                                        <EyeOutlined />
-                                    ) : (
-                                        <EyeInvisibleOutlined />
-                                    )}
-                                    </div>
-                                </button>
-                            </div>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="newPassword"
-                                    className="block text-md font-medium text-gray-700"
-                                >
-                                    New Password
-                                </label>
-                                <input
-                                    type={passwordData.showNew ? "text" : "password"}
-                                    id="newPassword"
-                                    autoComplete="off"
-                                    value={passwordData.newPassword}
-                                    onChange={handlePasswordChange}
-                                    className="p-2 border rounded-lg w-full"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setPasswordData({
-                                            ...passwordData,
-                                            showNew: !passwordData.showNew,
-                                        })
-                                    }
-                                >
-                                    <div className="relative bottom-8 left-80">
-                                    {passwordData.showNew ? (
-                                         <EyeOutlined />
-                                    ) : (
-                                        <EyeInvisibleOutlined />
-                                    )}
-                                    </div>
-                                </button>
-                            </div>
-                            <div>
-                                <label
-                                    htmlFor="confirmNewPassword"
-                                    className="block text-md font-medium text-gray-700"
-                                >
-                                    Confirm New Password
-                                </label>
-                                <input
-                                    type={passwordData.showConfirm ? "text" : "password"}
-                                    id="confirmNewPassword"
-                                    autoComplete="off"
-                                    value={passwordData.confirmNewPassword}
-                                    onChange={handlePasswordChange}
-                                    className="p-2 border rounded-lg w-full"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setPasswordData({
-                                            ...passwordData,
-                                            showConfirm: !passwordData.showConfirm,
-                                        })
-                                    }
-                                >
-                                    <div className="relative bottom-8 left-80">
-                                    {passwordData.showConfirm ? (
-                                       <EyeOutlined />
-                                    ) : (
-                                        <EyeInvisibleOutlined />
-                                    )}
-                                    </div>
-                                </button>
-                            </div>
-                        </form>
-                        <div className="flex justify-between">
-                        <button
-                                type="submit"
-                                className="w-40 h-10 rounded-md text-center bg-blue-500 text-white text-base font-bold"
-                            >
-                                Change Password
-                            </button>
-                        <button
-                            className="w-40 bg-red-600 rounded-md text-white text-red-500 font-bold"
-                            onClick={() => setShowPopup(false)}
-                        >
-                            Close
-                        </button>
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div className="bg-white p-4 rounded-lg shadow-lg w-96">
+            <h2 className="text-lg text-center font-bold mb-4">Change Password</h2>
+            <form onSubmit={handlePasswordSubmit}>
+                <div className="mb-4">
+                    <label
+                        htmlFor="existingPassword"
+                        className="block text-md font-medium text-gray-700"
+                    >
+                        Existing Password
+                    </label>
+                    <input
+                        type={passwordData.showExisting ? "text" : "password"}
+                        id="existingPassword"
+                        autoComplete="off"
+                        value={passwordData.existingPassword}
+                        onChange={handlePasswordChange}
+                        className="p-2 border rounded-lg w-full"
+                        title="Enter your existing password"
+                    />
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setPasswordData({
+                                ...passwordData,
+                                showExisting: !passwordData.showExisting,
+                            })
+                        }
+                    >
+                        <div className="relative bottom-8 left-80">
+                            {passwordData.showExisting ? (
+                                <EyeOutlined />
+                            ) : (
+                                <EyeInvisibleOutlined />
+                            )}
                         </div>
-                    </div>
+                    </button>
                 </div>
-            )}
+                <div className="mb-4">
+                    <label
+                        htmlFor="newPassword"
+                        className="block text-md font-medium text-gray-700"
+                    >
+                        New Password
+                    </label>
+                    <input
+                        type={passwordData.showNew ? "text" : "password"}
+                        id="newPassword"
+                        autoComplete="off"
+                        value={passwordData.newPassword}
+                        onChange={handlePasswordChange}
+                        className="p-2 border rounded-lg w-full"
+                        title="Enter your new password"
+                    />
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setPasswordData({
+                                ...passwordData,
+                                showNew: !passwordData.showNew,
+                            })
+                        }
+                    >
+                        <div className="relative bottom-8 left-80">
+                            {passwordData.showNew ? (
+                                <EyeOutlined />
+                            ) : (
+                                <EyeInvisibleOutlined />
+                            )}
+                        </div>
+                    </button>
+                </div>
+                <div className="mb-4">
+                    <label
+                        htmlFor="confirmNewPassword"
+                        className="block text-md font-medium text-gray-700"
+                    >
+                        Confirm New Password
+                    </label>
+                    <input
+                        type={passwordData.showConfirm ? "text" : "password"}
+                        id="confirmNewPassword"
+                        autoComplete="off"
+                        value={passwordData.confirmNewPassword}
+                        onChange={handlePasswordChange}
+                        className="p-2 border rounded-lg w-full"
+                        title="Re-enter your new password"
+                    />
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setPasswordData({
+                                ...passwordData,
+                                showConfirm: !passwordData.showConfirm,
+                            })
+                        }
+                    >
+                        <div className="relative bottom-8 left-80">
+                            {passwordData.showConfirm ? (
+                                <EyeOutlined />
+                            ) : (
+                                <EyeInvisibleOutlined />
+                            )}
+                        </div>
+                    </button>
+                </div>
+                <div className="flex justify-between mt-4">
+                    <button
+                        type="submit"
+                        className="w-40 h-10 rounded-md text-center bg-blue-500 text-white text-base font-bold"
+                    >
+                        Change Password
+                    </button>
+                    <button
+                        className="w-40 bg-red-600 rounded-md text-white text-red-500 font-bold"
+                        onClick={() => setShowPopup(false)}
+                    >
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+)}
         </div>
     );
 };
 
 export default Profile;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
