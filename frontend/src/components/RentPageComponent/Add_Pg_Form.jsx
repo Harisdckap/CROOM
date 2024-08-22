@@ -10,7 +10,7 @@ import countryDataJSON from '../RentPageComponent/country JSON/countries+states.
 
 const Add_PG = () => {
     const [pg_type, setPgType] = useState("Both");
-    const [mobile_num, setMobileNum] = useState("");
+    const [mobile_num, setMobileNum] = useState(null);
     const [pg_name, setPgName] = useState("");
     const [occupancy_type, setOccupancyType] = useState("");
     const [occupancy_amount, setOccupancyAmount] = useState("");
@@ -145,12 +145,16 @@ const Add_PG = () => {
                showToastMessage("Please upload at least 1 photo of your room");
                return false;
            }
-          
-      
+           if (images.length > 3) {
+            showToast("You can upload a maximum of 3 images");
+            return false;
+        }
+        
         if (!pg_post_content) {
             showToastMessage("PG post content is required");
             return false;
         }
+        
            return true;
        };
 
@@ -290,7 +294,7 @@ const Add_PG = () => {
                                 />
                             </div>
 
-                            <div className="mt-0">
+                            <div className="mt-0 relative">
                                 <label className="block text-sm font-medium text-gray-700">{`Amount for ${occupancy_type} Occupancy`}</label>
                                 <input
                                     value={occupancy_amount}
@@ -301,7 +305,7 @@ const Add_PG = () => {
                                     placeholder="Amount"
                                     className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
-                                <span>
+                                <span className="absolute top-8 right-8">
                                     {countryData&& countryDataJSON.find((c)=>c.name == countryData)?.currency_symbol}
                                 </span>
                             </div>
@@ -407,8 +411,8 @@ const Add_PG = () => {
                             </label>
                             <input
                                 value={mobile_num}
-                                onChange={(e) => setMobileNum(e.target.value.trim())}
-                                type="tel"
+                                onChange={(e) => setMobileNum(e.target.value)}
+                                type="number"
                                 placeholder="Mobile Number"
                                 className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm "
                             />

@@ -7,6 +7,7 @@ import countryDataJSON from "../RentPageComponent/country JSON/countries+states.
 
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
+        user_id: localStorage.getItem("user_id"),
         title: "",
         location:{},
         price: "",
@@ -14,7 +15,7 @@ const AddRoomForm = () => {
         contact: "",
         looking_for_gender: "any",
         looking_for: "Roommate",
-        occupancy: "Single Occupancy",
+        ocgicupancy:"",
         photos: [],
         highlighted_features: [],
         amenities: [],
@@ -87,28 +88,30 @@ const deleteIMG = (index) => {
         "Microwave",
     ];
      
+    console.log(formData)
+    console.log(formData.ocgicupancy)
 
-   
+
 
 
 
     const handleFileChange = (e) => {
-        const files = Array.from(e.target.files.trim());
-
+        const files = Array.from(e.target.files);
 
         if (images.length + files.length > 3) {
             setMessage('You can only upload up to 3 images in total.');
             return;
         }
-
-
         setImages(prevImages => [...prevImages, ...files]);
     };
 
 
+
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prevState) => ({ ...prevState, [name]: value.trim() }));
+        setFormData((prevState) => ({ ...prevState, [name]: value}));
+        
     };
 
 
@@ -133,6 +136,7 @@ const deleteIMG = (index) => {
             return { ...prevState, amenities };
         });
     };
+
 
 
     const showToast = (message, type = "error") => {
@@ -184,20 +188,19 @@ const deleteIMG = (index) => {
             showToast("Room type is required");
             return false;
         }
-
+        if (!formData.ocgicupancy) {
+            showToast("ocgicupancy is required");
+            return false;
+        }
         if (!formData.contact) {
             showToast("Contact is required");
             return false;
         }
-        if (!formData.photos) {
-            showToast("image is required");
-            return false;
-        }
-        if (!formData.highlighted_features.length == 0) {
+        if (formData.highlighted_features.length == 0) {
             showToast("highlighted_features is required");
             return false;
         }
-        if (!formData.amenities.length == 0) {
+        if (formData.amenities.length == 0) {
             showToast("amenities is required");
             return false;
         }
@@ -207,6 +210,10 @@ const deleteIMG = (index) => {
         }
         if (images.length == 0) {
             showToast("Atleast 1 image is required");
+            return false;
+        }
+        if (images.length > 3) {
+            showToast("You can upload a maximum of 3 images");
             return false;
         }
 
@@ -241,20 +248,20 @@ const deleteIMG = (index) => {
         const uploadData = new FormData()
         const formattedFormData = {
             ...formData,
-            location:{
-                doorNo:doorNoValue,
-                street:streetValue,
-                area:areaValue,
-                city : cityValue,
-                district:districtValue,
-                pin:PIN,
-                state:state,
-                country:countryData
-            },
+            location: JSON.stringify({
+              doorNo: doorNoValue,
+              street: streetValue,
+              area: areaValue,
+              city: cityValue,
+              district: districtValue,
+              pin: PIN,
+              state: state,
+              country: countryData,
+            }),
             highlighted_features: JSON.stringify(formData.highlighted_features),
             amenities: JSON.stringify(formData.amenities),
-        };
-
+          };
+          
 
         Object.keys(formattedFormData).forEach((key) => {
             uploadData.append(key, formattedFormData[key]);
@@ -270,47 +277,43 @@ const deleteIMG = (index) => {
            
         }
 
-        console.log(formattedFormData.location)
 
     
         
-        // try {
-        //     const response = await axios.post(
-        //         "http://127.0.0.1:8000/api/listings",
-        //         uploadData,
-        //         {
-        //             headers: { "Content-Type": "multipart/form-data" },
-        //         }
-        //     );
-        //     setMessage("Room added successfully!");
-        //     setFormData({
-        //         title: "",
-        //         state: "",
-        //         price: "",
-        //         room_type: "1RK",
-        //         contact: "",
-        //         looking_for_gender: "any",
-        //         looking_for: "Roommate",
-        //         occupancy: "Single Occupancy",
-        //         photos: [],
-        //         highlighted_features: [],
-        //         amenities: [],
-        //         description: "",
-        //         listing_type: "room",
-        //     });
-        //     setImages([]);
-        //     if (fileInputRef.current) fileInputRef.current.value = "";
-        //     // Navigate to the image display route
-        // } catch (error) {
-        //     console.error(
-        //         "There was an error adding the room:",
-        //         error.response.data
-        //     );
-        //     setMessage("There was an error adding the room.");
-        // }
-
-
-
+        try {
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/listings",
+                uploadData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            );
+            setMessage("Room added successfully!");
+            setFormData({
+                title: "",
+                state: "",
+                price: "",
+                room_type: "1RK",
+                contact: "",
+                looking_for_gender: "any",
+                looking_for: "Roommate",
+                occupancy: "Single Occupancy",
+                photos: [],
+                highlighted_features: [],
+                amenities: [],
+                description: "",
+                listing_type: "room",
+            });
+            setImages([]);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+            // Navigate to the image display route
+        } catch (error) {
+            console.error(
+                "There was an error adding the room:",
+                error.response.data
+            );
+            setMessage("There was an error adding the room.");
+        }
 
 
     };
@@ -352,8 +355,8 @@ const deleteIMG = (index) => {
                             </div>
 
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
+                            <div className="relative">
+                                <label className="block  text-sm font-medium text-gray-700">
                                     Price
                                 </label>
                                 <input
@@ -362,12 +365,12 @@ const deleteIMG = (index) => {
                                     value={formData.price}
                                     onChange={handleChange}
                                     placeholder="Price"
-                                    className="mt-1 block  px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
+                                    className="mt-1 block   px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                                 
                                 >
                                
                                 </input>
-                            <span>
+                            <span className="absolute top-8 right-8">
                             {countryData && 
                                 countryDataJSON.find((c)=>c.name == countryData)?.currency_symbol
                                 }
@@ -461,17 +464,16 @@ const deleteIMG = (index) => {
                             <legend className="text-base font-medium text-gray-900">
                                 occupancy
                             </legend>
-
                             <div className="mt-2 space-x-4">
                                 {["Bachelar ", "Family "].map((option) => (
                                     <button
                                         type="button"
                                         key={option}
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${formData.occupancy === option
-                                                ? "bg-blue-500  "
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${formData.ocgicupancy === option
+                                                ? "bg-blue-400 text-white"
                                                 : "hover:bg-gray-100"
                                             }`}
-                                        onClick={() => handleChange({ target: { name: "occupancy", value: option } })}
+                                        onClick={() => handleChange({ target: { name: "ocgicupancy", value: option } })}
                                     >
                                         {option}
                                     </button>

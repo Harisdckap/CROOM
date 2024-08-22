@@ -1,5 +1,277 @@
 [
     {
+        "name": "India",
+        "iso3": "IND",
+        "iso2": "IN",
+        "numeric_code": "356",
+        "phone_code": "91",
+        "capital": "New Delhi",
+        "currency": "INR",
+        "currency_name": "Indian Rupee",
+        "currency_symbol": "₹",
+        "tld": ".in",
+        "native": "भारत",
+        "region": "Asia",
+        "region_id": "3",
+        "subregion": "Southern Asia",
+        "subregion_id": "14",
+        "nationality": "Indian",
+        "timezones": [
+            {
+                "zoneName": "Asia/Kolkata",
+                "gmtOffset": 19800,
+                "gmtOffsetName": "UTC+05:30",
+                "abbreviation": "IST",
+                "tzName": "Indian Standard Time"
+            }
+        ],
+        "translations": {
+            "kr": "인도",
+            "pt-BR": "Índia",
+            "pt": "Índia",
+            "nl": "India",
+            "hr": "Indija",
+            "fa": "هند",
+            "de": "Indien",
+            "es": "India",
+            "fr": "Inde",
+            "ja": "インド",
+            "it": "India",
+            "cn": "印度",
+            "tr": "Hindistan"
+        },
+        "latitude": "20.593684",
+        "longitude": "78.96288",
+        "emoji": "🇮🇳",
+        "emojiU": "U+1F1EE U+1F1F3",
+        "states": [
+            {
+                "id": 4001,
+                "name": "Andhra Pradesh",
+                "state_code": "AP",
+                "latitude": "15.9129",
+                "longitude": "79.7400",
+                "type": null
+            },
+            {
+                "id": 4002,
+                "name": "Arunachal Pradesh",
+                "state_code": "AR",
+                "latitude": "28.217999",
+                "longitude": "94.727753",
+                "type": null
+            },
+            {
+                "id": 4003,
+                "name": "Assam",
+                "state_code": "AS",
+                "latitude": "26.200604",
+                "longitude": "92.937573",
+                "type": null
+            },
+            {
+                "id": 4004,
+                "name": "Bihar",
+                "state_code": "BR",
+                "latitude": "25.096074",
+                "longitude": "85.313119",
+                "type": null
+            },
+            {
+                "id": 4005,
+                "name": "Chhattisgarh",
+                "state_code": "CT",
+                "latitude": "21.278656",
+                "longitude": "81.866144",
+                "type": null
+            },
+            {
+                "id": 4006,
+                "name": "Goa",
+                "state_code": "GA",
+                "latitude": "15.299326",
+                "longitude": "74.123996",
+                "type": null
+            },
+            {
+                "id": 4007,
+                "name": "Gujarat",
+                "state_code": "GJ",
+                "latitude": "22.258652",
+                "longitude": "71.192380",
+                "type": null
+            },
+            {
+                "id": 4008,
+                "name": "Haryana",
+                "state_code": "HR",
+                "latitude": "29.058776",
+                "longitude": "76.085601",
+                "type": null
+            },
+            {
+                "id": 4009,
+                "name": "Himachal Pradesh",
+                "state_code": "HP",
+                "latitude": "31.104829",
+                "longitude": "77.173390",
+                "type": null
+            },
+            {
+                "id": 4010,
+                "name": "Jharkhand",
+                "state_code": "JH",
+                "latitude": "23.610181",
+                "longitude": "85.279935",
+                "type": null
+            },
+            {
+                "id": 4011,
+                "name": "Karnataka",
+                "state_code": "KA",
+                "latitude": "15.317277",
+                "longitude": "75.713888",
+                "type": null
+            },
+            {
+                "id": 4012,
+                "name": "Kerala",
+                "state_code": "KL",
+                "latitude": "10.850516",
+                "longitude": "76.271083",
+                "type": null
+            },
+            {
+                "id": 4013,
+                "name": "Madhya Pradesh",
+                "state_code": "MP",
+                "latitude": "22.973423",
+                "longitude": "78.656894",
+                "type": null
+            },
+            {
+                "id": 4014,
+                "name": "Maharashtra",
+                "state_code": "MH",
+                "latitude": "19.751480",
+                "longitude": "75.713888",
+                "type": null
+            },
+            {
+                "id": 4015,
+                "name": "Manipur",
+                "state_code": "MN",
+                "latitude": "24.663717",
+                "longitude": "93.906269",
+                "type": null
+            },
+            {
+                "id": 4016,
+                "name": "Meghalaya",
+                "state_code": "ML",
+                "latitude": "25.467030",
+                "longitude": "91.366216",
+                "type": null
+            },
+            {
+                "id": 4017,
+                "name": "Mizoram",
+                "state_code": "MZ",
+                "latitude": "23.164543",
+                "longitude": "92.937573",
+                "type": null
+            },
+            {
+                "id": 4018,
+                "name": "Nagaland",
+                "state_code": "NL",
+                "latitude": "26.158436",
+                "longitude": "94.562442",
+                "type": null
+            },
+            {
+                "id": 4019,
+                "name": "Odisha",
+                "state_code": "OR",
+                "latitude": "20.951666",
+                "longitude": "85.098523",
+                "type": null
+            },
+            {
+                "id": 4020,
+                "name": "Punjab",
+                "state_code": "PB",
+                "latitude": "31.147130",
+                "longitude": "75.341218",
+                "type": null
+            },
+            {
+                "id": 4021,
+                "name": "Rajasthan",
+                "state_code": "RJ",
+                "latitude": "27.023804",
+                "longitude": "74.217933",
+                "type": null
+            },
+            {
+                "id": 4022,
+                "name": "Sikkim",
+                "state_code": "SK",
+                "latitude": "27.533000",
+                "longitude": "88.512200",
+                "type": null
+            },
+            {
+                "id": 4023,
+                "name": "Tamil Nadu",
+                "state_code": "TN",
+                "latitude": "11.127123",
+                "longitude": "78.656894",
+                "type": null
+            },
+            {
+                "id": 4024,
+                "name": "Telangana",
+                "state_code": "TG",
+                "latitude": "18.112438",
+                "longitude": "79.019300",
+                "type": null
+            },
+            {
+                "id": 4025,
+                "name": "Tripura",
+                "state_code": "TR",
+                "latitude": "23.940848",
+                "longitude": "91.988152",
+                "type": null
+            },
+            {
+                "id": 4026,
+                "name": "Uttar Pradesh",
+                "state_code": "UP",
+                "latitude": "26.846694",
+                "longitude": "80.946166",
+                "type": null
+            },
+            {
+                "id": 4027,
+                "name": "Uttarakhand",
+                "state_code": "UK",
+                "latitude": "30.066753",
+                "longitude": "79.019300",
+                "type": null
+            },
+            {
+                "id": 4028,
+                "name": "West Bengal",
+                "state_code": "WB",
+                "latitude": "22.986757",
+                "longitude": "87.855324",
+                "type": null
+            }
+        ]
+    },
+     {
         "name": "Afghanistan",
         "iso3": "AFG",
         "iso2": "AF",

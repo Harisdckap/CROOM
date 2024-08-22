@@ -21,7 +21,7 @@ const AddRequirement = () => {
         occupancy: "",
         number_of_people: "",
         amenities: [],
-        listing_type: "roommates", // Default value
+        listing_type: "roommates", 
     });
 
     const [requirements, setRequirements] = useState([]);
@@ -37,9 +37,10 @@ const AddRequirement = () => {
 
 
     const handleCountryChange = (e) => {
+
         setSelectedCountry(e.target.value);
       };
-    
+
     
 
     const handleChangeAddress_1 = (e) => {
@@ -51,7 +52,7 @@ const AddRequirement = () => {
     };
 
 
-   const handleStateChange = () =>{
+   const handleStateChange = (e) =>{
     setSelectedState(e.target.value);
    }
    
@@ -94,6 +95,9 @@ const AddRequirement = () => {
         }
         setImages((prevImages) => [...prevImages, ...files]);
     };
+
+
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -153,14 +157,18 @@ const AddRequirement = () => {
             showToast("address_2 is required");
             return false;
         }
+        if (!address_2) {
+            showToast("address_2 is required");
+            return false;
+        }
         if (!PIN) {
             showToast("PIN is required");
             return false;
         }
-        if (!state) {
-            showToast("state is required");
-            return false;
-        }
+        // if (!selectedState) {
+        //     showToast("state is required");
+        //     return false;
+        // }
 
         if (!occupancy) {
             showToast("Valid occupancy is required");
@@ -168,11 +176,6 @@ const AddRequirement = () => {
         }
         if (!approx_rent) {
             showToast("Valid approx rent amount is required");
-            return false;
-        }
-
-        if (!countryData) {
-            showToast("country is required");
             return false;
         }
         if (!looking_for) {
@@ -192,6 +195,7 @@ const AddRequirement = () => {
             showToast("House image is required");
             return false;
         }
+        
         if (!post) {
             showToast("post for is required");
             return false;
@@ -233,14 +237,16 @@ const AddRequirement = () => {
     const districtValue = address_2_Value[1].trim();
 
     const formattedFormData = {
-        user_id: localStorage.getItem("user_id"), // Ensure user_id is being set
-        title: formData.title, // Ensure title is being set
-        looking_for: formData.looking_for, // Ensure looking_for is being set
-        listing_type: formData.listing_type, // Ensure listing_type is being set
-        room_type: formData.room_type, // Ensure room_type is being set
-        approx_rent: formData.approx_rent, // Ensure approx_rent is being set
-        occupancy: formData.occupancy, // Ensure occupancy is being set
-        number_of_people: formData.number_of_people, // Ensure number_of_people is being set
+        user_id: localStorage.getItem("user_id"), 
+        title: formData.title, 
+        looking_for: "room",
+        listing_type: formData.listing_type, 
+        room_type: formData.room_type, 
+        approx_rent: formData.approx_rent, 
+        post:formData.post,
+        looking_for_gender:formData.looking_for, 
+        occupancy: formData.occupancy, 
+        number_of_people: formData.number_of_people,
         location: JSON.stringify({
             doorNo: doorNoValue,
             street: streetValue,
@@ -248,20 +254,30 @@ const AddRequirement = () => {
             city: cityValue,
             district: districtValue,
             pin: PIN,
-            state: state,
+            state: selectedState,
             country: selectedCountry,
         }),
         highlighted_features: JSON.stringify(formData.highlighted_features),
         amenities: JSON.stringify(formData.amenities),
     };
 
+
     Object.keys(formattedFormData).forEach((key) => {
         formDataObj.append(key, formattedFormData[key]);
     });
 
     images.forEach((image, index) => {
+        console.log(index)
         formDataObj.append(`photos[${index}]`, image);
     });
+
+    
+
+
+    for(let [key,value] of formDataObj.entries()){
+        console.log(key + "  "+value)
+    }
+
 
     try {
         const response = await axios.post(
@@ -481,7 +497,7 @@ const AddRequirement = () => {
     className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
     disabled={!selectedCountry} // Disable state dropdown if no country is selected
   >
-    <option value="" disabled>
+    <option disabled>
       Select a state
     </option>
 
@@ -492,7 +508,7 @@ const AddRequirement = () => {
           <option key={state.code} value={state.name}>
             {state.name}
           </option>
-        )) // Map over states to create options
+        ))
     }
   </select>
 </div>
@@ -520,12 +536,12 @@ const AddRequirement = () => {
     </div>
 <div className="flex gap-14">
 
-<div>
+<div className="relative">
   <label className="block text-sm font-medium text-gray-700">
     Approx Rent
   </label>
   <input
-    type="text"
+    type="number"
     name="approx_rent"
     placeholder="approx_rent"
     value={formData.approx_rent}
@@ -534,7 +550,7 @@ const AddRequirement = () => {
   />
   {selectedCountry && (
     
-    <span>
+    <span className="absolute top-8 right-8">
       {countryDataJSON
         .find((cn) => cn.name === selectedCountry)?.currency_symbol || 'Currency Symbol'}
         </span>
@@ -549,7 +565,7 @@ const AddRequirement = () => {
                                 Occupancy
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 placeholder="Occupancy"
                                 name="occupancy"
                                 value={formData.occupancy}
