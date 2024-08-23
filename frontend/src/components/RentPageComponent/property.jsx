@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
 import Navbar from "./Navbar";
 import HomeNavBar from "../Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faMapMarkerAlt,
-    faHome,
-    faArrowUp,
-   faHeart 
-} from "@fortawesome/free-solid-svg-icons";
+import { faMapMarkerAlt, faHome } from "@fortawesome/free-solid-svg-icons";
 import "../../slider.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const PropertyPage = () => {
     const navigate = useNavigate();
+    const toastShownRef = useRef(false);
     const [listings, setListings] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams();
     const [search, setSearch] = useState(searchParams.get("address") || "");
@@ -43,6 +42,21 @@ const PropertyPage = () => {
     
             setListings([]);
             setListings(response.data.data);
+             if (response.data.data.length === 0 && !toastShownRef.current) {
+                toast.info('No properties found for this location.', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+
+                toastShownRef.current = true;
+            } else if (response.data.data.length > 0) {
+                toastShownRef.current = false;
+            }
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
@@ -110,7 +124,7 @@ const PropertyPage = () => {
             className: "custom-slider",
             dotsClass: "custom-dots",
         };
-
+    
         return (
             <Slider {...settings}>
                 {photos.map((photo, index) => (
@@ -128,6 +142,7 @@ const PropertyPage = () => {
             </Slider>
         );
     };
+    
     
     const renderListing = (listing, index) => {
         let photos = [];
@@ -157,13 +172,12 @@ const PropertyPage = () => {
             <div
                 key={`${listing.id}-${index}`}
                 className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4 cursor-pointer hover:bg-gray-200"
-                onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
             >
                 <div className="relative">
-                  
+
                     {photos.length > 0 ? renderSlider(photos) : <p className="text-gray-500 text-center">No photo available.</p>}
                 </div>
-                <div className="px-2">
+                <div className="px-2 "  onClick={() => handleViewClick(listing.id, city, listing.listing_type)}>
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-semibold gradient-text">{listing.title || listing.pg_name || listing.post}</h2>
                         <p className="text-green-600 flex items-center">
@@ -186,14 +200,6 @@ const PropertyPage = () => {
         );
     };
     
-    
-    
-    
-    
-    
-    
-    
-
     return (
         <div>
             <HomeNavBar />
@@ -212,6 +218,7 @@ const PropertyPage = () => {
                 </div>
                 
             </div>
+            <ToastContainer />
         </div>
     );
 };

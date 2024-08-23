@@ -8,7 +8,7 @@ const AddRequirement = () => {
     const [formData, setFormData] = useState({
         user_id: localStorage.getItem("user_id"),
         title: "",
-        looking_for: "Any",
+        looking_for: "room",
         looking_for_gender: "Male",
         room_type: "1RK",
         highlighted_features: [],

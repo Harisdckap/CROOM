@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DistrictModal from "./DistrictModel"; // Adjust import name to match the file name
+
+
+
+import DistrictModal from "./DistrictModel"; 
+
+
 
 // Import district images
 import chennai from "../../assets/chennai.webp";
@@ -13,11 +18,17 @@ import Thoothukudi from "../../assets/thoothukudi.jpeg";
 import Tiruppur from "../../assets/tiruppur.jpeg";
 import Vellore from "../../assets/vellore.jpg";
 import Tirunelveli from "../../assets/tirunelveli.jpeg";
+import Trichy from "../../assets/trichy.jpg";
+import Thanjavur from "../../assets/thanjavur.jpg"; // Corrected the typo
+import sivakasi from "../../assets/sivakasi.jpg";
+
+
+
 
 const ExploreButton = () => {
     const navigate = useNavigate();
     const [isDistrictModalOpen, setIsDistrictModalOpen] = useState(false);
-    const [selectedDistrict, setSelectedDistrict] = useState(null); // State to store selected district
+    const [selectedDistrict, setSelectedDistrict] = useState(null); 
 
     // Districts data
     const districts = [
@@ -30,8 +41,12 @@ const ExploreButton = () => {
         { name: "Vellore", image: Vellore },
         { name: "Thoothukudi", image: Thoothukudi },
         { name: "Tirunelveli", image: Tirunelveli },
-        { name: "Dindigul", image: Dindigul }
+        { name: "Dindigul", image: Dindigul },
+        { name: "Tiruchirappalli", image: Trichy },
+       { name: "Thanjavur", image: Thanjavur }, 
+       { name: "Sivakasi", image: sivakasi },
     ];
+
     const handleSelectDistrict = (district) => {
         setSelectedDistrict(district.name);
         const formattedAddress = encodeURIComponent(district.name);
@@ -61,6 +76,8 @@ const ExploreButton = () => {
             >
                 Explore Rooms
             </button>
+
+            
             {/* District Modal */}
             <DistrictModal
                 isOpen={isDistrictModalOpen}

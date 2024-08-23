@@ -211,7 +211,7 @@ const PropertyDetail = () => {
                             value={property.pg_type}
                         />
                         <DetailItem
-                            icon={<FaTag />}
+                            icon={<FaUser />}
                             label="Looking For Gender"
                             value={property.looking_for_gender}
                         />

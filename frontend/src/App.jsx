@@ -18,7 +18,7 @@ import PlanPage from "./components/RentPageComponent/PlanPage";
 import CountryDropdown from "./components/RentPageComponent/CountryDropdown";
 // import UserAdsPage from "./components/RentPageComponent/UserAdsPage";
 import Profile from "./components/User";
-import UserAds from "./components/UserAdsomponent";
+// import UserAds from "./components/UserAdsomponent";
 
 function App() {
     return (
