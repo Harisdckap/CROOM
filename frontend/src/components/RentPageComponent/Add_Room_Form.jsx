@@ -55,20 +55,18 @@ const AddRoomForm = () => {
     };
 
     const allHighlightedFeatures = [
-        "Attached washroom",
+        "Attached Bathroom",
         "Balcony",
-        "Air conditioning",
         "Swimming pool",
         "Gym",
         "Parking",
     ];
     const allAmenities = [
         "WiFi",
-        "Air Conditioning",
-        "Heating",
-        "Hot Water",
-        "Refrigerator",
-        "Microwave",
+        "Air Condition",
+        "Fridge",
+        "Kitchen",
+        "Washing_machine"
     ];
 
     //   useEffect(() => {

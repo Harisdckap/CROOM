@@ -14,7 +14,7 @@ class UserController extends Controller
         $jwt = $request->header('Authorization');
         $key = env('JWT_SECRET');
 
-        //removing 'Bearer ' from the token string
+        // Removing 'Bearer ' from the token string
         if (strpos($jwt, 'Bearer ') === 0) {
             $jwt = substr($jwt, 7);
         }
@@ -22,17 +22,16 @@ class UserController extends Controller
         try {
             $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 
-            //fetching user by ID from decoded token
+            // Fetching user by ID from decoded token
             $user = User::find($decoded->sub);
 
             if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
+                return response()->json(['error' => 'User not found']); // Return null if user not found
             }
 
-            return response()->json(['user' => $user]);
+            return $user; // Return user object
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to decode JWT', 'message' => $e->getMessage()], 400);
+            return response()->json(['error' => 'Faied to decode JWT', 'message' => $e->getMessage()], 400); // Return null on failure
         }
     }
 }
-

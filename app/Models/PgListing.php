@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +29,8 @@ class PgListing extends Model
         'photos' => 'array',
         'highlighted_features' => 'array',
         'amenities' => 'array',
+        'location' => 'array',
     ];
 
+  
 }

@@ -30,7 +30,7 @@ class RoommateController extends Controller
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
+            'location' => 'required|json',
             'looking_for' => 'required|string|max:255',
             'looking_for_gender' => 'nullable|string|max:255',
             'approx_rent' => 'required|numeric',
@@ -54,6 +54,7 @@ class RoommateController extends Controller
                 $imagePaths[] = $path;
             }
         }
+
         // Decode JSON strings back to arrays
         $validatedData['highlighted_features'] = isset($validatedData['highlighted_features'])
             ? json_decode($validatedData['highlighted_features'], true)
@@ -64,6 +65,7 @@ class RoommateController extends Controller
 
         // Convert image paths to JSON for storage
         $validatedData['photos'] = json_encode($imagePaths);
+        $validatedData['location'] = json_encode($validatedData['location']);
 
         Log::info('Uploaded files:', $imagePaths);
 
@@ -72,8 +74,6 @@ class RoommateController extends Controller
 
         return response()->json($roommate, 201);
     }
-
-
 
     public function show($id)
     {
@@ -113,7 +113,6 @@ class RoommateController extends Controller
 
         $validatedData['house_images'] = json_encode($imagePaths);
 
-
         $roommate->update($validatedData);
         return response()->json($roommate);
     }
@@ -124,5 +123,4 @@ class RoommateController extends Controller
         $roommate->delete();
         return response()->json(null, 204);
     }
- 
 }

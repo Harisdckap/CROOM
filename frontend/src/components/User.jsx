@@ -21,6 +21,7 @@ const Profile = () => {
     });
     const [error, setError] = useState("");
     const authToken = localStorage.getItem("auth_token");
+    const user_id =localStorage.getItem("user_id");
 
     useEffect(() => {
         fetchUser();
@@ -47,7 +48,6 @@ const Profile = () => {
         }
     };
 
-
     // useEffect(() => {
     //     const savedImage = localStorage.getItem("profileImage");
     //     if (savedImage) {
@@ -57,11 +57,14 @@ const Profile = () => {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get("http://127.0.0.1:8000/api/userDetail", {
-                headers: {
-                    Authorization: `Bearer ${authToken}`,
-                },
-            });
+            const response = await axios.get(
+                "http://127.0.0.1:8000/api/userDetail",
+                {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                }
+            );
 
             setUser(response.data.user);
             setFormData({
@@ -129,13 +132,24 @@ const Profile = () => {
                 setIsEditing(false);
             })
             .catch((error) => {
-                setError("Error updating profile: " + (error.response ? error.response.data : error.message));
+                setError(
+                    "Error updating profile: " +
+                        (error.response ? error.response.data : error.message)
+                );
             });
     };
 
     const handlePasswordSubmit = (e) => {
         e.preventDefault();
-        const { existingPassword, newPassword, confirmNewPassword } = passwordData;
+
+        const { existingPassword, newPassword, confirmNewPassword } =
+            passwordData;
+        const formData = new FormData();
+        formData.append("existingPassword", existingPassword);
+        formData.append("newPassword", newPassword);
+        formData.append("newPassword_confirmation", confirmNewPassword);
+        console.log(formData);
+
         if (!existingPassword || !newPassword || !confirmNewPassword) {
             alert("All password fields are required.");
             return;
@@ -150,7 +164,7 @@ const Profile = () => {
         }
 
         axios
-            .post("http://localhost:8000/api/change-password", passwordData, {
+            .post(`http://localhost:8000/api/change-password/${user_id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${authToken}`,
                 },
@@ -160,7 +174,10 @@ const Profile = () => {
                 setShowPopup(false);
             })
             .catch((error) => {
-                alert("Error changing password: " + (error.response ? error.response.data : error.message));
+                alert(
+                    "Error changing password: " +
+                        (error.response ? error.response.data : error.message)
+                );
             });
     };
 
@@ -177,15 +194,20 @@ const Profile = () => {
                                 Profile
                             </h1>
                             <div className="flex align-center justify-center">
-                                {error && <p className="text-red-600 w-60 flex align-center justify-center text-center rounded-md fixed bg-red-300 mb-4">{error}</p>}
+                                {error && (
+                                    <p className="text-red-600 w-60 flex align-center justify-center text-center rounded-md fixed bg-red-300 mb-4">
+                                        {error}
+                                    </p>
+                                )}
                             </div>
                             <div className="flex justify-between items-center">
                                 <div
                                     className="w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-cover bg-center bg-no-repeat"
                                     style={{
-                                        backgroundImage: `url(${profileImage ||
+                                        backgroundImage: `url(${
+                                            profileImage ||
                                             "https://mighty.tools/mockmind-api/content/cartoon/32.jpg"
-                                            })`,
+                                        })`,
                                     }}
                                 >
                                     <div className="bg-white/90 rounded-full w-6 h-6 text-center ml-24 mt-28">
@@ -227,7 +249,9 @@ const Profile = () => {
                                         <button
                                             type="button"
                                             className="p-2 mx-auto rounded-xl"
-                                            onClick={() => setIsEditing(!isEditing)}
+                                            onClick={() =>
+                                                setIsEditing(!isEditing)
+                                            }
                                         >
                                             {isEditing ? "Cancel" : "Edit"}
                                         </button>
@@ -250,10 +274,11 @@ const Profile = () => {
                                             value={formData.username}
                                             onChange={handleInputChange}
                                             disabled={!isEditing}
-                                            className={`p-2 border rounded-lg w-5/6 ${isEditing
+                                            className={`p-2 border rounded-lg w-5/6 ${
+                                                isEditing
                                                     ? "border-gray-300"
                                                     : "bg-gray-100"
-                                                }`}
+                                            }`}
                                         />
                                     </div>
                                     <div className="flex justify-between items-center mb-4">
@@ -270,10 +295,11 @@ const Profile = () => {
                                             value={formData.email}
                                             onChange={handleInputChange}
                                             disabled={!isEditing}
-                                            className={`p-2 border rounded-lg w-5/6 ${isEditing
+                                            className={`p-2 border rounded-lg w-5/6 ${
+                                                isEditing
                                                     ? "border-gray-300"
                                                     : "bg-gray-100"
-                                                }`}
+                                            }`}
                                         />
                                     </div>
                                     <div className="flex justify-between items-center mb-4">
@@ -290,10 +316,11 @@ const Profile = () => {
                                             value={formData.mobile}
                                             onChange={handleInputChange}
                                             disabled={!isEditing}
-                                            className={`p-2 border rounded-lg w-5/6 ${isEditing
+                                            className={`p-2 border rounded-lg w-5/6 ${
+                                                isEditing
                                                     ? "border-gray-300"
                                                     : "bg-gray-100"
-                                                }`}
+                                            }`}
                                         />
                                     </div>
                                 </form>
@@ -323,7 +350,9 @@ const Profile = () => {
             {showPopup && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
                     <div className="bg-white p-4 rounded-lg shadow-lg w-96">
-                        <h2 className="text-lg text-center font-bold mb-4">Change Password</h2>
+                        <h2 className="text-lg text-center font-bold mb-4">
+                            Change Password
+                        </h2>
                         <form onSubmit={handlePasswordSubmit}>
                             <div className="mb-4">
                                 <label
@@ -333,8 +362,13 @@ const Profile = () => {
                                     Existing Password
                                 </label>
                                 <input
-                                    type={passwordData.showExisting ? "text" : "password"}
+                                    type={
+                                        passwordData.showExisting
+                                            ? "text"
+                                            : "password"
+                                    }
                                     id="existingPassword"
+                                    placeholder="Existing Password"
                                     autoComplete="off"
                                     value={passwordData.existingPassword}
                                     onChange={handlePasswordChange}
@@ -345,16 +379,17 @@ const Profile = () => {
                                     onClick={() =>
                                         setPasswordData({
                                             ...passwordData,
-                                            showExisting: !passwordData.showExisting,
+                                            showExisting:
+                                                !passwordData.showExisting,
                                         })
                                     }
                                 >
                                     <div className="relative bottom-8 left-80">
-                                    {passwordData.showExisting ? (
-                                        <EyeOutlined />
-                                    ) : (
-                                        <EyeInvisibleOutlined />
-                                    )}
+                                        {passwordData.showExisting ? (
+                                            <EyeOutlined />
+                                        ) : (
+                                            <EyeInvisibleOutlined />
+                                        )}
                                     </div>
                                 </button>
                             </div>
@@ -366,8 +401,13 @@ const Profile = () => {
                                     New Password
                                 </label>
                                 <input
-                                    type={passwordData.showNew ? "text" : "password"}
+                                    type={
+                                        passwordData.showNew
+                                            ? "text"
+                                            : "password"
+                                    }
                                     id="newPassword"
+                                    placeholder="New Password"
                                     autoComplete="off"
                                     value={passwordData.newPassword}
                                     onChange={handlePasswordChange}
@@ -383,11 +423,11 @@ const Profile = () => {
                                     }
                                 >
                                     <div className="relative bottom-8 left-80">
-                                    {passwordData.showNew ? (
-                                         <EyeOutlined />
-                                    ) : (
-                                        <EyeInvisibleOutlined />
-                                    )}
+                                        {passwordData.showNew ? (
+                                            <EyeOutlined />
+                                        ) : (
+                                            <EyeInvisibleOutlined />
+                                        )}
                                     </div>
                                 </button>
                             </div>
@@ -399,8 +439,13 @@ const Profile = () => {
                                     Confirm New Password
                                 </label>
                                 <input
-                                    type={passwordData.showConfirm ? "text" : "password"}
+                                    type={
+                                        passwordData.showConfirm
+                                            ? "text"
+                                            : "password"
+                                    }
                                     id="confirmNewPassword"
+                                    placeholder="Confirm New Password"
                                     autoComplete="off"
                                     value={passwordData.confirmNewPassword}
                                     onChange={handlePasswordChange}
@@ -411,34 +456,36 @@ const Profile = () => {
                                     onClick={() =>
                                         setPasswordData({
                                             ...passwordData,
-                                            showConfirm: !passwordData.showConfirm,
+                                            showConfirm:
+                                                !passwordData.showConfirm,
                                         })
                                     }
                                 >
                                     <div className="relative bottom-8 left-80">
-                                    {passwordData.showConfirm ? (
-                                       <EyeOutlined />
-                                    ) : (
-                                        <EyeInvisibleOutlined />
-                                    )}
+                                        {passwordData.showConfirm ? (
+                                            <EyeOutlined />
+                                        ) : (
+                                            <EyeInvisibleOutlined />
+                                        )}
                                     </div>
                                 </button>
                             </div>
+                            <div className="flex justify-between mt-4">
+                                <button
+                                    type="submit"
+                                    className="w-40 h-10 rounded-md text-center bg-blue-500 text-white text-base font-bold"
+                                >
+                                    Change Password
+                                </button>
+                                <button
+                                    type="button"
+                                    className="w-40 bg-red-600 rounded-md text-white text-red-500 font-bold"
+                                    onClick={() => setShowPopup(false)}
+                                >
+                                    Close
+                                </button>
+                            </div>
                         </form>
-                        <div className="flex justify-between">
-                        <button
-                                type="submit"
-                                className="w-40 h-10 rounded-md text-center bg-blue-500 text-white text-base font-bold"
-                            >
-                                Change Password
-                            </button>
-                        <button
-                            className="w-40 bg-red-600 rounded-md text-white text-red-500 font-bold"
-                            onClick={() => setShowPopup(false)}
-                        >
-                            Close
-                        </button>
-                        </div>
                     </div>
                 </div>
             )}
@@ -447,23 +494,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

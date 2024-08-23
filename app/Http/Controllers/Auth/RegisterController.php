@@ -71,10 +71,36 @@ class RegisterController extends Controller
         ], 201);
     }
 
-    public function details()
+
+    public function changePassword(Request $request,$userId)
     {
-        $user = Auth::guard('api')->user();
-        return response()->json(['user' => $user], 200);
+
+        // Validate input fields
+        $validator = Validator::make($request->all(), [
+            'existingPassword' => 'required',
+            'newPassword' => 'required|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Validation failed', 'messages' => $validator->errors()], 422);
+        }
+
+        $user =User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => ' user not found'], 400);
+        }
+
+        // Check if existing password is correct
+        if (!Hash::check($request->input('existingPassword'), $user->password)) {
+            return response()->json(['error' => 'Current password is incorrect'], 400);
+        }
+
+        // Update password and save user
+        $user->password = Hash::make($request->input('newPassword'));
+        $user->save();
+
+        return response()->json(['message' => 'Password changed successfully']);
     }
 
     public function logout(Request $request)

@@ -11,6 +11,7 @@ class Roommate extends Model
 
     protected $fillable = [
         'user_id',
+        'title',
         'location',
         'looking_for',
         'looking_for_gender',
@@ -29,5 +30,6 @@ class Roommate extends Model
         'photos' => 'array',
         'highlighted_features' => 'array',
         'amenities' => 'array',
+        'location' => 'array',
     ];
 }

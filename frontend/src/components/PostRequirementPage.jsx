@@ -23,10 +23,10 @@ export const List_page = () => {
             </div>
 
             <div className="text-center mt-16 text-white">
-                <h1 className="text-3xl">Post Your Requirment</h1>
+                <h1 className="text-3xl">Post Your Requirments</h1>
                 <p className="mt-6 font-thin leading-7">
-                    Find your perfect roommate or room effortlessly.Just post
-                    ypur <br />
+                    Find your perfect PG or Roommate or Rooms effortlessly. Just post
+                    your <br />
                     requirment and let the matching begin!
                 </p>
             </div>
@@ -64,7 +64,7 @@ export const List_page = () => {
 
                 <Link to="/PgForm">
                     <div className="w-80 h-80 bg-white p-8 rounded">
-                        <h1 className="font-bold text-xl">Add Pg</h1>
+                        <h1 className="font-bold text-xl">Add PG</h1>
                         <figure class="md:h-36 hrink-1 md:shrink-0 mt-10 ml-auto">
                             <img
                                 src={PgImg}

@@ -23,12 +23,12 @@ class PgListingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-          'user_id' => 'required|exists:users,id',
+            'user_id' => 'required|exists:users,id',
             'pg_type' => 'required|string|max:255',
             'looking_for_gender' => 'nullable|string|max:255',
             'mobile_num' => 'required|numeric',
             'pg_name' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
+            'location' => 'required|json',
             'occupancy_type' => 'required|string|max:255',
             'occupancy_amount' => 'required|numeric',
             'pg_post_content' => 'required|string',
@@ -36,6 +36,7 @@ class PgListingController extends Controller
             'highlighted_features' => 'nullable|json',
             'amenities' => 'nullable|json',
         ]);
+
         // Handle file upload
         $imagePaths = [];
 
@@ -49,17 +50,18 @@ class PgListingController extends Controller
 
         // Convert image paths to JSON for storage
         $validated['photos'] = json_encode($imagePaths);
+        $validated['location'] = json_encode($validated['location']);
 
         Log::info('Uploaded files:', $imagePaths);
 
         $validated['highlighted_features'] = isset($validated['highlighted_features'])
-        ? json_decode($validated['highlighted_features'], true)
-        : [];
-    $validated['amenities'] = isset($validated['amenities'])
-        ? json_decode($validated['amenities'], true)
-        : [];
+            ? json_decode($validated['highlighted_features'], true)
+            : [];
+        $validated['amenities'] = isset($validated['amenities'])
+            ? json_decode($validated['amenities'], true)
+            : [];
 
-        // Create a new Roommate record
+        // Create a new PG Listing record
         $pgListing = PgListing::create($validated);
 
         try {
@@ -70,5 +72,5 @@ class PgListingController extends Controller
             return response()->json(['message' => 'Failed to add PG Listing', 'error' => $e->getMessage()], 500);
         }
     }
-   
+
 }

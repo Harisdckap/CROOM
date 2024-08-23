@@ -21,6 +21,7 @@ const Navbar = ({
     const queryParams = new URLSearchParams(location.search);
     const currentType = queryParams.get("t") || "a";
     const currentSortOrder = queryParams.get("sort") || "ASC";
+    const address = decodeURIComponent(queryParams.get("address"));
 
     const [sortOrder, setSortOrder] = useState(currentSortOrder);
 
@@ -28,7 +29,7 @@ const Navbar = ({
         const updatedParams = new URLSearchParams(location.search);
         Object.keys(params).forEach((key) => {
             if (params[key] !== undefined && params[key] !== null) {
-                updatedParams.set(key, params[key]);
+                updatedParams.set(key, (params[key]));
             } else {
                 updatedParams.delete(key);
             }
@@ -39,7 +40,7 @@ const Navbar = ({
     const handleTypeClick = (type) => {
         setListingType(type);
         updateQueryParams({
-            address: search || "Chennai",
+            address: decodeURIComponent(search),
             p: 0,
             t: type,
             sort: sortOrder,
@@ -56,7 +57,7 @@ const Navbar = ({
         <div className="w-full h-32 bg-white mx-auto flex items-center justify-between pt-16 px-4">
             <div className="flex items-center space-x-6">
                 <NavLink
-                    to={`?address=${search || "Chennai"}&p=0&t=a&sort=ASC`}
+                   to={`?address=${encodeURIComponent(search || "chennai")}&p=0&t=a&sort=ASC`}
                     onClick={() => handleTypeClick("a")}
                     className={({ isActive }) =>
                         `flex items-center font-medium ${
@@ -70,7 +71,7 @@ const Navbar = ({
                     All Listings
                 </NavLink>
                 <NavLink
-                    to={`?address=${search || "Chennai"}&p=0&t=r&sort=ASC`}
+                   to={`?address=${encodeURIComponent(search || "chennai")}&p=0&t=r&sort=ASC`}
                     onClick={() => handleTypeClick("r")}
                     className={({ isActive }) =>
                         `flex items-center font-medium ${
@@ -84,7 +85,7 @@ const Navbar = ({
                     Rooms
                 </NavLink>
                 <NavLink
-                    to={`?address=${search || "Chennai"}&p=0&t=rm&sort=ASC`}
+                 to={`?address=${encodeURIComponent(search || "chennai")}&p=0&t=rm&sort=ASC`}
                     onClick={() => handleTypeClick("rm")}
                     className={({ isActive }) =>
                         `flex items-center font-medium ${
@@ -98,7 +99,7 @@ const Navbar = ({
                     Roommates
                 </NavLink>
                 <NavLink
-                    to={`?address=${search || "Chennai"}&p=0&t=pg&sort=ASC`}
+                to={`?address=${encodeURIComponent(search || "chennai")}&p=0&t=pg&sort=ASC`}
                     onClick={() => handleTypeClick("pg")}
                     className={({ isActive }) =>
                         `flex items-center font-medium ${

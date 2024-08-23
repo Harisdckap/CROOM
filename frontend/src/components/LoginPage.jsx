@@ -32,10 +32,12 @@ function LoginPage() {
 
             if (response && response.success) {
                 if (response.access_token) {
-                    const { access_token } = response;
-
+                    const { access_token,user_id } = response;
+                    // const user_id = response.user_id;
+   
                     // Store the token in localStorage
                     localStorage.setItem("auth_token", access_token);
+                    localStorage.setItem("user_id", user_id);
 
                     // Redirect to home page
                     navigate("/");

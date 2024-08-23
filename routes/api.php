@@ -22,7 +22,7 @@ Route::post('/logout', [RegisterController::class, 'logout']);
 Route::post('/login', [LoginController::class, 'login']);
 Route::get('/get-otp', [OTPController::class, 'getOTP']);
 Route::middleware('auth:sanctum')->get('/details', [RegisterController::class, 'details']);
-Route::post('/verify-otp', [OTPVerificationController::class, 'verifyOtp']);
+Route::post('/verify-otp', [OTPController::class, 'verifyOtp']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('reset-password', [ResetPasswordController::class, 'reset']);
 Route::get('/password/reset/', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
@@ -36,12 +36,15 @@ Route::post('/pg_listings', [PgListingController::class, 'store']);
 Route::get('/userDetail', [UserController::class, 'decodeToken']);
 Route::get('/user-ads/{id}/', [AdsController::class, 'getUserAds']);
 
-
-use App\Http\Controllers\PasswordChangeController;
-
-Route::post('/change-password', [PasswordChangeController::class, 'changePassword']);
+Route::post('/change-password/{userId}', [RegisterController::class, 'changePassword']);
 
 Route::get('user/{userId}/ads', [AdsController::class, 'getUserAds']);
+
+use App\Http\Controllers\FavouriteController;
+
+Route::post('/{listing_type}/{id}/toggle-favourite', [FavouriteController::class, 'toggleFavourite']);
+Route::get('/user/{id}/favourites', [FavouriteController::class, 'getFavourites']);
+
 
 
 
