@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import countryDataJSON from '../RentPageComponent/country JSON/countries+states.json'
 
 // import "./Roommate.css";
@@ -26,6 +26,9 @@ const Add_PG = () => {
     const [PIN, setPIN] = useState("");
     const [state, setstate] = useState("");
     const [countryData, setcountryData] = useState();
+
+    // navigate
+    const navigate = useNavigate();
 
     const handleChangeAddress_1 = (e) => {
         setaddress_1(e.target.value.trim());
@@ -90,9 +93,21 @@ const Add_PG = () => {
         setImages((prevImages) => [...prevImages, ...files]);
     };
 
-    const showToastMessage = (message) => {
-        toast.error(message, { position: "top-center" });
+    const showToastMessage = (message,type) => {
+        if (type === "success") {
+            toast.success(message, {
+                position: "top-center",
+                onClose: () => {
+                    navigate("/NeedRoomateForm");
+                },
+            });
+        }        
+        else{
+            toast.error(message, { position: "top-center" });
+        }
     };
+
+
 
        const validateInputs = () => {
 
@@ -228,11 +243,7 @@ const Add_PG = () => {
                     },
                 }
             );
-            toast.success("Form submitted successfully", {
-                position: "top-center",
-            });
-            
-            
+           showToastMessage("Add PG Sucessfully", "success")
             console.log(response.data);
         } catch (error) {
             console.error(
@@ -255,6 +266,8 @@ const Add_PG = () => {
         setAmenities([]);
         setPgPostContent("");
     };
+
+ 
 
     return (
         <div className="max-w-6xl mx-auto p-8 bg-white rounded-lg shadow-md mt-4">

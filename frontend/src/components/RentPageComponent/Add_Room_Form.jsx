@@ -37,6 +37,8 @@ const AddRoomForm = () => {
     const [PIN,setPIN ] = useState("")
     const [state,setstate ] = useState("")
 
+    // navigate
+    const navigate = useNavigate();
 
 
 
@@ -141,8 +143,15 @@ const deleteIMG = (index) => {
 
     const showToast = (message, type = "error") => {
         if (type === "success") {
-            toast.success(message, { position: "top-center" });
-        } else {
+            toast.success(message, {
+                position: "top-center",
+                onClose: () => {
+                    // Navigate after the toast message is closed
+                    navigate("/PostRequirementPage");
+                },
+            });
+        }
+         else {
             toast.error(message, { position: "top-center" });
         }
     };
@@ -288,7 +297,10 @@ const deleteIMG = (index) => {
                     headers: { "Content-Type": "multipart/form-data" },
                 }
             );
-            setMessage("Room added successfully!");
+
+
+            showToast("Room Added Sucessfully","success")
+              
             setFormData({
                 title: "",
                 state: "",

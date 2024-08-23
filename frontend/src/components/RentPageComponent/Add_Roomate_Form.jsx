@@ -2,7 +2,7 @@ import React, { useState, useRef,useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 
 import countryDataJSON from "../RentPageComponent/country JSON/countries+states.json";
 // import { FaT } from "react-icons/fa6";/
@@ -33,6 +33,9 @@ const AddRequirement = () => {
     const [state, setstate] = useState("");
     const [selectedState, setSelectedState] = useState("");
     const [selectedCountry, setSelectedCountry] = useState("");
+
+    // navigate
+    const navigate = useNavigate();
 
 
 
@@ -205,9 +208,16 @@ const AddRequirement = () => {
     };
     
     const showToast = (message, type = "error") => {
-        if (type === "success") {
-            toast.success(message, { position: "top-center" });
-        } else {
+            if (type === "success") {
+                toast.success(message, {
+                    position: "top-center",
+                    onClose: () => {
+                        navigate("/PgForm");
+                    },
+                });
+            }
+            
+         else {
             toast.error(message, { position: "top-center" });
         }
     };
@@ -260,7 +270,7 @@ const AddRequirement = () => {
         highlighted_features: JSON.stringify(formData.highlighted_features),
         amenities: JSON.stringify(formData.amenities),
     };
-
+ 
 
     Object.keys(formattedFormData).forEach((key) => {
         formDataObj.append(key, formattedFormData[key]);
@@ -287,8 +297,7 @@ const AddRequirement = () => {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-            }
-        );
+            },        );
         setRequirements((prevRequirements) => [
             ...prevRequirements,
             response.data,
