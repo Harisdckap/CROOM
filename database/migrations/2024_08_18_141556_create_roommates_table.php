@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('number_of_people');
             $table->json('photos')->nullable();
             $table->json('amenities')->nullable(); 
+            $table->boolean('is_favourite')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); //foreign key constraint

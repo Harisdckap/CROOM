@@ -1,19 +1,19 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
 import Navbar from "./Navbar";
 import HomeNavBar from "../Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkerAlt, faHome } from "@fortawesome/free-solid-svg-icons";
+import {
+    faMapMarkerAlt,
+    faHome,
+    faHeart,
+} from "@fortawesome/free-solid-svg-icons";
 import "../../slider.css";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
 
 const PropertyPage = () => {
     const navigate = useNavigate();
-    const toastShownRef = useRef(false);
     const [listings, setListings] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams();
     const [search, setSearch] = useState(searchParams.get("address") || "");
@@ -24,7 +24,6 @@ const PropertyPage = () => {
 
     useEffect(() => {
         fetchListings();
-        console.log("Listings data:", listings);
     }, [searchParams]);
 
     const fetchListings = async () => {
@@ -39,29 +38,11 @@ const PropertyPage = () => {
                 "http://127.0.0.1:8000/api/properties",
                 { params }
             );
-    
-            setListings([]);
             setListings(response.data.data);
-             if (response.data.data.length === 0 && !toastShownRef.current) {
-                toast.info('No properties found for this location.', {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
-
-                toastShownRef.current = true;
-            } else if (response.data.data.length > 0) {
-                toastShownRef.current = false;
-            }
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
     };
-    
 
     const handleSearchChange = (event) => {
         setSearch(event.target.value);
@@ -77,6 +58,7 @@ const PropertyPage = () => {
     };
 
     const handleSearchSubmit = (event) => {
+        event.preventDefault();
         setSearchParams({
             address: search,
             t: searchParams.get("t") || "a",
@@ -95,21 +77,52 @@ const PropertyPage = () => {
     };
 
     const setListingType = (type) => {
-        setSearchParams({
-            address: searchParams.get("address") || "",
-            t: type,
-            gender: gender,
-            sort: sortOrder,
+        setSearchParams((prev) => {
+            const newParams = new URLSearchParams(prev);
+            newParams.set("t", type);
+            return newParams;
         });
     };
 
-    const handleViewClick = (id, location, listingType) => {
+    const handleViewClick = (id, location, type) => {
         const trimmedLocation = location.trim();
         navigate(
             `/property/${btoa(id)}/${encodeURIComponent(
                 trimmedLocation
-            )}/${listingType}`
+            )}/${type}`
         );
+    };
+
+    const toggleFavourite = async (id, listing_type) => {
+        console.log("Toggling favourite for ID:", id, "Type:", listing_type);
+
+        try {
+            const response = await axios.post(
+                `http://127.0.0.1:8000/api/${listing_type}/${id}/toggle-favourite`
+            );
+            console.log("API Response:", response.data);
+
+            if (response.data.success) {
+                const newFavouriteStatus = response.data.is_favourite;
+                console.log("New Favourite Status:", newFavouriteStatus);
+
+                // Update listings state
+                setListings((prevListings) =>
+                    prevListings.map((listing) =>
+                        listing.id === id
+                            ? { ...listing, is_favourite: newFavouriteStatus }
+                            : listing
+                    )
+                );
+            } else {
+                console.error(
+                    "Failed to toggle favourite:",
+                    response.data.message
+                );
+            }
+        } catch (error) {
+            console.error("Error toggling favourite status:", error);
+        }
     };
 
     const renderSlider = (photos) => {
@@ -124,7 +137,7 @@ const PropertyPage = () => {
             className: "custom-slider",
             dotsClass: "custom-dots",
         };
-    
+
         return (
             <Slider {...settings}>
                 {photos.map((photo, index) => (
@@ -142,15 +155,16 @@ const PropertyPage = () => {
             </Slider>
         );
     };
-    
-    
+
     const renderListing = (listing, index) => {
         let photos = [];
         let locationData = {};
-    
+
         if (listing.photos) {
             try {
-                photos = JSON.parse(listing.photos).map(photo => photo.replace("/", "/"));
+                photos = JSON.parse(listing.photos).map((photo) =>
+                    photo.replace("/", "/")
+                );
             } catch (error) {
                 console.error("Failed to parse photos:", error);
             }
@@ -158,37 +172,76 @@ const PropertyPage = () => {
 
         if (listing.location) {
             try {
-                const outerJson = JSON.parse(listing.location); 
-                locationData = JSON.parse(outerJson); 
+                const outerJson = JSON.parse(listing.location);
+                locationData = JSON.parse(outerJson);
             } catch (error) {
                 console.error("Failed to parse location data:", error);
             }
         }
-    
-        const city = (typeof locationData.city === 'string' && locationData.city.trim()) || "Unknown City";
-        const district = (typeof locationData.district === 'string' && locationData.district.trim()) || "Unknown District";
-    
+
+        const city =
+            (typeof locationData.city === "string" &&
+                locationData.city.trim()) ||
+            "Unknown City";
+        const district =
+            (typeof locationData.district === "string" &&
+                locationData.district.trim()) ||
+            "Unknown District";
+
+
+
         return (
             <div
                 key={`${listing.id}-${index}`}
-                className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4 cursor-pointer hover:bg-gray-200"
+                className={`border rounded-lg p-6 bg-white shadow-md ml-4 mr-4 cursor-pointer hover:bg-gray-200 transition-transform`}
+                onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
             >
                 <div className="relative">
+                    <FontAwesomeIcon
+                        icon={faHeart}
+                        className={`absolute top-2 right-2 text-2xl cursor-pointer z-10 ${
+                            listing.is_favourite
+                                ? "text-red-500"
+                                : "text-gray-100"
+                        }`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavourite(listing.id, listing.listing_type);
+                        }}
+                    />
 
-                    {photos.length > 0 ? renderSlider(photos) : <p className="text-gray-500 text-center">No photo available.</p>}
+                    {photos.length > 0 ? (
+                        renderSlider(photos)
+                    ) : (
+                        <p className="text-gray-500 text-center">
+                            No photo available.
+                        </p>
+                    )}
                 </div>
-                <div className="px-2 "  onClick={() => handleViewClick(listing.id, city, listing.listing_type)}>
+                <div className="px-2">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-semibold gradient-text">{listing.title || listing.pg_name || listing.post}</h2>
+                        <h2 className="text-xl font-semibold gradient-text">
+                            {listing.title || listing.pg_name || listing.post}
+                        </h2>
                         <p className="text-green-600 flex items-center">
-                            <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+                            <FontAwesomeIcon
+                                icon={faMapMarkerAlt}
+                                className="mr-2"
+                            />
                             {city}, {district}
                         </p>
                     </div>
                     <hr className="my-2" />
                     <div className="flex justify-between items-center mt-2 p-1">
                         <div className="text-gray-700">
-                            <p><span className="font-semibold">₹{listing.price || listing.occupancy_amount || listing.approx_rent}</span></p>
+                            <p>
+                                <span className="font-semibold">
+                                    ₹
+                                    {listing.price ||
+                                        listing.occupancy_amount ||
+                                        listing.approx_rent}
+                                </span>
+                            </p>
                         </div>
                         <p className="text-gray-700 flex items-center">
                             <FontAwesomeIcon icon={faHome} className="mr-2" />
@@ -199,7 +252,7 @@ const PropertyPage = () => {
             </div>
         );
     };
-    
+
     return (
         <div>
             <HomeNavBar />
@@ -213,12 +266,10 @@ const PropertyPage = () => {
                 onSortChange={handleSortChange}
             />
             <div className="flex justify-center mt-6">
-                <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
                     {listings.map(renderListing)}
                 </div>
-                
             </div>
-            <ToastContainer />
         </div>
     );
 };

@@ -17,19 +17,25 @@ class RegisterController extends Controller
 {
     public function register(Request $request)
     {
+        $existingUser = User::where('email', $request->email)->first();
+        if ($existingUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User already registered. Please login.'
+            ], 409);
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
             'gender' => 'required|string',
             'mobile' => 'required|string|max:10',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -66,6 +72,39 @@ class RegisterController extends Controller
     }
 
 
+    public function changePassword(Request $request, $userId)
+    {
+
+        // Validate input fields
+        $validator = Validator::make($request->all(), [
+            'existingPassword' => 'required',
+            'newPassword' => 'required|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Validation failed', 'messages' => $validator->errors()], 422);
+        }
+
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => ' user not found'], 400);
+        }
+
+        // Check if existing password is correct
+        if (!Hash::check($request->input('existingPassword'), $user->password)) {
+            return response()->json(['error' => 'Current password is incorrect'], 400);
+        }
+
+        // Update password and save user
+        $user->password = Hash::make($request->input('newPassword'));
+        $user->save();
+
+        return response()->json(['message' => 'Password changed successfully']);
+    }
+
+
+    
     public function logout(Request $request)
     {
         try {
@@ -89,5 +128,4 @@ class RegisterController extends Controller
             ], 500);
         }
     }
-
 }

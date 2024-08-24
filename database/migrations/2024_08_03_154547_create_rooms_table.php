@@ -27,6 +27,7 @@ return new class extends Migration
             $table->json('amenities')->nullable();  
             $table->text('description')->nullable();
             $table->string('listing_type')->nullable();
+            $table->boolean('is_favourite')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); //foreign key constraint

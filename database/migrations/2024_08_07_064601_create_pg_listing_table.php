@@ -23,6 +23,7 @@ return new class extends Migration
             $table->json('amenities')->nullable();
             $table->json('photos')->nullable();
             $table->text('pg_post_content');
+            $table->boolean('is_favourite')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); //foreign key constraint

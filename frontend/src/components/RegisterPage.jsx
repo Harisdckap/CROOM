@@ -91,12 +91,6 @@ const Register = () => {
         if (!data.password.trim()) errors.password = "Password is required";
         else if (data.password.length < 8 || !/[A-Z]/.test(data.password) || !/[0-9]/.test(data.password) || !/[!@#$%^&*]/.test(data.password))
             console.log(errors.password = "It is not strong password");
-        // else if (!/[A-Z]/.test(data.password))
-        //     console.log(errors.password = "Password must contain at least one uppercase letter");
-        // else if (!/[0-9]/.test(data.password))
-        //     console.log(errors.password = "Password must contain at least one number");
-        // else if (!/[!@#$%^&*]/.test(data.password))
-        //     console.log(errors.password = "Password must contain at least one special character");
         if (!data.password_confirmation.trim())
             errors.password_confirmation = "Confirm Password is required";
         else if (data.password !== data.password_confirmation)

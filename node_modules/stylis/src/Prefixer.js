@@ -16,11 +16,14 @@ export function prefix (value, length, children) {
 		case 5737: case 4201: case 3177: case 3433: case 1641: case 4457: case 2921:
 		// text-decoration, filter, clip-path, backface-visibility, column, box-decoration-break
 		case 5572: case 6356: case 5844: case 3191: case 6645: case 3005:
-		// mask, mask-image, mask-(mode|clip|size), mask-(repeat|origin), mask-position, mask-composite,
-		case 6391: case 5879: case 5623: case 6135: case 4599: case 4855:
 		// background-clip, columns, column-(count|fill|gap|rule|rule-color|rule-style|rule-width|span|width)
 		case 4215: case 6389: case 5109: case 5365: case 5621: case 3829:
+		// mask, mask-image, mask-(mode|clip|size), mask-(repeat|origin), mask-position
+		case 6391: case 5879: case 5623: case 6135: case 4599:
 			return WEBKIT + value + value
+		// mask-composite
+		case 4855:
+			return WEBKIT + value.replace('add', 'source-over').replace('substract', 'source-out').replace('intersect', 'source-in').replace('exclude', 'xor') + value
 		// tab-size
 		case 4789:
 			return MOZ + value + value
@@ -76,7 +79,7 @@ export function prefix (value, length, children) {
 			return replace(value, /(image-set\([^]*)/, WEBKIT + '$1' + '$`$1')
 		// justify-content
 		case 4968:
-			return replace(replace(value, /(.+:)(flex-)?(.*)/, WEBKIT + 'box-pack:$3' + MS + 'flex-pack:$3'), /s.+-b[^;]+/, 'justify') + WEBKIT + value + value
+			return replace(replace(value, /(.+:)(flex-)?(.*)/, WEBKIT + 'box-pack:$3' + MS + 'flex-pack:$3'), /space-between/, 'justify') + WEBKIT + value + value
 		// justify-self
 		case 4200:
 			if (!match(value, /flex-|baseline/)) return MS + 'grid-column-align' + substr(value, length) + value
@@ -87,7 +90,7 @@ export function prefix (value, length, children) {
 		// grid-(row|column)-start
 		case 4384: case 3616:
 			if (children && children.some(function (element, index) { return length = index, match(element.props, /grid-\w+-end/) })) {
-				return ~indexof(value + (children = children[length].value), 'span') ? value : (MS + replace(value, '-start', '') + value + MS + 'grid-row-span:' + (~indexof(children, 'span') ? match(children, /\d+/) : +match(children, /\d+/) - +match(value, /\d+/)) + ';')
+				return ~indexof(value + (children = children[length].value), 'span', 0) ? value : (MS + replace(value, '-start', '') + value + MS + 'grid-row-span:' + (~indexof(children, 'span', 0) ? match(children, /\d+/) : +match(children, /\d+/) - +match(value, /\d+/)) + ';')
 			}
 			return MS + replace(value, '-start', '') + value
 		// grid-(row|column)-end
@@ -113,7 +116,7 @@ export function prefix (value, length, children) {
 						return replace(value, /(.+:)(.+)-([^]+)/, '$1' + WEBKIT + '$2-$3' + '$1' + MOZ + (charat(value, length + 3) == 108 ? '$3' : '$2-$3')) + value
 					// (s)tretch
 					case 115:
-						return ~indexof(value, 'stretch') ? prefix(replace(value, 'stretch', 'fill-available'), length, children) + value : value
+						return ~indexof(value, 'stretch', 0) ? prefix(replace(value, 'stretch', 'fill-available'), length, children) + value : value
 				}
 			break
 		// grid-(column|row)

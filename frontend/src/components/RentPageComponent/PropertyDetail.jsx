@@ -74,7 +74,6 @@ const PropertyDetail = () => {
         Fridge: fridge,
         Kitchen: kitchen,
         Washing_machine: washingMachine,
-
     };
 
     const featuresImages = {
@@ -89,46 +88,41 @@ const PropertyDetail = () => {
         "Working night shift":working_night_shift,
         "Pure vegetarian":pure_vegetarian,
     };
-
     let locationData = {};
 
     if (property && property.location) {
         try {
-            const OuterData = JSON.parse(property.location);
-            locationData = JSON.parse(OuterData);
+            const outerData = JSON.parse(property.location);
+            locationData = JSON.parse(outerData);
             console.log(locationData);
         } catch (error) {
             console.error("Failed to parse location data:", error);
             locationData = { city: "Unknown Location", district: "" };
         }
     }
-
-    const city =
-        (typeof locationData.city === "string" && locationData.city.trim()) ||
-        "Unknown City";
-    const district =
-        (typeof locationData.district === "string" &&
-            locationData.district.trim()) ||
-        "Unknown District";
-    const street =
-        (typeof locationData.street === "string" &&
-            locationData.street.trim()) ||
-        "Unknown District";
-
-    console.log(street);
-    const Doorno =
-        (typeof locationData.doorNo === "string" &&
-            locationData.doorNo.trim()) ||
-        "Unknown District";
-
-    console.log(Doorno);
-
+    
+    const city = (typeof locationData.city === "string" && locationData.city.trim()) || "Unknown City";
+    const district = (typeof locationData.district === "string" && locationData.district.trim()) || "Unknown District";
+    const street = (typeof locationData.street === "string" && locationData.street.trim()) || "Unknown Street";
+    const doorNo = (typeof locationData.doorNo === "string" && locationData.doorNo.trim()) || "Unknown Door No";
+    const state = (typeof locationData.state === "string" && locationData.state.trim()) || "Unknown State";
+    const pinCode = (typeof locationData.pinCode === "string" && locationData.pinCode.trim()) || "000000";
+    const country = (typeof locationData.country === "string" && locationData.country.trim()) || "Unknown Country";
+    
+    // console.log(street);
+    // console.log(doorNo);
+    
     if (!property) {
         return <p>Loading property details...</p>;
     }
-
-    const location_name = encodeURIComponent(`${Doorno} ${street} ${location}`);
+    
+    // Encode the location details into a URI component
+    const location_name = encodeURIComponent(`${doorNo} ${street}, ${district}, ${city}, ${state} ${pinCode}, ${country}`);
     const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
+    
+    // console.log(mapUrl);
+
+    console.log(location_name)
 
     const renderPropertyDetails = (type) => {
         switch (type) {
@@ -326,7 +320,7 @@ const PropertyDetail = () => {
                             <motion.iframe
                                 src={mapUrl}
                                 width="100%"
-                                height="450"
+                                height="500"
                                 className="rounded-lg mt-4 shadow-lg"
                                 allowFullScreen
                                 title="Property Location"
@@ -472,6 +466,8 @@ const PropertyDetail = () => {
         </div>
     );
 };
+
+
 // Helper component to render each detail item
 const DetailItem = ({ icon, label, value }) => (
     <div className="flex items-center mb-2">
