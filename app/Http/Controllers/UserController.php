@@ -14,7 +14,7 @@ class UserController extends Controller
         $jwt = $request->header('Authorization');
         $key = env('JWT_SECRET');
 
-        //removing 'Bearer ' from the token string
+        // Removing 'Bearer ' from the token string
         if (strpos($jwt, 'Bearer ') === 0) {
             $jwt = substr($jwt, 7);
         }
@@ -22,7 +22,12 @@ class UserController extends Controller
         try {
             $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 
-            //fetching user by ID from decoded token
+            // Check if token is expired
+            if ($decoded->exp < time()) {
+                return response()->json(['error' => 'Token expired'], 401);
+            }
+
+            // Fetching user by ID from decoded token
             $user = User::find($decoded->sub);
 
             if (!$user) {

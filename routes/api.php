@@ -35,6 +35,8 @@ Route::post('/upload', [ImageController::class, 'upload']);
 Route::post('/roommates', [RoommateController::class, 'store']);
 Route::post('/pg_listings', [PgListingController::class, 'store']);
 Route::get('/userDetail', [UserController::class, 'decodeToken']);
+Route::middleware('auth:api')->post('/update-profile', [RegisterController::class, 'updateProfile']);
+
 Route::get('user/{userId}/ads', [AdsController::class, 'getUserAds']);
 Route::put('/property/{id}/{listingType}', [PropertyController::class, 'updateProperty']);
 Route::delete('/property/{listingType}/{id}', [PropertyController::class, 'deleteProperty']);

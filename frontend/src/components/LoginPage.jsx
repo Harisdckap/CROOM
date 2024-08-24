@@ -33,9 +33,14 @@ function LoginPage() {
             if (response && response.success) {
                 if (response.access_token) {
                     const { access_token } = response;
-
+                    const now = new Date();
                     // Store the token in localStorage
                     localStorage.setItem("auth_token", access_token);
+                    const expirationTime = now.getTime() + 24 * 60 * 60 * 1000;
+                    localStorage.setItem(
+                        "auth_token_expiration",
+                        expirationTime
+                    );
 
                     // Redirect to home page
                     navigate("/");
