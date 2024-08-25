@@ -17,8 +17,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import HomeNavBar from "../Header";
 import { CustomNextArrow, CustomPrevArrow } from "./ArrowComponent";
-import SocialShare from './ShareBtn';
-
+import SocialShare from "./ShareBtn";
 
 import wifi from "../../assets/wifi.png";
 import fridge from "../../assets/fridge.png";
@@ -37,8 +36,6 @@ import College_student from "../../assets/college_student.jpg";
 import pure_vegetarian from "../../assets/pure_vegetarian.jpg";
 import working_night_shift from "../../assets/working_night_shift.webp";
 import men from "../../assets/men.jpg";
-
-
 
 const PropertyDetail = () => {
     const { id, location, listingType } = useParams();
@@ -82,11 +79,11 @@ const PropertyDetail = () => {
         "Swimming pool": swiming_pool,
         Gym: gym,
         Parking: parking,
-        "Working full time":working_full_time,
-        "College student":College_student,
-        "25+ age":men,
-        "Working night shift":working_night_shift,
-        "Pure vegetarian":pure_vegetarian,
+        "Working full time": working_full_time,
+        "College student": College_student,
+        "25+ age": men,
+        "Working night shift": working_night_shift,
+        "Pure vegetarian": pure_vegetarian,
     };
     let locationData = {};
 
@@ -100,29 +97,55 @@ const PropertyDetail = () => {
             locationData = { city: "Unknown Location", district: "" };
         }
     }
-    
-    const city = (typeof locationData.city === "string" && locationData.city.trim()) || "Unknown City";
-    const district = (typeof locationData.district === "string" && locationData.district.trim()) || "Unknown District";
-    const street = (typeof locationData.street === "string" && locationData.street.trim()) || "Unknown Street";
-    const doorNo = (typeof locationData.doorNo === "string" && locationData.doorNo.trim()) || "Unknown Door No";
-    const state = (typeof locationData.state === "string" && locationData.state.trim()) || "Unknown State";
-    const pinCode = (typeof locationData.pinCode === "string" && locationData.pinCode.trim()) || "000000";
-    const country = (typeof locationData.country === "string" && locationData.country.trim()) || "Unknown Country";
-    
-    // console.log(street);
-    // console.log(doorNo);
-    
+
+    const city =
+        (typeof locationData.city === "string" && locationData.city.trim()) ||
+        "Unknown City";
+    const district =
+        (typeof locationData.district === "string" &&
+            locationData.district.trim()) ||
+        "Unknown District";
+        const area =  (typeof locationData.area === "string" &&
+            locationData.area.trim()) ||
+        "Unknown District";
+    const street =
+        (typeof locationData.street === "string" &&
+            locationData.street.trim()) ||
+        "Unknown Street";
+    const doorNo =
+        (typeof locationData.doorNo === "string" &&
+            locationData.doorNo.trim()) ||
+        "Unknown Door No";
+    const state =
+        (typeof locationData.state === "string" && locationData.state.trim()) ||
+        "Unknown State";
+    const pinCode =
+        (typeof locationData.pin === "string" &&
+            locationData.pin.trim()) ||
+        "000000";
+    const country =
+        (typeof locationData.country === "string" &&
+            locationData.country.trim()) ||
+        "Unknown Country";
+
+   
+
     if (!property) {
         return <p>Loading property details...</p>;
     }
-    
+
     // Encode the location details into a URI component
-    const location_name = encodeURIComponent(`${doorNo} ${street}, ${district}, ${city}, ${state} ${pinCode}, ${country}`);
-    const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
+    const location_name = encodeURIComponent(
+        `${doorNo} ${street} ${area} ${district} ${city} ${state} ${pinCode} ${country}`
+    );
+
+    console.log(location_name);
     
+    const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
+
     // console.log(mapUrl);
 
-    console.log(location_name)
+    console.log(location_name);
 
     const renderPropertyDetails = (type) => {
         switch (type) {
@@ -329,13 +352,12 @@ const PropertyDetail = () => {
                                 transition={{ duration: 1 }}
                             ></motion.iframe>
                         )}
-                              <div className="social-share mt-6">
-                        <SocialShare
-                            url={`http://localhost:3000/property/${property.id}`}
-                            title={property.title}
-                        />
-                       </div>
-                      
+                        <div className="social-share mt-6">
+                            <SocialShare
+                                url={`http://localhost:3000/property/${property.id}`}
+                                title={property.title}
+                            />
+                        </div>
                     </motion.div>
 
                     {/* Details Section */}
@@ -348,8 +370,6 @@ const PropertyDetail = () => {
                         <h1 className="text-4xl font-extrabold mb-4 text-gray-800 gradient-text">
                             {property.title || property.pg_name}
                         </h1>
-
-                   
 
                         <div className="grid  gap-4 text-gray-800">
                             {/* Render specific property details */}
@@ -460,13 +480,10 @@ const PropertyDetail = () => {
                         </div>
                     </motion.div>
                 </div>
-              
             </motion.div>
-            
         </div>
     );
 };
-
 
 // Helper component to render each detail item
 const DetailItem = ({ icon, label, value }) => (

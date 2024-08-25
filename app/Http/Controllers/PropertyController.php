@@ -193,7 +193,7 @@ class PropertyController extends Controller
 
 
 
-    public function updateProperty(Request $request, $listingType, $id)
+    public function updateProperty(Request $request, $id,$listingType)
     {
         // Define validation rules based on the listing type
         switch ($listingType) {
@@ -237,7 +237,7 @@ class PropertyController extends Controller
                 $property = PgListing::where('id', $id)->first();
                 break;
 
-            case 'rooms':
+            case 'room':
                 $validatedData = $request->validate([
                     'user_id' => 'required|exists:users,id',
                     'title' => 'required|string|max:255',

@@ -10,7 +10,7 @@ import "../../slider.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NoPropertiesFound from "../RentPageComponent/NoPropertyFound";
-
+import Loader from "./Loader";
 
 const PropertyPage = () => {
     const navigate = useNavigate();
@@ -19,10 +19,22 @@ const PropertyPage = () => {
     const [search, setSearch] = useState(searchParams.get("address") || "");
     const [gender, setGender] = useState(searchParams.get("gender") || "all");
     const [sortOrder, setSortOrder] = useState(searchParams.get("sort") || "ASC");
+    const [loading, setLoading] = useState(true);
+
     // const toastShownRef = useRef(false); // Use useRef to keep track of toast display
 
+
+
     useEffect(() => {
-        fetchListings();
+        const fetchListingsWithDelay = async () => {
+            setLoading(true);  // Start loading
+            await fetchListings();
+            setTimeout(() => {
+                setLoading(false);  // Stop loading after 2 seconds
+            }, 1000);
+        };
+
+        fetchListingsWithDelay();
     }, [searchParams]);
 
     const fetchListings = async () => {
@@ -227,15 +239,19 @@ const PropertyPage = () => {
             setListingType={setListingType}
             onSortChange={handleSortChange}
           />
-          <div className="flex justify-center mt-6">
-            {listings.length === 0 ? (
-              <NoPropertiesFound />
-            ) : (
-              <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {listings.map(renderListing)}
-              </div>
-            )}
-          </div>
+<div className="flex justify-center mt-6">
+    {loading ? (  // Show loader if loading
+        <Loader />  // Use the Loader component here
+    ) : (
+        listings.length === 0 ? (
+            <NoPropertiesFound />
+        ) : (
+            <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {listings.map((listing, index) => renderListing(listing, index))}
+            </div>
+        )
+    )}
+</div>
           <ToastContainer />
         </div>
       );

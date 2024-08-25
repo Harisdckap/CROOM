@@ -13,6 +13,7 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
     const [childrenDrawer, setChildrenDrawer] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [selectedAd, setSelectedAd] = useState(null);
+    const [fileList, setFileList] = useState([]);
     const [ads, setAds] = useState({
         roommates: [],
         pg_listings: [],
@@ -27,14 +28,50 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                 const response = await axios.get(
                     `http://127.0.0.1:8000/api/user/${userId}/ads`
                 );
-                setAds(response.data);
+                const adsData = response.data;
+                setAds(adsData);
+                // console.log("hii",selectedAd.photos);
+                
+    
+                // Parsing photos after adsData is set
+                if (selectedAd.photos) {
+                    try {
+                        const parsedPhotos = JSON.parse(selectedAd.photos);
+                        // console.log(parsedPhotos);
+                        
+                        const initialFileList = parsedPhotos.map(
+                            (photo, index) => ({
+                                uid: index, // Unique ID for each file
+                                name: `Photo ${index + 1}`,
+                                url: photo, // Ensure URL is correctly set
+                                status: "done", // Status to indicate file is already uploaded
+                            })
+                        );
+                        setFileList(initialFileList);
+                    } catch (error) {
+                        console.error("Failed to parse photos:", error);
+                    }
+                }
             } catch (error) {
                 console.error("Error fetching user ads:", error);
             }
         };
-
+    
         fetchAds();
     }, [userId]);
+
+    const handleUpload = ({ fileList }) => {
+        const updatedFileList = fileList.map((file) => {
+            if (!file.url && file.originFileObj) {
+                const fileUrl = URL.createObjectURL(file.originFileObj);
+                return { ...file, url: fileUrl };
+            }
+            return file;
+        });
+        setFileList(updatedFileList);
+    };
+
+
 
     const parseLocation = (location) => {
         try {
@@ -84,6 +121,8 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
     };
 
     const handleFormSubmit = async (values) => {
+        console.log(values);
+        
         try {
             const location = JSON.stringify({
                 doorNo: values.address1.split(",")[0] || "",
@@ -94,7 +133,8 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                 pin: values.pincode || "",
                 country: values.country || "",
             });
-
+         console.log(values);
+         
             const formData = new FormData();
             formData.append("title", values.title);
             formData.append("price", values.price);
@@ -104,19 +144,17 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
             formData.append("occupancy", values.occupancy);
             formData.append("location", location);
             formData.append("listing_type", values.listing_type);
-            formData.append(
-                "highlighted_features",
-                values.highlighted_features.join(",")
-            );
+            formData.append("highlighted_features", values.highlighted_features.join(","));
             formData.append("amenities", values.amenities.join(","));
             formData.append("description", values.description);
-
+            formData.append("user_id",  localStorage.getItem("user_id"));
+    
             if (values.images && values.images.length > 0) {
                 values.images.forEach((file) => {
                     formData.append("images[]", file.originFileObj);
                 });
             }
-
+    
             await axios.put(
                 `http://127.0.0.1:8000/api/property/${selectedAd.id}/${selectedAd.listing_type}`,
                 formData,
@@ -126,15 +164,16 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                     },
                 }
             );
-
+    
             toast.success("Ad updated successfully!");
             setEditModalVisible(false);
-            fetchAds();
+            fetchAds(); // Refresh the ads list after successful submission
         } catch (error) {
             console.error("Error updating ad:", error);
             toast.error("Error updating ad. Please try again.");
         }
     };
+    
     const handleDelete = async (adId, listingType) => {
         // Optimistically remove the ad from UI
         setAds((prevAds) => ({
@@ -281,6 +320,7 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                                 .address1,
                             address2: parseLocation(selectedAd.location)
                                 .address2,
+                            images: fileList,
                         }}
                         onValuesChange={handleFormChange}
                         onFinish={handleFormSubmit}
@@ -461,16 +501,20 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                             ]}
                         >
                             <Upload
-                                listType="picture"
+                                listType="photo"
                                 beforeUpload={() => false}
+                                onChange={handleUpload}
                                 multiple
                                 maxCount={5}
+                                fileList={fileList}
                             >
                                 <Button icon={<UploadOutlined />}>
                                     Upload
                                 </Button>
                             </Upload>
                         </Form.Item>
+
+              
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 Update Ad
