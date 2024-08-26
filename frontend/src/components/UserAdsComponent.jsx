@@ -119,11 +119,11 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
     const handleFormChange = (changedValues, allValues) => {
         setFormData(allValues);
     };
-
     const handleFormSubmit = async (values) => {
-        console.log(values);
+        console.log("Form values:", values);
         
         try {
+            // Construct location object
             const location = JSON.stringify({
                 doorNo: values.address1.split(",")[0] || "",
                 street: values.address1.split(",")[1] || "",
@@ -133,28 +133,37 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                 pin: values.pincode || "",
                 country: values.country || "",
             });
-         console.log(values);
-         
+    console.log(values)
+            console.log("Constructed location:", location);
+            const userId = localStorage.getItem("user_id");
             const formData = new FormData();
-            formData.append("title", values.title);
-            formData.append("price", values.price);
-            formData.append("room_type", values.room_type);
-            formData.append("contact", values.contact);
-            formData.append("looking_for_gender", values.looking_for_gender);
-            formData.append("occupancy", values.occupancy);
+            formData.append("user_id", userId);
+            formData.append("title", values.title || "");
+            formData.append("price", values.price || "");
+            formData.append("room_type", values.room_type || "");
+            formData.append("contact", values.contact || "");
+            formData.append("looking_for_gender", values.looking_for_gender || "");
+            formData.append("occupancy", values.occupancy || "");
             formData.append("location", location);
-            formData.append("listing_type", values.listing_type);
-            formData.append("highlighted_features", values.highlighted_features.join(","));
-            formData.append("amenities", values.amenities.join(","));
-            formData.append("description", values.description);
-            formData.append("user_id",  localStorage.getItem("user_id"));
+            formData.append("listing_type", values.listing_type || "");
+            formData.append("highlighted_features", values.highlighted_features.join(",") || "");
+            formData.append("amenities", values.amenities.join(",") || "");
+            formData.append("description", values.description || "");
+            
     
+            // Handle images
             if (values.images && values.images.length > 0) {
                 values.images.forEach((file) => {
                     formData.append("images[]", file.originFileObj);
                 });
             }
     
+            // Log the formData content
+            for (const [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+    
+            // Make the API call to update the property
             await axios.put(
                 `http://127.0.0.1:8000/api/property/${selectedAd.id}/${selectedAd.listing_type}`,
                 formData,

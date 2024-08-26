@@ -11,6 +11,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NoPropertiesFound from "../RentPageComponent/NoPropertyFound";
 import Loader from "./Loader";
+import Footer from "../../components/Footer";
 
 const PropertyPage = () => {
     const navigate = useNavigate();
@@ -229,31 +230,38 @@ const PropertyPage = () => {
 
     return (
         <div>
-          <HomeNavBar />
-          <Navbar
-            search={search}
-            onSearchChange={handleSearchChange}
-            onSearchSubmit={handleSearchSubmit}
-            gender={gender}
-            onGenderChange={handleGenderChange}
-            setListingType={setListingType}
-            onSortChange={handleSortChange}
-          />
-<div className="flex justify-center mt-6">
-    {loading ? (  // Show loader if loading
-        <Loader />  // Use the Loader component here
+  <HomeNavBar />
+  <Navbar
+    search={search}
+    onSearchChange={handleSearchChange}
+    onSearchSubmit={handleSearchSubmit}
+    gender={gender}
+    onGenderChange={handleGenderChange}
+    setListingType={setListingType}
+    onSortChange={handleSortChange}
+  />
+
+  <div className="flex justify-center mt-6">
+    {loading ? (
+      <Loader />  // Show loader if loading
     ) : (
-        listings.length === 0 ? (
-            <NoPropertiesFound />
-        ) : (
-            <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {listings.map((listing, index) => renderListing(listing, index))}
-            </div>
-        )
-    )}
-</div>
-          <ToastContainer />
+      listings.length === 0 ? (
+        <NoPropertiesFound />
+      ) : (
+        <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+          {/* Added mb-12 to create space between the listings and the footer */}
+          {listings.map((listing, index) => renderListing(listing, index))}
         </div>
+      )
+    )}
+  </div>
+
+  <ToastContainer />
+  
+  {/* Add padding or margin to the footer */}
+  <Footer/>
+</div>
+
       );
 };
 

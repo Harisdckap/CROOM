@@ -9,6 +9,8 @@ use App\Models\PgListing;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class PropertyController extends Controller
 {
@@ -196,6 +198,9 @@ class PropertyController extends Controller
     public function updateProperty(Request $request, $id,$listingType)
     {
         // Define validation rules based on the listing type
+        // Log::info('Received Request Data:', $request->all());
+
+        //  return $request->all();
         switch ($listingType) {
             
             case 'roommates':
@@ -256,6 +261,7 @@ class PropertyController extends Controller
                 ]);
 
                 $property = Rooms::where('id', $id)->first();
+                return response()->json(['request' => $request->all()]);
                 break;
 
             default:
@@ -272,4 +278,53 @@ class PropertyController extends Controller
 
         return response()->json(['message' => 'Property updated successfully', 'property' => $property]);
     }
+
+
+    public function getNearbyProperties($listingType, $propertyId, Request $request)
+    {
+        // Dynamically select the correct model based on listing type
+        $propertyModel = $this->getModelByListingType($listingType);
+    
+        if (!$propertyModel) {
+            return response()->json(['error' => 'Invalid listing type'], 400);
+        }
+    
+        // Get latitude and longitude from the request
+        $latitude = $request->query('latitude');
+        $longitude = $request->query('longitude');
+    
+        if (!$latitude || !$longitude) {
+            return response()->json(['error' => 'Latitude and longitude are required'], 400);
+        }
+    
+        // Query to get nearby properties within a radius (e.g., 10 km)
+        $nearbyProperties = $propertyModel::selectRaw("*, ( 6371 * acos( cos( radians(?) ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance", [$latitude, $longitude, $latitude])
+            ->having('distance', '<', 10) // Example: radius of 10 km
+            ->orderBy('distance')
+            ->get();
+    
+        return response()->json(['data' => $nearbyProperties]);
+    }
+    
+    /**
+     * Get the model class based on the listing type.
+     *
+     * @param string $listingType
+     * @return string|null
+     */
+    private function getModelByListingType($listingType)
+    {
+        switch ($listingType) {
+            case 'room':
+                return Rooms::class;
+            case 'pg':
+                return PgListing::class;
+            case 'roommate':
+                return Roommate::class;
+            default:
+                return null;
+        }
+    }
+    
+    
 }

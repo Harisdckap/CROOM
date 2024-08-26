@@ -1,42 +1,87 @@
-import React from 'react';
-import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
+import React from "react";
+import logo from "../assets/logo.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white py-8">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center">
-          <div className="text-sm">
-            <p className="mb-2">© 2024 Room Sharing. All rights reserved.</p>
-            <p className="mb-2">
-              <a href="/privacy-policy" className="hover:underline">
-                Privacy Policy
+    <footer className="bg-blue-100 text-gray-700 p-8 ">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Logo and Address Section */}
+        <div>
+          <img src={logo} alt="Croom Logo" className="h-10 mb-4" />
+          <h3 className="font-bold text-lg">Corporate Office</h3>
+          <p className="mt-2">
+            No. 1190, 22nd Cross, <br />
+            HSR Layout, Sector 3 <br />
+            Bangalore, Karnataka <br />
+            India - 560102
+          </p>
+        </div>
+
+        {/* Company Information */}
+        <div>
+          <h3 className="font-bold text-lg">Company Information</h3>
+          <ul className="mt-2 space-y-2">
+            <li><a href="#careers" className="hover:text-blue-600">Careers</a></li>
+            <li><a href="#contact" className="hover:text-blue-600">Contact Us</a></li>
+            <li><a href="#blog" className="hover:text-blue-600">Blog</a></li>
+            <li><a href="#faqs" className="hover:text-blue-600">FAQs</a></li>
+            <li><a href="#privacy" className="hover:text-blue-600">Privacy Policy</a></li>
+            <li><a href="#terms" className="hover:text-blue-600">T&C</a></li>
+            <li><a href="#disclaimers" className="hover:text-blue-600">Disclaimers</a></li>
+            <li><a href="#how-it-works" className="hover:text-blue-600">How it Works</a></li>
+            <li><a href="#list-property" className="hover:text-blue-600">List Your Property</a></li>
+            <li><a href="#sitemap" className="hover:text-blue-600">Sitemap</a></li>
+          </ul>
+        </div>
+
+        {/* Contact and Social Media */}
+        <div>
+          <h3 className="font-bold text-lg">Contact Us</h3>
+          <p className="mt-2">
+            <span>📞 +91 8884518010</span> <br />
+            <span>✉️ info@croomapp.com</span>
+          </p>
+          <div className="mt-4">
+            <h3 className="font-bold text-lg">Stay In Touch</h3>
+            <div className="flex space-x-4 mt-2">
+              {/* Social Media Icons */}
+              <a href="#facebook" className="hover:text-blue-600">
+                <i className="fab fa-facebook"></i> {/* Add FontAwesome or SVG icon */}
               </a>
-              {' | '}
-              <a href="/terms-of-service" className="hover:underline">
-                Terms of Service
+              <a href="#youtube" className="hover:text-blue-600">
+                <i className="fab fa-youtube"></i>
               </a>
-            </p>
+              <a href="#linkedin" className="hover:text-blue-600">
+                <i className="fab fa-linkedin"></i>
+              </a>
+              <a href="#instagram" className="hover:text-blue-600">
+                <i className="fab fa-instagram"></i>
+              </a>
+            </div>
           </div>
-          <div className="flex space-x-4">
-            <a
-              href="https://facebook.com"
-              className="text-white hover:text-blue-500 transition-colors duration-300"
-            >
-              <FaFacebook size={24} />
-            </a>
-            <a
-              href="https://twitter.com"
-              className="text-white hover:text-blue-300 transition-colors duration-300"
-            >
-              <FaTwitter size={24} />
-            </a>
-            <a
-              href="https://instagram.com"
-              className="text-white hover:text-pink-500 transition-colors duration-300"
-            >
-              <FaInstagram size={24} />
-            </a>
+          {/* App Store Links */}
+          <div className="mt-6">
+            <h3 className="font-bold text-lg">Download the Croom App</h3>
+            <div className="flex space-x-4 mt-2">
+  {/* Apple App Store */}
+  <a href="https://www.apple.com/app-store/" target="_blank" rel="noopener noreferrer">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/6/67/App_Store_%28iOS%29.svg"
+      alt="App Store"
+      className="h-8"
+    />
+  </a>
+  
+  {/* Google Play Store */}
+  <a href="https://play.google.com/store" target="_blank" rel="noopener noreferrer">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+      alt="Google Play"
+      className="h-8"
+    />
+  </a>
+</div>
+
           </div>
         </div>
       </div>

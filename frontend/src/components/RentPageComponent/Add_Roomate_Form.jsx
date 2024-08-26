@@ -65,18 +65,14 @@ const AddRequirement = () => {
         "Working night shift",
         "Pure vegetarian",
     ];
-    
-
     const allAmenities = [
         "WiFi",
-        "Air Conditioning",
-        "Heating",
-        "Hot Water",
-        "Refrigerator",
-        "Microwave",
+          "Fridge",
+          "Kitchen",
+        "Air Condition",
+        "Washing_machine",
     ];
-
-
+   
     const locationAdd = `${PIN} ${address_1} ${address_2} ${state}`;
 
     const handleFileChange = (e) => {

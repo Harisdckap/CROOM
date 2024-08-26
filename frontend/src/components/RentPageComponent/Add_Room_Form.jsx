@@ -15,7 +15,7 @@ const AddRoomForm = () => {
         contact: "",
         looking_for_gender: "any",
         looking_for: "Roommate",
-        ocgicupancy: "",
+        occupancy: "Single Occupancy",
         photos: [],
         highlighted_features: [],
         amenities: [],
@@ -61,20 +61,22 @@ const AddRoomForm = () => {
     const allHighlightedFeatures = [
         "Attached Bathroom",
         "Balcony",
-        "Air conditioning",
         "Swimming pool",
         "Gym",
         "Parking",
     ];
-    
+   
+ 
+   
+
     const allAmenities = [
         "WiFi",
-        "Air Conditioning",
-        "Heating",
-        "Hot Water",
-        "Refrigerator",
-        "Microwave",
+          "Fridge",
+          "Kitchen",
+        "Air Condition",
+        "Washing_machine",
     ];
+   
 
     console.log(formData);
     console.log(formData.ocgicupancy);
@@ -162,7 +164,7 @@ const AddRoomForm = () => {
             showToast("Room type is required");
             return false;
         }
-        if (!formData.ocgicupancy) {
+        if (!formData.occupancy) {
             showToast("ocgicupancy is required");
             return false;
         }

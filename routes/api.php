@@ -38,8 +38,9 @@ Route::get('/userDetail', [UserController::class, 'decodeToken']);
 Route::middleware('auth:api')->post('/update-profile', [RegisterController::class, 'updateProfile']);
 
 Route::get('user/{userId}/ads', [AdsController::class, 'getUserAds']);
-Route::put('/property/{id}/{listingType}', [PropertyController::class, 'updateProperty']);
+Route::put('/property/{id}/{listing_type}', [PropertyController::class, 'updateProperty']);
 Route::delete('/property/{listingType}/{id}', [PropertyController::class, 'deleteProperty']);
 Route::post('/change-password/{userId}', [RegisterController::class, 'changePassword']);
 Route::post('/{listing_type}/{id}/toggle-favourite', [FavouriteController::class, 'toggleFavourite']);
 Route::get('/user/{id}/favourites', [FavouriteController::class, 'getFavourites']);
+Route::get('/nearby-properties/{listingType}/{propertyId}', [PropertyController::class, 'getNearbyProperties']);

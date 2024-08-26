@@ -50,19 +50,18 @@ const Add_PG = () => {
     const allHighlightedFeatures = [
         "Attached Bathroom",
         "Balcony",
-        "Air conditioning",
         "Swimming pool",
         "Gym",
         "Parking",
     ];
     const allAmenities = [
         "WiFi",
-        "Air Conditioning",
-        "Heating",
-        "Hot Water",
-        "Refrigerator",
-        "Microwave",
+          "Fridge",
+          "Kitchen",
+        "Air Condition",
+        "Washing_machine",
     ];
+   
 
 
     const handleFeatureClick = (feature) => {

@@ -18,14 +18,15 @@ import "slick-carousel/slick/slick-theme.css";
 import HomeNavBar from "../Header";
 import { CustomNextArrow, CustomPrevArrow } from "./ArrowComponent";
 import SocialShare from "./ShareBtn";
+import Footer from "../../components/Footer";
+// import MapComponent from "./MapComponet";
 
+// Amenities and Features Images
 import wifi from "../../assets/wifi.png";
 import fridge from "../../assets/fridge.png";
 import air_conditioner from "../../assets/air_conditioner.png";
 import kitchen from "../../assets/kitchen.png";
 import washingMachine from "../../assets/washing_machine.png";
-
-// features
 import swiming_pool from "../../assets/swiming_pool.jpeg";
 import balcony from "../../assets/balcony.png";
 import parking from "../../assets/parking.png";
@@ -40,26 +41,93 @@ import men from "../../assets/men.jpg";
 const PropertyDetail = () => {
     const { id, location, listingType } = useParams();
     const [property, setProperty] = useState(null);
+    const [nearbyProperties, setNearbyProperties] = useState([]);
+    const [LocationData, setLocationData] = useState({});
+    const [coordinates, setCoordinates] = useState({
+        latitude: null,
+        longitude: null,
+    });
+    const [error, setError] = useState(null);
 
     useEffect(() => {
+        const fetchProperty = async () => {
+            try {
+                const response = await axios.get(
+                    `http://127.0.0.1:8000/api/property/${id}/${encodeURIComponent(
+                        location.trim()
+                    )}/${listingType}`
+                );
+                setProperty(response.data.data);
+            } catch (error) {
+                console.error("Error fetching property:", error);
+            }
+        };
+
         fetchProperty();
     }, [id, location, listingType]);
 
-    const fetchProperty = async () => {
-        try {
-            const cleanLocation = location.trim();
-            const encodedId = encodeURIComponent(id);
-            const encodedLocation = encodeURIComponent(cleanLocation);
-            const encodedListingType = encodeURIComponent(listingType);
-
-            const response = await axios.get(
-                `http://127.0.0.1:8000/api/property/${encodedId}/${encodedLocation}/${encodedListingType}`
-            );
-            setProperty(response.data.data);
-        } catch (error) {
-            console.error("Error fetching property:", error);
+    useEffect(() => {
+        if (property && property.location) {
+            try {
+                const locationData = JSON.parse(property.location);
+                setLocationData(locationData);
+            } catch (error) {
+                console.error("Failed to parse location data:", error);
+                setLocationData({ city: "Unknown Location", district: "" });
+            }
         }
-    };
+    }, [property]);
+
+    useEffect(() => {
+        const fetchGeolocation = async () => {
+            try {
+                const apiKey = "4910c63061b247788f30a03631e1acbf";
+                const location_name = `${doorNo} ${street}, ${area}, ${city}, ${state} ${pinCode}, ${country}`
+                const geoapifyUrl = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
+                    location_name
+                )}&apiKey=${apiKey}`;
+
+                const response = await axios.get(geoapifyUrl);
+                // console.log(response);
+                
+
+                if (
+                    response.data.features &&
+                    response.data.features.length > 0
+                ) {
+                    const { lat, lon } = response.data.features[0].properties;
+                    setCoordinates({ latitude: lat, longitude: lon });
+                    console.log(lat,lon);
+                    fetchNearbyProperties(lat,lon);
+                    
+                } else {
+                    setError("No geolocation data found for the address.");
+                }
+            } catch (error) {
+                setError("Error fetching geolocation data.");
+                console.error("Geoapify Error:", error);
+            }
+        };
+
+        const fetchNearbyProperties = async (latitude, longitude) => {
+            try {
+                const response = await axios.get(
+                    `http://127.0.0.1:8000/api/nearby-properties/${property.listing_type}/${property.id}`,
+                    {
+                        params: { latitude, longitude },
+                    }
+                );
+                setNearbyProperties(response.data.data);
+            } catch (error) {
+                console.error("Error fetching nearby properties:", error);
+                setError("Error fetching nearby properties.");
+            }
+        };
+
+        if (property && LocationData) {
+            fetchGeolocation();
+        }
+    }, [property, LocationData]);
 
     if (!property) {
         return <p>Loading property details...</p>;
@@ -85,63 +153,57 @@ const PropertyDetail = () => {
         "Working night shift": working_night_shift,
         "Pure vegetarian": pure_vegetarian,
     };
-    let locationData = {};
-
-    if (property && property.location) {
-        try {
-            const outerData = JSON.parse(property.location);
-            locationData = JSON.parse(outerData);
-            console.log(locationData);
-        } catch (error) {
-            console.error("Failed to parse location data:", error);
-            locationData = { city: "Unknown Location", district: "" };
-        }
-    }
 
     const city =
-        (typeof locationData.city === "string" && locationData.city.trim()) ||
+        (typeof LocationData.city === "string" && LocationData.city.trim()) ||
         "Unknown City";
     const district =
-        (typeof locationData.district === "string" &&
-            locationData.district.trim()) ||
+        (typeof LocationData.district === "string" &&
+            LocationData.district.trim()) ||
         "Unknown District";
-        const area =  (typeof locationData.area === "string" &&
-            locationData.area.trim()) ||
+    const area =
+        (typeof LocationData.area === "string" && LocationData.area.trim()) ||
         "Unknown District";
     const street =
-        (typeof locationData.street === "string" &&
-            locationData.street.trim()) ||
+        (typeof LocationData.street === "string" &&
+            LocationData.street.trim()) ||
         "Unknown Street";
     const doorNo =
-        (typeof locationData.doorNo === "string" &&
-            locationData.doorNo.trim()) ||
+        (typeof LocationData.doorNo === "string" &&
+            LocationData.doorNo.trim()) ||
         "Unknown Door No";
     const state =
-        (typeof locationData.state === "string" && locationData.state.trim()) ||
+        (typeof LocationData.state === "string" && LocationData.state.trim()) ||
         "Unknown State";
     const pinCode =
-        (typeof locationData.pin === "string" &&
-            locationData.pin.trim()) ||
+        (typeof LocationData.pin === "string" && LocationData.pin.trim()) ||
         "000000";
     const country =
-        (typeof locationData.country === "string" &&
-            locationData.country.trim()) ||
+        (typeof LocationData.country === "string" &&
+            LocationData.country.trim()) ||
         "Unknown Country";
-
-   
 
     if (!property) {
         return <p>Loading property details...</p>;
     }
 
-    // Encode the location details into a URI component
-    const location_name = encodeURIComponent(
-        `${doorNo} ${street} ${area} ${district} ${city} ${state} ${pinCode} ${country}`
-    );
+    //     // Encode the location details into a URI component and replace %20 with +
+    //     const location_name = `${doorNo} ${street}, ${area}, ${city}, ${state} ${pinCode}, ${country}`
+    //     .replace(/\s+/g, '+');  // Replace all spaces with '+'
 
-    console.log(location_name);
-    
+    //   // Construct the Google Maps URL
+    // //   const mapUrl = `https://www.google.com/maps?q=${location_name}&output=embed`;
+
+    const location_name =
+        `${doorNo} ${street}, ${area}, ${city}, ${state} ${pinCode}, ${country}`.replace(
+            /\s+/g,
+            "+"
+        );
+
     const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
+    console.log(location_name);
+
+    // const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
 
     // console.log(mapUrl);
 
@@ -479,8 +541,33 @@ const PropertyDetail = () => {
                             </p>
                         </div>
                     </motion.div>
-                </div>
+                    {/* NearMe Location */}
+                    <div className="nearby-properties">
+                        <h2>Nearby Properties</h2>
+                        {nearbyProperties.length ? (
+                            <ul>
+                                {nearbyProperties.map((nearby, index) => (
+                                    <li key={index}>
+                                        <Link
+                                            to={`/property/${
+                                                nearby.id
+                                            }/${encodeURIComponent(
+                                                nearby.location
+                                            )}/${nearby.listing_type}`}
+                                        >
+                                            <h3>{nearby.title}</h3>
+                                            <p>{nearby.description}</p>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No nearby properties found.</p>
+                        )}
+                    </div>
+                </div>{" "}
             </motion.div>
+            <Footer />
         </div>
     );
 };

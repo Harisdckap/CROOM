@@ -45,12 +45,16 @@ class FavouriteController extends Controller
 
     public function getFavourites($userId)
     {
-
-        $pgListings = PgListing::where('is_favourite', 1)->where('id', $userId)->get();
-        $rooms = Rooms::where('is_favourite', 1)->where('id', $userId)->get();
-        $roommates = Roommate::where('is_favourite', 1)->where('id', $userId)->get();
+        // Assuming you have a 'user_id' column in your listings tables
+        $pgListings = PgListing::where('is_favourite', 1)->where('user_id', $userId)->get();
+        $rooms = Rooms::where('is_favourite', 1)->where('user_id', $userId)->get();
+        $roommates = Roommate::where('is_favourite', 1)->where('user_id', $userId)->get();
+    
+        // Merging all collections together
         $favourites = $pgListings->merge($rooms)->merge($roommates);
+    
         return response()->json(['data' => $favourites]);
     }
+    
 
 }
