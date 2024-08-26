@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Tooltip } from "react-tooltip";
 import { useNavigate, Link } from "react-router-dom";
 import { RotatingLines } from "react-loader-spinner";
 import img from "../assets/reg.png";
 import { register } from "../js/api/auth";
-import { EyeOutlined, EyeInvisibleOutlined, CheckOutlined } from "@ant-design/icons";
-import Auth_navbar from "./RentPageComponent/Auth_navbar";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import Auth_navbar from "./RentPageComponent/Auth_navbar"; // Ensure the correct import path
 
 const Register = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -62,14 +60,7 @@ const Register = () => {
                 }
             } catch (error) {
                 console.error("Registration error:", error);
-                if (error.response && error.response.status === 409) {
-                    setServerError(
-                        error.response.data.message &&
-                            "Email is already registered. Please log in."
-                    );
-                } else {
-                    setServerError("Registration failed. Please try again.");
-                }
+                setServerError("Registration failed. Please try again.");
                 setLoading(false);
             }
         } else {
@@ -87,49 +78,28 @@ const Register = () => {
         if (!data.gender) errors.gender = "Gender is required";
         if (!data.mobile.trim()) errors.mobile = "Phone number is required";
         else if (data.mobile.length !== 10)
-            errors.mobile = "Phone must be 10 number";
+            errors.mobile = "Phone number must be 10 digits";
         if (!data.password.trim()) errors.password = "Password is required";
-        else if (data.password.length < 8 || !/[A-Z]/.test(data.password) || !/[0-9]/.test(data.password) || !/[!@#$%^&*]/.test(data.password))
-            console.log(errors.password = "It is not strong password");
-        // else if (!/[A-Z]/.test(data.password))
-        //     console.log(errors.password = "Password must contain at least one uppercase letter");
-        // else if (!/[0-9]/.test(data.password))
-        //     console.log(errors.password = "Password must contain at least one number");
-        // else if (!/[!@#$%^&*]/.test(data.password))
-        //     console.log(errors.password = "Password must contain at least one special character");
-        if (!data.password_confirmation.trim())
-            errors.password_confirmation = "Confirm Password is required";
-        else if (data.password !== data.password_confirmation)
+        else if (data.password.length < 8)
+            errors.password = "Password must be at least 8 characters long";
+        if (data.password !== data.password_confirmation)
             errors.password_confirmation = "Passwords do not match";
 
         return errors;
     };
-
-    // password tooltip
-    useEffect(() => {
-        if (formData.password && !errors.password) {
-            setIsTooltipOpen(false);
-        } else if (formData.password && errors.password) {
-            setIsTooltipOpen(true);
-        } else {
-            setIsTooltipOpen(false);
-        }
-    }, [formData.password, errors.password]);
 
     return (
         <div
             className="min-h-screen"
             style={{ backgroundColor: "rgb(31, 41, 59)" }}
         >
-            {/* loader */}
+            {/* Loader */}
             {loading && (
                 <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
                     <RotatingLines
                         height="98"
                         width="98"
                         color="blue"
-                        wrapperStyle={{}}
-                        wrapperClass=""
                         visible={true}
                         ariaLabel="rotating-lines-loading"
                         strokeWidth="3"
@@ -138,11 +108,11 @@ const Register = () => {
                     />
                 </div>
             )}
-            {/* navbar */}
+            {/* Navbar */}
             <Auth_navbar />
 
             <div className="main flex flex-grow items-center justify-center">
-                <div className="bg-gray-100 relative top-20 rounded-md max-w-3xl flex">
+                <div className="bg-gray-100 mt-3 mb-3 rounded-md w-3xl flex">
                     <div className="w-1/2 flex items-center justify-between">
                         <img className="w-full h-auto" src={img} alt="house" />
                     </div>
@@ -151,49 +121,42 @@ const Register = () => {
                             <h1 className="text-center text-2xl font-bold">
                                 Create your account
                             </h1>
-                            {/* servererror */}
+                            {/* Server Error */}
                             {serverError && (
                                 <div className="bg-red-300 rounded-sm p-1 text-center text-red-500">
                                     {serverError}
                                 </div>
                             )}
-
-                            {/* registration form */}
+                            {/* Registration Form */}
                             <form onSubmit={handleSubmit} autoComplete="off">
-                                {/* username */}
+                                {/* Username */}
                                 <div className="mb-3">
-                                    {errors.name && (
-                                        <div className="text-red-500 ml-52 text-sm fixed">
-                                            {errors.name}
-                                        </div>
-                                    )}
                                     <label
                                         htmlFor="name"
-                                        className="block text-sm mt-4 font-medium text-gray-700"
+                                        className="block text-sm font-medium text-gray-700"
                                     >
                                         Username:
                                     </label>
                                     <input
                                         type="text"
-                                        className={`mt-1 block w-full p-1 border ${
-                                            errors.name
+                                        className={`mt-1 block w-full p-1 border ${errors.name
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded-md`}
+                                            } rounded-md`}
                                         name="name"
                                         id="name"
                                         placeholder="Username"
                                         value={formData.name}
                                         onChange={handleChange}
                                     />
-                                </div>
-                                {/* email */}
-                                <div className="mb-3">
-                                    {errors.email && (
-                                        <div className="text-red-500 fixed ml-60 text-sm">
-                                            {errors.email}
+                                    {errors.name && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.name}
                                         </div>
                                     )}
+                                </div>
+                                {/* Email */}
+                                <div className="mb-3">
                                     <label
                                         htmlFor="email"
                                         className="block text-sm font-medium text-gray-700"
@@ -202,19 +165,23 @@ const Register = () => {
                                     </label>
                                     <input
                                         type="email"
-                                        className={`mt-1 block w-full p-1 border ${
-                                            errors.email
+                                        className={`mt-1 block w-full p-1 border ${errors.email
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded-md`}
+                                            } rounded-md`}
                                         name="email"
                                         id="email"
                                         placeholder="Email"
                                         value={formData.email}
                                         onChange={handleChange}
                                     />
+                                    {errors.email && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.email}
+                                        </div>
+                                    )}
                                 </div>
-                                {/* gender */}
+                                {/* Gender */}
                                 <fieldset className="mb-3 flex items-center gap-4">
                                     <label className="block text-sm font-medium text-gray-700">
                                         Gender:
@@ -223,11 +190,10 @@ const Register = () => {
                                         <label className="inline-flex items-center">
                                             <input
                                                 type="radio"
-                                                className={`form-radio ${
-                                                    errors.gender
+                                                className={`form-radio ${errors.gender
                                                         ? "text-red-500"
                                                         : ""
-                                                }`}
+                                                    }`}
                                                 name="gender"
                                                 value="male"
                                                 checked={
@@ -240,11 +206,10 @@ const Register = () => {
                                         <label className="inline-flex items-center ml-4">
                                             <input
                                                 type="radio"
-                                                className={`form-radio ${
-                                                    errors.gender
+                                                className={`form-radio ${errors.gender
                                                         ? "text-red-500"
                                                         : ""
-                                                }`}
+                                                    }`}
                                                 name="gender"
                                                 value="female"
                                                 checked={
@@ -261,13 +226,8 @@ const Register = () => {
                                         </div>
                                     )}
                                 </fieldset>
-                                {/* phone number */}
+                                {/* Phone Number */}
                                 <div className="mb-3">
-                                    {errors.mobile && (
-                                        <div className="text-red-500 fixed ml-44 text-sm">
-                                            {errors.mobile}
-                                        </div>
-                                    )}
                                     <label
                                         htmlFor="mobile"
                                         className="block text-sm font-medium text-gray-700"
@@ -276,25 +236,24 @@ const Register = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        className={`mt-1 block w-full p-1 border ${
-                                            errors.mobile
+                                        className={`mt-1 block w-full p-1 border ${errors.mobile
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded-md`}
+                                            } rounded-md`}
                                         name="mobile"
                                         id="mobile"
                                         placeholder="Phone Number"
                                         value={formData.mobile}
                                         onChange={handleChange}
                                     />
-                                </div>
-                                {/* password */}
-                                <div className="mb-3 relative">
-                                    {errors.password && (
-                                        <div className="text-red-500 fixed ml-44 text-sm">
-                                            {errors.password}
+                                    {errors.mobile && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.mobile}
                                         </div>
                                     )}
+                                </div>
+                                {/* Password */}
+                                <div className="mb-3 relative">
                                     <label
                                         htmlFor="password"
                                         className="block text-sm font-medium text-gray-700"
@@ -303,67 +262,48 @@ const Register = () => {
                                     </label>
                                     <input
                                         type={showPassword ? "text" : "password"}
-                                        className={`mt-1 block w-full p-1 border ${
-                                            errors.password
+                                        className={`mt-1 block w-full p-1 border ${errors.password
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded-md`}
+                                            } rounded-md`}
                                         name="password"
                                         id="password"
                                         placeholder="Password"
                                         value={formData.password}
                                         onChange={handleChange}
-                                        onFocus={() => setIsTooltipOpen(true)}
-                                        onBlur={() => setIsTooltipOpen(false)}
+                                        autoComplete="off"
                                     />
-                                    <span
-                                        className="absolute top-10 right-2 transform -translate-y-1/2 cursor-pointer"
+                                    <p
+                                        className="absolute top-8 right-3 cursor-pointer"
                                         onClick={() =>
                                             setShowPassword(!showPassword)
                                         }
+                                        id="eye"
                                     >
                                         {showPassword ? (
-                                            <EyeOutlined />
+                                            <EyeOutlined
+                                                style={{
+                                                    fontSize: "18px",
+                                                    color: "gray",
+                                                }}
+                                            />
                                         ) : (
-                                            <EyeInvisibleOutlined />
+                                            <EyeInvisibleOutlined
+                                                style={{
+                                                    fontSize: "18px",
+                                                    color: "gray",
+                                                }}
+                                            />
                                         )}
-                                    </span>
-                                    {isTooltipOpen && errors.password && (
-                                        <Tooltip
-                                            anchorId="password"
-                                            place="right"
-                                            variant="info"
-                                            className="tooltip-style"
-                                            isOpen={isTooltipOpen}
-                                            closeOnMouseLeave={false}
-                                        >
-                                            <div>
-                                                Password must contain:
-                                                <ul className="list-disc ml-4">
-                                                    <li>
-                                                        At least 8 characters
-                                                    </li>
-                                                    <li>
-                                                        At least one uppercase
-                                                        letter
-                                                    </li>
-                                                    <li>At least one number</li>
-                                                    <li>
-                                                        At least one special
-                                                        character
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </Tooltip>
-                                    )}
-                                </div>
-                                {/* confirm password */}
-                                <div className="mb-3 relative">
-                                    {errors.password_confirmation && (
-                                        <div className="text-red-500 fixed ml-40 text-sm">
-                                            {errors.password_confirmation}
+                                    </p>
+                                    {errors.password && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.password}
                                         </div>
                                     )}
+                                </div>
+                                {/* Password Confirmation */}
+                                <div className="mb-3 relative">
                                     <label
                                         htmlFor="password_confirmation"
                                         className="block text-sm font-medium text-gray-700"
@@ -371,56 +311,49 @@ const Register = () => {
                                         Confirm Password:
                                     </label>
                                     <input
-                                        type={
-                                            showConfirmPassword
-                                                ? "text"
-                                                : "password"
-                                        }
-                                        className={`mt-1 block w-full p-1 border ${
-                                            errors.password_confirmation
+                                        type={showPassword ? "text" : "password"}
+                                        className={`mt-1 block w-full p-1 border ${errors.password_confirmation
                                                 ? "border-red-500"
                                                 : "border-gray-300"
-                                        } rounded-md`}
+                                            } rounded-md`}
                                         name="password_confirmation"
                                         id="password_confirmation"
                                         placeholder="Confirm Password"
                                         value={formData.password_confirmation}
                                         onChange={handleChange}
+                                        autoComplete="off"
                                     />
-                                    <span
-                                        className="absolute top-10 right-2 transform -translate-y-1/2 cursor-pointer"
-                                        onClick={() =>
-                                            setShowConfirmPassword(
-                                                !showConfirmPassword
-                                            )
-                                        }
-                                    >
-                                        {showConfirmPassword ? (
-                                            <EyeOutlined />
-                                        ) : (
-                                            <EyeInvisibleOutlined />
-                                        )}
-                                    </span>
+                                    {errors.password_confirmation && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.password_confirmation}
+                                        </div>
+                                    )}
                                 </div>
+                                {/* Submit Button */}
                                 <button
                                     type="submit"
-                                    className="bg-blue-500 text-white py-2 px-4 rounded-md w-full mt-4"
+                                    className="bg-blue-500 text-white py-2 px-4 rounded mt-3 w-full"
+                                    disabled={loading}
                                 >
                                     Register
                                 </button>
-                                <div className="mt-4 text-center">
-                                    <Link
-                                        to="/login"
-                                        className="text-blue-500"
-                                    >
-                                        Already have an account? Log in
-                                    </Link>
-                                </div>
                             </form>
+                            <div className="mt-3 text-center">
+                                <span className="text-gray-600">
+                                    Already have an account?
+                                </span>
+                                <Link
+                                    className="text-blue-500 hover:text-blue-700 ml-1"
+                                    to="/login"
+                                >
+                                    Login here
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <Tooltip id="eye" />
         </div>
     );
 };

@@ -14,10 +14,7 @@ import PropertyPage from "./components/RentPageComponent/property";
 import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
 import PlanPage from "./components/RentPageComponent/PlanPage";
 import Profile from "./components/User";
-// import UserAds from "./components/UserAdsomponent";
-import UserAds from "./components/UserAds";
-import CountryDropdown from "./components/RentPageComponent/CountryDropdown";
-// import UserAdsPage from "./components/RentPageComponent/UserAdsPage";
+import UserAds from "./components/UserAdsomponent";
 
 function App() {
     return (
