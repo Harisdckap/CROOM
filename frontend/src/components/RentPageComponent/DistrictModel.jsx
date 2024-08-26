@@ -13,7 +13,7 @@ const DistrictModal = ({ isOpen, onClose, districts, onSelectDistrict }) => {
                 >
                     <XCircleIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
-                <h2 className="text-3xl font-bold mb-6 gradient-text animate-slideUpFadeIn">Select a Popular City in India</h2>
+                <h2 className="text-3xl font-bold mb-6 gradient-text animate-slideUpFadeIn">Select a Popular City in Tamil Nadu</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 h-96 overflow-y-scroll">
                     {districts.map((district) => (
                         <button

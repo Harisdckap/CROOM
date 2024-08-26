@@ -296,7 +296,7 @@ const Profile = () => {
                             </button>
                             {showPopup && (
                                 <div className="fixed inset-0 flex items-center justify-center">
-                                    <div className="bg-white p-6 rounded-lg shadow-lg dark:bg-gray-800">
+                                    <div className="bg-white  p-6 rounded-lg shadow-lg dark:bg-gray-800">
                                         <h2 className="text-lg font-semibold mb-4 dark:text-white">
                                             Change Password
                                         </h2>

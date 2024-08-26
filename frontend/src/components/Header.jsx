@@ -18,37 +18,38 @@ const Header = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("auth_token");
-        setIsLoggedIn(!!token);
+        setIsLoggedIn(!!token); // Check if token exists
     }, []);
-
+    
     const onLogout = async () => {
         const token = localStorage.getItem("auth_token");
-
+    
         if (token) {
             try {
                 const response = await axios.post(
                     "http://127.0.0.1:8000/api/logout",
-                    {},
+                    {}, // Body content (empty for logout)
                     {
                         headers: {
                             "Content-Type": "application/json",
-                            Authorization: `Bearer ${token}`,
+                            Authorization: `Bearer ${token}`, // Attach Bearer token in headers
                         },
                     }
                 );
-
+    
                 if (response.status === 200) {
-                    localStorage.removeItem("auth_token");
-                    setIsLoggedIn(false);
-                    navigate("/login");
+                    localStorage.removeItem("auth_token"); // Remove token from local storage
+                    setIsLoggedIn(false); // Update state
+                    navigate("/login"); // Navigate to login page
                 } else {
                     console.error("Logout failed");
                 }
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error:", error); // Handle error case
             }
         }
     };
+    
 
     const handleMyAdsClick = () => {
         setDrawerOpen(true);

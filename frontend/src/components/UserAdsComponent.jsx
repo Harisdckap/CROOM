@@ -4,74 +4,50 @@ import axios from "axios";
 import DetailsUserAdsComponents from "./DetailsUserAdsComponents";
 import "../index.css";
 import { UploadOutlined } from "@ant-design/icons";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import EditAdsComponent from "./EditAdsComponent";
 
 const { Option } = Select;
 
 const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
+    const [open, setOpen] = useState(false);
     const [childrenDrawer, setChildrenDrawer] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [selectedAd, setSelectedAd] = useState(null);
-    const [fileList, setFileList] = useState([]);
-    const [ads, setAds] = useState({
-        roommates: [],
-        pg_listings: [],
-        rooms: [],
-    });
-    const userId = localStorage.getItem("user_id");
+    const [ads, setAds] = useState({ roommates: [], pg_listings: [], rooms: [] });
+    const userId = localStorage.getItem('user_id');
     const [formData, setFormData] = useState(null);
 
     useEffect(() => {
         const fetchAds = async () => {
             try {
-                const response = await axios.get(
-                    `http://127.0.0.1:8000/api/user/${userId}/ads`
-                );
-                const adsData = response.data;
-                setAds(adsData);
-                // console.log("hii",selectedAd.photos);
-                
-    
-                // Parsing photos after adsData is set
-                if (selectedAd.photos) {
-                    try {
-                        const parsedPhotos = JSON.parse(selectedAd.photos);
-                        // console.log(parsedPhotos);
-                        
-                        const initialFileList = parsedPhotos.map(
-                            (photo, index) => ({
-                                uid: index, // Unique ID for each file
-                                name: `Photo ${index + 1}`,
-                                url: photo, // Ensure URL is correctly set
-                                status: "done", // Status to indicate file is already uploaded
-                            })
-                        );
-                        setFileList(initialFileList);
-                    } catch (error) {
-                        console.error("Failed to parse photos:", error);
-                    }
-                }
+                const response = await axios.get(`http://127.0.0.1:8000/api/user/${userId}/ads`);
+                const ads=response.data
+                setAds(response.data);
+
+                ads.rooms = ads.rooms.map(ad => ({
+                    ...ad,
+                    highlighted_features: ad.highlighted_features ? ad.highlighted_features.split(", ") : [],
+                    amenities: ad.amenities ? ad.amenities.split(", ") : [],
+                }));
+
+                ads.roommates = ads.roommates.map(ad => ({
+                    ...ad,
+                    highlighted_features: ad.highlighted_features ? ad.highlighted_features.split(", ") : [],
+                    amenities: ad.amenities ? ad.amenities.split(", ") : [],
+                }));
+
+                ads.pg_listings = ads.pg_listings.map(ad => ({
+                    ...ad,
+                    highlighted_features: ad.highlighted_features ? ad.highlighted_features.split(", ") : [],
+                    amenities: ad.amenities ? ad.amenities.split(", ") : [],
+                }));
             } catch (error) {
                 console.error("Error fetching user ads:", error);
             }
         };
-    
+
         fetchAds();
     }, [userId]);
-
-    const handleUpload = ({ fileList }) => {
-        const updatedFileList = fileList.map((file) => {
-            if (!file.url && file.originFileObj) {
-                const fileUrl = URL.createObjectURL(file.originFileObj);
-                return { ...file, url: fileUrl };
-            }
-            return file;
-        });
-        setFileList(updatedFileList);
-    };
-
-
 
     const parseLocation = (location) => {
         try {
@@ -99,31 +75,37 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                 address2: "Unknown",
                 state: "Unknown",
                 pincode: "Unknown",
-                country: "Unknown",
+                country: "Unknown"
             };
         }
     };
-
     const showChildrenDrawer = (ad) => {
-        const { address1, address2, state, pincode, country } = parseLocation(
-            ad.location
-        );
-        setSelectedAd({ ...ad, address1, address2, state, pincode, country });
+        setSelectedAd(ad);
         setChildrenDrawer(true);
-    };
 
+        const { address1, address2, state, pincode, country } = parseLocation(ad.location);
+        setSelectedAd({ ...ad, address1, address2, state, pincode, country });
+    };
     const onChildrenDrawerClose = () => setChildrenDrawer(false);
     const showEditModal = () => setEditModalVisible(true);
     const handleEditModalCancel = () => setEditModalVisible(false);
-
     const handleFormChange = (changedValues, allValues) => {
         setFormData(allValues);
     };
+
+    const printFormData = (formData) => {
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                console.log(`${key}: ${value.name} (${value.size} bytes)`);
+            } else {
+                console.log(`${key}: ${value}`);
+            }
+        }
+    };
+
     const handleFormSubmit = async (values) => {
-        console.log("Form values:", values);
-        
         try {
-            // Construct location object
+            const userId = localStorage.getItem('user_id');
             const location = JSON.stringify({
                 doorNo: values.address1.split(",")[0] || "",
                 street: values.address1.split(",")[1] || "",
@@ -131,88 +113,55 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                 city: values.address2 || "",
                 state: values.state || "",
                 pin: values.pincode || "",
-                country: values.country || "",
+                country: values.country || ""
             });
-    console.log(values)
-            console.log("Constructed location:", location);
-            const userId = localStorage.getItem("user_id");
-            const formData = new FormData();
-            formData.append("user_id", userId);
-            formData.append("title", values.title || "");
-            formData.append("price", values.price || "");
-            formData.append("room_type", values.room_type || "");
-            formData.append("contact", values.contact || "");
-            formData.append("looking_for_gender", values.looking_for_gender || "");
-            formData.append("occupancy", values.occupancy || "");
-            formData.append("location", location);
-            formData.append("listing_type", values.listing_type || "");
-            formData.append("highlighted_features", values.highlighted_features.join(",") || "");
-            formData.append("amenities", values.amenities.join(",") || "");
-            formData.append("description", values.description || "");
-            
     
-            // Handle images
+            const highlightedFeaturesArray = typeof values.highlighted_features === 'string'
+                ? values.highlighted_features.split(",").map(feature => feature.trim())
+                : values.highlighted_features || [];
+            const amenitiesArray = typeof values.amenities === 'string'
+                ? values.amenities.split(",").map(amenity => amenity.trim())
+                : values.amenities || [];
+    
+            const formData = new FormData();
+            formData.append('title', values.title);
+            formData.append('price', values.price);
+            formData.append('room_type', values.room_type);
+            formData.append('contact', values.contact);
+            formData.append('looking_for_gender', values.looking_for_gender);
+            formData.append('occupancy', values.occupancy);
+            formData.append('location', location);
+            formData.append('listing_type', 'room');  // Set this explicitly
+            formData.append('highlighted_features', JSON.stringify(highlightedFeaturesArray));
+            formData.append('amenities', JSON.stringify(amenitiesArray));
+            formData.append('description', values.description);
+            formData.append('user_id', userId);
+    
             if (values.images && values.images.length > 0) {
-                values.images.forEach((file) => {
-                    formData.append("images[]", file.originFileObj);
+                values.images.forEach(file => {
+                    formData.append('photos[]', file.originFileObj);  // Use 'photos[]'
                 });
             }
     
-            // Log the formData content
-            for (const [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
-            }
+            const response = await axios.put(`http://127.0.0.1:8000/api/property/${selectedAd.id}/${selectedAd.listing_type}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
     
-            // Make the API call to update the property
-            await axios.put(
-                `http://127.0.0.1:8000/api/property/${selectedAd.id}/${selectedAd.listing_type}`,
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
-            );
-    
-            toast.success("Ad updated successfully!");
+            console.log("Ad updated successfully:", response.data);
             setEditModalVisible(false);
-            fetchAds(); // Refresh the ads list after successful submission
+            fetchAds();
         } catch (error) {
             console.error("Error updating ad:", error);
-            toast.error("Error updating ad. Please try again.");
         }
     };
     
-    const handleDelete = async (adId, listingType) => {
-        // Optimistically remove the ad from UI
-        setAds((prevAds) => ({
-            ...prevAds,
-            [listingType]: prevAds[listingType]
-                ? prevAds[listingType].filter((ad) => ad.id !== adId)
-                : [],
-        }));
 
-        try {
-            const response = await axios.delete(
-                `http://127.0.0.1:8000/api/property/${listingType}/${adId}`
-            );
-            console.log("Response data:", response.data);
-
-            // Show success toast and close drawers
-            toast.success("Ad deleted successfully!");
-            onChildrenDrawerClose();
-            closeDrawer();
-        } catch (error) {
-            console.error("Error deleting ad:", error);
-            setAds((prevAds) => ({
-                ...prevAds,
-                [listingType]: [...prevAds[listingType], { id: adId }],
-            }));
-            toast.error("Failed to delete ad. Please try again.");
-        }
-    };
-
-    const normFile = (e) => (Array.isArray(e) ? e : e?.fileList);
+    const normFile = (e) => {
+        console.log('Upload event:', e);
+        return Array.isArray(e) ? e : e?.fileList;
+      };
 
     return (
         <>
@@ -230,24 +179,12 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                         <p>No room ads found.</p>
                     ) : (
                         ads.rooms.map((ad) => (
-                            <Card
-                                key={ad.id}
-                                className="w-full mb-4"
-                                onClick={() => showChildrenDrawer(ad)}
-                            >
+                            <Card key={ad.id} className="w-full mb-4" onClick={() => showChildrenDrawer(ad)}>
                                 <div className="flex flex-wrap justify-between">
-                                    <h3 className="text-base font-bold">
-                                        Title: {ad.title}
-                                    </h3>
-                                    <h3 className="text-base font-bold">
-                                        Price: {ad.price}
-                                    </h3>
-                                    <h3 className="text-base font-bold">
-                                        Room Type: {ad.room_type}
-                                    </h3>
-                                    <h3 className="text-base font-bold">
-                                        Type: {ad.listing_type}
-                                    </h3>
+                                    <h3 className="text-base font-bold">Title: {ad.title}</h3>
+                                    <h3 className="text-base font-bold">Price: {ad.price}</h3>
+                                    <h3 className="text-base font-bold">Room Type: {ad.room_type}</h3>
+                                    <h3 className="text-base font-bold">Type: {ad.listing_type}</h3>
                                 </div>
                             </Card>
                         ))
@@ -256,24 +193,12 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                         <p>No roommates ads found.</p>
                     ) : (
                         ads.roommates.map((ad) => (
-                            <Card
-                                key={ad.id}
-                                className="w-full mb-4"
-                                onClick={() => showChildrenDrawer(ad)}
-                            >
+                            <Card key={ad.id} className="w-full mb-4" onClick={() => showChildrenDrawer(ad)}>
                                 <div className="flex flex-wrap justify-between">
-                                    <h3 className="text-base font-bold">
-                                        Title: {ad.title}
-                                    </h3>
-                                    <h3 className="text-base font-bold">
-                                        Price: {ad.approx_rent}
-                                    </h3>
-                                    <h3 className="text-base font-bold">
-                                        Room Type: {ad.room_type}
-                                    </h3>
-                                    <h3 className="text-base font-bold">
-                                        Type: {ad.listing_type}
-                                    </h3>
+                                    <h3 className="text-base font-bold">Title: {ad.title}</h3>
+                                    <h3 className="text-base font-bold">Price: {ad.approx_rent}</h3>
+                                    <h3 className="text-base font-bold">Room Type: {ad.room_type}</h3>
+                                    <h3 className="text-base font-bold">Type: {ad.listing_type}</h3>
                                 </div>
                             </Card>
                         ))
@@ -282,24 +207,12 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                         <p>No PG listings found.</p>
                     ) : (
                         ads.pg_listings.map((ad) => (
-                            <Card
-                                key={ad.id}
-                                className="w-full mb-4"
-                                onClick={() => showChildrenDrawer(ad)}
-                            >
+                            <Card key={ad.id} className="w-full mb-4" onClick={() => showChildrenDrawer(ad)}>
                                 <div className="flex flex-wrap justify-between">
-                                    <h3 className="text-base font-bold">
-                                        Title: {ad.pg_name}
-                                    </h3>
-                                    <h3 className="text-base font-bold">
-                                        Price: {ad.occupancy_amount}
-                                    </h3>
-                                    <h3 className="text-base font-bold">
-                                        Room Type: {ad.pg_type}
-                                    </h3>
-                                    <h3 className="text-base font-bold">
-                                        Type: {ad.listing_type}
-                                    </h3>
+                                    <h3 className="text-base font-bold">Title: {ad.pg_name}</h3>
+                                    <h3 className="text-base font-bold">Price: {ad.occupancy_amount}</h3>
+                                    <h3 className="text-base font-bold">Room Type: {ad.pg_type}</h3>
+                                    <h3 className="text-base font-bold">Type: {ad.listing_type}</h3>
                                 </div>
                             </Card>
                         ))
@@ -310,9 +223,18 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                     open={childrenDrawer}
                     onClose={onChildrenDrawerClose}
                     showEditModal={showEditModal}
-                    handleDelete={handleDelete}
                 />
             </Drawer>
+
+            {/* <EditAdsComponent
+                visible = {editModalVisible}
+                onCancel = {handleEditModalCancel}
+                onSubmit = {handleFormSubmit}
+                selectedAd = {selectedAd}
+                handleFormChange={handleFormChange}
+                normFile={(e)=>(Array.isArray(e) ? e : e?.fileList)}
+                parseLocation={parseLocation}
+            /> */}
 
             <Modal
                 title="Edit Ad"
@@ -321,15 +243,14 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                 footer={null}
                 zIndex={1200}
             >
+                {/* console.log(selectedAd); */}
+
                 {selectedAd && (
                     <Form
                         initialValues={{
                             ...selectedAd,
-                            address1: parseLocation(selectedAd.location)
-                                .address1,
-                            address2: parseLocation(selectedAd.location)
-                                .address2,
-                            images: fileList,
+                            address1: parseLocation(selectedAd.location).address1,
+                            address2: parseLocation(selectedAd.location).address2,
                         }}
                         onValuesChange={handleFormChange}
                         onFinish={handleFormSubmit}
@@ -337,197 +258,181 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                         <Form.Item
                             name="title"
                             label="Title"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please enter the title",
-                                },
-                            ]}
+                            rules={[{ required: true, message: 'Please input the title!' }]}
                         >
-                            <Input placeholder="Enter title" />
+                            <Input />
                         </Form.Item>
+
                         <Form.Item
                             name="price"
                             label="Price"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please enter the price",
-                                },
-                            ]}
+                            rules={[{ required: true, message: 'Please input the price!' }]}
                         >
-                            <Input placeholder="Enter price" />
+                            <Input />
                         </Form.Item>
+
                         <Form.Item
                             name="room_type"
                             label="Room Type"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please select the room type",
-                                },
-                            ]}
+                            rules={[{ required: true, message: 'Please input the room type!' }]}
                         >
-                            <Select placeholder="Select room type">
-                                <Option value="Single">Single</Option>
-                                <Option value="Double">Double</Option>
-                                <Option value="Triple">Triple</Option>
+                            <Select>
+                                <Option value="1RK">1RK</Option>
+                                <Option value="1BHK">1BHK</Option>
+                                <Option value="2BHK">2BHK</Option>
                             </Select>
                         </Form.Item>
+
                         <Form.Item
                             name="contact"
                             label="Contact"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please enter the contact details",
-                                },
-                            ]}
+                            rules={[{ required: true, message: 'Please input the contact number!' }]}
                         >
-                            <Input placeholder="Enter contact details" />
+                            <Input type="tel" />
                         </Form.Item>
+
                         <Form.Item
                             name="address1"
-                            label="Address Line 1"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please enter the address",
-                                },
-                            ]}
+                            label="Address 1"
+                            rules={[{ required: true, message: 'Please input address 1!' }]}
                         >
-                            <Input placeholder="Enter address line 1" />
+                            <Input placeholder="example: door no, street, area" />
                         </Form.Item>
+
                         <Form.Item
                             name="address2"
-                            label="City"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please enter the city",
-                                },
-                            ]}
+                            label="Address 2"
+                            rules={[{ required: true, message: 'Please input address 2!' }]}
                         >
-                            <Input placeholder="Enter city" />
+                            <Input placeholder="example: city, district" />
                         </Form.Item>
+
                         <Form.Item
                             name="state"
                             label="State"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please enter the state",
-                                },
-                            ]}
+                            rules={[{ required: true, message: 'Please input the state!' }]}
                         >
-                            <Input placeholder="Enter state" />
+                            <Input />
                         </Form.Item>
-                        <Form.Item
-                            name="pincode"
-                            label="Pincode"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please enter the pincode",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="Enter pincode" />
-                        </Form.Item>
+
                         <Form.Item
                             name="country"
                             label="Country"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please enter the country",
-                                },
-                            ]}
+                            rules={[{ required: true, message: 'Please input the country!' }]}
                         >
-                            <Input placeholder="Enter country" />
+                            <Input />
                         </Form.Item>
+
                         <Form.Item
-                            name="highlighted_features"
-                            label="Highlighted Features"
-                            rules={[
-                                {
-                                    required: true,
-                                    message:
-                                        "Please enter highlighted features",
-                                },
-                            ]}
+                            name="pincode"
+                            label="PIN Code"
+                            rules={[{ required: true, message: 'Please input the PIN code!' }]}
                         >
-                            <Select
-                                mode="multiple"
-                                placeholder="Select highlighted features"
-                            >
-                                <Option value="Feature1">Feature 1</Option>
-                                <Option value="Feature2">Feature 2</Option>
-                                <Option value="Feature3">Feature 3</Option>
+                            <Input type="number" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="listing_type"
+                            label="Listing Type"
+                            rules={[{ required: true, message: 'Please select the listing type!' }]}
+                        >
+                            <Select>
+                                <Option value="room">Rooms</Option>
+                                <Option value="roommates">Roommates</Option>
+                                <Option value="pg">PG</Option>
                             </Select>
                         </Form.Item>
+                        <Form.Item
+                            name="looking_for_gender"
+                            label="Gender"
+                            rules={[{ required: true, message: 'Please select the listing type!' }]}
+                        >
+                            <Select>
+                                <Option value="room">Male</Option>
+                                <Option value="roommates">Female</Option>
+                                <Option value="pg">Any</Option>
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            name="looking_for"
+                            label="Looking"
+                            // rules={[{ required: true, message: 'Please select the listing type!' }]}
+                        >
+                            <Input value="Roommates" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="highlighted_features"
+                            label="Features"
+                            rules={[{ required: true, message: 'Please select at least one feature!' }]}
+                        >
+                            <Select mode="multiple">
+                                <Option value="attached bathroom">Attached Bathroom</Option>
+                                <Option value="balcony">Balcony</Option>
+                                <Option value="swimming pool">Swimming Pool</Option>
+                                <Option value="gym">Gym</Option>
+                                <Option value="parking">Parking</Option>
+                            </Select>
+                        </Form.Item>
+
+
                         <Form.Item
                             name="amenities"
                             label="Amenities"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please select amenities",
-                                },
-                            ]}
+                            rules={[{ required: true, message: 'Please select at least one amenity!' }]}
                         >
-                            <Select
-                                mode="multiple"
-                                placeholder="Select amenities"
-                            >
-                                <Option value="Amenity1">Amenity 1</Option>
-                                <Option value="Amenity2">Amenity 2</Option>
-                                <Option value="Amenity3">Amenity 3</Option>
+                            <Select mode="multiple">
+                                <Option value="wifi">Wi-Fi</Option>
+                                <Option value="air condition">Air Condition</Option>
+                                <Option value="fridge">Fridge</Option>
+                                <Option value="kitchen">Kitchen</Option>
+                                <Option value="washing machine">Washing Machine</Option>
                             </Select>
                         </Form.Item>
                         <Form.Item
-                            name="description"
-                            label="Description"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please enter the description",
-                                },
-                            ]}
+                            name="occupancy"
+                            label="Occupancy"
+                            rules={[{ required: true, message: 'Please select at least one feature!' }]}
                         >
-                            <Input.TextArea placeholder="Enter description" />
+                            <Select mode="multiple">
+                                <Option value="bachelar">Bachelar</Option>
+                                <Option value="Family">Family</Option>
+
+                            </Select>
                         </Form.Item>
+
                         <Form.Item
-                            name="images"
+                            name="photos"
                             label="Upload Images"
-                            valuePropName="fileList"
                             getValueFromEvent={normFile}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please upload images",
-                                },
-                            ]}
+                            rules={[{ message: "Please upload at least one image" }]}
                         >
                             <Upload
-                                listType="photo"
+                                listType="picture"
+                                className="h-20 w-20 object-cover"
+                                multiple={true}
                                 beforeUpload={() => false}
-                                onChange={handleUpload}
-                                multiple
-                                maxCount={5}
-                                fileList={fileList}
+                                defaultFileList={selectedAd.photos ? JSON.parse(selectedAd.photos).map((photo, index) => ({
+                                    uid: index.toString(),
+                                    name: `Ad photo ${index}`,
+                                    status: 'done',
+                                    url: `http://127.0.0.1:8000/storage/${photo.replace("\\", "/")}`,
+                                })) : []}
                             >
-                                <Button icon={<UploadOutlined />}>
-                                    Upload
-                                </Button>
+                                <Button icon={<UploadOutlined />}>Click to upload</Button>
                             </Upload>
                         </Form.Item>
 
-              
+                        <Form.Item
+                            name="description"
+                            label="Description"
+                            rules={[{ message: 'Please input the description!' }]}
+                        >
+                            <Input.TextArea rows={4} />
+                        </Form.Item>
+
                         <Form.Item>
-                            <Button type="primary" htmlType="submit">
-                                Update Ad
-                            </Button>
+                            <Button type="primary" htmlType="submit">Save</Button>
                         </Form.Item>
                     </Form>
                 )}
@@ -537,3 +442,7 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
 };
 
 export default UserAdsComponent;
+
+
+
+

@@ -27,6 +27,7 @@ class RegisterController extends Controller
                 'message' => 'User already registered. Please login.'
             ], 409);
         }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -108,29 +109,30 @@ class RegisterController extends Controller
 
 
     
-    public function logout(Request $request)
-    {
-        try {
-            $token = $request->header('Authorization');
-            if ($token) {
-                JWTAuth::parseToken()->invalidate();
-                return response()->json([
-                    'success' => true,
-                    'message' => 'User logged out successfully.'
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Authorization token not found.'
-                ], 401);
-            }
-        } catch (\Exception $e) {
+public function logout(Request $request)
+{
+    try {
+        $token = str_replace('Bearer ', '', $request->header('Authorization')); // Extract token
+        if ($token) {
+            JWTAuth::parseToken()->invalidate(); // Invalidate the JWT token
+            return response()->json([
+                'success' => true,
+                'message' => 'User logged out successfully.'
+            ]);
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to log out, please try again.'
-            ], 500);
+                'message' => 'Authorization token not found.'
+            ], 401);
         }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to log out, please try again.'
+        ], 500);
     }
+}
+
 
 
     public function updateProfile(Request $request)

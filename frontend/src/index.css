@@ -15,6 +15,11 @@ html, body {
   -webkit-text-fill-color: transparent;
 }
 
+.primary-btn{
+    background-color: #1F293B;
+    color:white;
+}
+
 /* Custom scrollbar styling */
 /* ::-webkit-scrollbar {
   width: 4px;

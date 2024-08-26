@@ -69,8 +69,10 @@ const PropertyDetail = () => {
     useEffect(() => {
         if (property && property.location) {
             try {
-                const locationData = JSON.parse(property.location);
+                const innerparse = JSON.parse(property.location);
+                const locationData = JSON.parse(innerparse);
                 setLocationData(locationData);
+                // console.log("Parsed Location Data:", locationData);
             } catch (error) {
                 console.error("Failed to parse location data:", error);
                 setLocationData({ city: "Unknown Location", district: "" });
@@ -78,28 +80,34 @@ const PropertyDetail = () => {
         }
     }, [property]);
 
+    console.log(LocationData);
+
     useEffect(() => {
         const fetchGeolocation = async () => {
             try {
+                const { doorNo, street, area, city, state, pinCode, county } =
+                    LocationData;
+                const location_name = `${doorNo || ""} ${street || ""}, ${
+                    area || ""
+                }, ${city || ""}, ${state || ""} ${pinCode || ""}, ${
+                    county || ""
+                }`;
+                //   console.log(location_name);
+
                 const apiKey = "4910c63061b247788f30a03631e1acbf";
-                const location_name = `${doorNo} ${street}, ${area}, ${city}, ${state} ${pinCode}, ${country}`
                 const geoapifyUrl = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
                     location_name
                 )}&apiKey=${apiKey}`;
 
                 const response = await axios.get(geoapifyUrl);
-                // console.log(response);
-                
-
                 if (
                     response.data.features &&
                     response.data.features.length > 0
                 ) {
                     const { lat, lon } = response.data.features[0].properties;
                     setCoordinates({ latitude: lat, longitude: lon });
-                    console.log(lat,lon);
-                    fetchNearbyProperties(lat,lon);
-                    
+                    fetchNearbyProperties(lat, lon);
+                    // console.log(lat,lon);
                 } else {
                     setError("No geolocation data found for the address.");
                 }
@@ -113,9 +121,7 @@ const PropertyDetail = () => {
             try {
                 const response = await axios.get(
                     `http://127.0.0.1:8000/api/nearby-properties/${property.listing_type}/${property.id}`,
-                    {
-                        params: { latitude, longitude },
-                    }
+                    { params: { latitude, longitude } }
                 );
                 setNearbyProperties(response.data.data);
             } catch (error) {
@@ -187,27 +193,12 @@ const PropertyDetail = () => {
         return <p>Loading property details...</p>;
     }
 
-    //     // Encode the location details into a URI component and replace %20 with +
-    //     const location_name = `${doorNo} ${street}, ${area}, ${city}, ${state} ${pinCode}, ${country}`
-    //     .replace(/\s+/g, '+');  // Replace all spaces with '+'
-
-    //   // Construct the Google Maps URL
-    // //   const mapUrl = `https://www.google.com/maps?q=${location_name}&output=embed`;
-
     const location_name =
         `${doorNo} ${street}, ${area}, ${city}, ${state} ${pinCode}, ${country}`.replace(
             /\s+/g,
             "+"
         );
-
     const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
-    console.log(location_name);
-
-    // const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
-
-    // console.log(mapUrl);
-
-    console.log(location_name);
 
     const renderPropertyDetails = (type) => {
         switch (type) {
@@ -542,7 +533,7 @@ const PropertyDetail = () => {
                         </div>
                     </motion.div>
                     {/* NearMe Location */}
-                    <div className="nearby-properties">
+                    {/* <div className="nearby-properties">
                         <h2>Nearby Properties</h2>
                         {nearbyProperties.length ? (
                             <ul>
@@ -564,7 +555,7 @@ const PropertyDetail = () => {
                         ) : (
                             <p>No nearby properties found.</p>
                         )}
-                    </div>
+                    </div> */}
                 </div>{" "}
             </motion.div>
             <Footer />

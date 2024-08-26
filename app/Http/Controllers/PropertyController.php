@@ -18,7 +18,7 @@ class PropertyController extends Controller
     {
         $address = $request->input('address', '');
         $page = $request->input('p', 1);
-        $itemsPerPage = 9;
+        $itemsPerPage = 20;
         $type = $request->input('t', 'a');
         $gender = $request->input('gender', 'all');
         $sortOrder = $request->input('sort', 'ASC');
