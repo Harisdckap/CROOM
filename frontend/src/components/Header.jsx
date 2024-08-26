@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaHeart, FaUser } from "react-icons/fa";
+import { FaHeart, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import AddListingButton from "./AddListingBtn";
-// import MyFavPage from './RentPageComponent/MyFavPage';
+import UserAdsComponent from "./UserAdsComponent";
 
 const Header = () => {
     const [accountOpen, setAccountOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
 
     const toggleAccount = () => setAccountOpen(!accountOpen);
+    const toggleMenu = () => setMenuOpen(!menuOpen);
 
     useEffect(() => {
         const token = localStorage.getItem("auth_token");
@@ -47,21 +50,43 @@ const Header = () => {
         }
     };
 
+    const handleMyAdsClick = () => {
+        setDrawerOpen(true);
+        setAccountOpen(false);
+    };
+
+    const closeDrawer = () => {
+        setDrawerOpen(false);
+        setAccountOpen(true);
+    };
+
     return (
         <nav className="fixed top-0 z-[9999] w-full bg-white text-gray-900 p-2 border-b-2">
             <div className="container mx-auto flex items-center justify-between">
-                <div className="flex items-center space-x-10">
-                    <Link to="/">
-                        <img src={logo} alt="Logo" className="w-34 h-10" />
-                    </Link>
+                {/* Logo */}
+                <Link to="/">
+                    <img src={logo} alt="Logo" className="w-34 h-10" />
+                </Link>
+
+                {/* Hamburger Icon for Mobile */}
+                <div className="md:hidden flex items-center">
+                    <button onClick={toggleMenu}>
+                        {menuOpen ? (
+                            <FaTimes className="text-2xl text-blue-500" />
+                        ) : (
+                            <FaBars className="text-2xl text-blue-500" />
+                        )}
+                    </button>
                 </div>
-                <div className="flex items-center space-x-4">
+
+                {/* Menu Items */}
+                <div className={`md:flex items-center space-x-4 ${menuOpen ? "block" : "hidden"} md:block`}>
                     <div className="relative">
                         {isLoggedIn ? (
                             <>
                                 <button
                                     onClick={toggleAccount}
-                                    className=" text-blue-500 flex items-center"
+                                    className="text-blue-500 flex items-center"
                                 >
                                     <FaUser className="mr-1 text-blue-500" />
                                     My Account
@@ -80,7 +105,7 @@ const Header = () => {
                                     </svg>
                                 </button>
                                 {accountOpen && (
-                                    <div className="absolute left-2 top-8 w-40 text-center bg-zinc-100 p-2 shadow-md text-black rounded">
+                                    <div className="absolute -left-4 top-8 w-40 text-center bg-slate-100 p-2 shadow-md text-black rounded">
                                         <Link to="/profile">
                                             <a
                                                 href="#"
@@ -89,14 +114,12 @@ const Header = () => {
                                                 Profile
                                             </a>
                                         </Link>
-                                        <Link to="/my-ads">
-                                            <a
-                                                href="#"
-                                                className="block hover:bg-blue-300 rounded p-2"
-                                            >
-                                                My Ads
-                                            </a>
-                                        </Link>
+                                        <button
+                                            onClick={handleMyAdsClick}
+                                            className="block text-center hover:bg-blue-300 rounded p-2 w-full text-left"
+                                        >
+                                            My Ads
+                                        </button>
                                         <Link to="/my-fav">
                                             <a
                                                 href="#"
@@ -120,7 +143,7 @@ const Header = () => {
                                     to="/register"
                                     className="text-blue-500 hover:underline"
                                 >
-                                    Register /
+                                    Register
                                 </Link>
                                 <Link
                                     to="/login"
@@ -135,6 +158,8 @@ const Header = () => {
                     <AddListingButton />
                 </div>
             </div>
+
+            <UserAdsComponent drawerOpen={drawerOpen} closeDrawer={closeDrawer} />
         </nav>
     );
 };

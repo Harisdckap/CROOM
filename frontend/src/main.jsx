@@ -5,7 +5,7 @@ import App from './App'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-// import "../src/components/RentPageComponent/CountryDropdown"
+
 
 
 
@@ -14,8 +14,6 @@ import "slick-carousel/slick/slick-theme.css";
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />
-    /
-    {/* <CountryDropdown />  */}
   </React.StrictMode>,
 )
 

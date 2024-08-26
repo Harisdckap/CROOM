@@ -6,6 +6,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         'reference' => '04af60a60785b394c6a2d3be67f9be98d8a43e27',
 =======
         'reference' => '1d4c66c954589232b214ba46e7244309da313e8a',
@@ -23,6 +24,9 @@
 >>>>>>> d6bbb797d2a840153dd4070c777a9e1bc1d0ad16
 >>>>>>> 89b787823e552d7a0f2236a89d54dea01b4a3e5a
 >>>>>>> 79382a85fe44040c0f6a78df305bd65558c30cb6
+=======
+        'reference' => 'b7c188d5400cade489f0d867323b67dd21b58b36',
+>>>>>>> bcc87c1c18f9bd3a2f944eca20e5123d13d72859
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -422,6 +426,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             'reference' => '04af60a60785b394c6a2d3be67f9be98d8a43e27',
 =======
             'reference' => '1d4c66c954589232b214ba46e7244309da313e8a',
@@ -439,6 +444,9 @@
 >>>>>>> d6bbb797d2a840153dd4070c777a9e1bc1d0ad16
 >>>>>>> 89b787823e552d7a0f2236a89d54dea01b4a3e5a
 >>>>>>> 79382a85fe44040c0f6a78df305bd65558c30cb6
+=======
+            'reference' => 'b7c188d5400cade489f0d867323b67dd21b58b36',
+>>>>>>> bcc87c1c18f9bd3a2f944eca20e5123d13d72859
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -486,6 +494,15 @@
             'reference' => '61b87392d986dc49ad5ef64e75b1ff5fee24ef81',
             'type' => 'library',
             'install_path' => __DIR__ . '/../laravel/serializable-closure',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'laravel/telescope' => array(
+            'pretty_version' => 'v5.2.1',
+            'version' => '5.2.1.0',
+            'reference' => 'c3a794ae6e011c8410e4de7c49ddab079ab846b0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../laravel/telescope',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -831,8 +848,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '3.0.0',
-                1 => '1.0|2.0|3.0',
+                0 => '1.0|2.0|3.0',
+                1 => '3.0.0',
             ),
         ),
         'psr/simple-cache' => array(

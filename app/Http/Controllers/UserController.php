@@ -22,6 +22,11 @@ class UserController extends Controller
         try {
             $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
 
+            // Check if token is expired
+            if ($decoded->exp < time()) {
+                return response()->json(['error' => 'Token expired'], 401);
+            }
+
             // Fetching user by ID from decoded token
             $user = User::find($decoded->sub);
 

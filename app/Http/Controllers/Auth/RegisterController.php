@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -10,8 +10,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Models\OTPVerification;
-use App\Mail\OTPMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
+
 
 class RegisterController extends Controller
 {
@@ -72,7 +75,7 @@ class RegisterController extends Controller
     }
 
 
-    public function changePassword(Request $request,$userId)
+    public function changePassword(Request $request, $userId)
     {
 
         // Validate input fields
@@ -85,7 +88,7 @@ class RegisterController extends Controller
             return response()->json(['error' => 'Validation failed', 'messages' => $validator->errors()], 422);
         }
 
-        $user =User::find($userId);
+        $user = User::find($userId);
 
         if (!$user) {
             return response()->json(['error' => ' user not found'], 400);
@@ -102,6 +105,8 @@ class RegisterController extends Controller
 
         return response()->json(['message' => 'Password changed successfully']);
     }
+
+
 
     public function logout(Request $request)
     {
@@ -125,5 +130,49 @@ class RegisterController extends Controller
                 'message' => 'Failed to log out, please try again.'
             ], 500);
         }
+    }
+
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        // Validation rules
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'mobile' => 'required|string|max:10',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Update user profile
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->gender = $request->gender;
+        $user->mobile = $request->mobile;
+
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($user->photo) {
+                Storage::delete($user->photo);
+            }
+
+            // Store new photo
+            $photoPath = $request->file('photo')->store('profile_photos');
+            $user->photo = $photoPath;
+        }
+
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully.',
+            'user' => $user,
+        ], 200);
     }
 }

@@ -1,8 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
+
+import countryDataJSON from "../RentPageComponent/country JSON/countries+states.json";
+// import { FaT } from "react-icons/fa6";/
 
 const AddRequirement = () => {
     const [formData, setFormData] = useState({
@@ -18,7 +21,7 @@ const AddRequirement = () => {
         occupancy: "",
         number_of_people: "",
         amenities: [],
-        listing_type: "roommates", // Default value
+        listing_type: "roommates",
     });
 
     const [requirements, setRequirements] = useState([]);
@@ -28,7 +31,12 @@ const AddRequirement = () => {
     const [address_2, setaddress_2] = useState("");
     const [PIN, setPIN] = useState("");
     const [state, setstate] = useState("");
-    const [countryData, setcountryData] = useState("");
+    const [selectedState, setSelectedState] = useState("");
+    const [selectedCountry, setSelectedCountry] = useState("");
+
+    const handleCountryChange = (e) => {
+        setSelectedCountry(e.target.value);
+    };
 
     const handleChangeAddress_1 = (e) => {
         setaddress_1(e.target.value);
@@ -38,11 +46,8 @@ const AddRequirement = () => {
         setaddress_2(e.target.value);
     };
 
-    const handleChangeState = (e) => {
-        setstate(e.target.value);
-    };
-    const handleChangeCuntry = (e) => {
-        setcountryData(e.target.value);
+    const handleStateChange = (e) => {
+        setSelectedState(e.target.value);
     };
 
     const handleChangePIN = (e) => {
@@ -53,14 +58,6 @@ const AddRequirement = () => {
         setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
 
-    const showToast = (message, type = "error") => {
-        if (type === "success") {
-            toast.success(message, { position: "top-center" });
-        } else {
-            toast.error(message, { position: "top-center" });
-        }
-    };
-
     const highlightProperty = [
         "Working full time",
         "College student",
@@ -69,17 +66,21 @@ const AddRequirement = () => {
         "Pure vegetarian",
     ];
 
+
     const allAmenities = [
         "WiFi",
-        "Air Condition",
-        "Fridge",
-        "Kitchen",
-        "Washing_machine",
+        "Air Conditioning",
+        "Heating",
+        "Hot Water",
+        "Refrigerator",
+        "Microwave",
     ];
+
 
     const locationAdd = `${PIN} ${address_1} ${address_2} ${state}`;
 
     const handleFileChange = (e) => {
+        requirements;
         const files = Array.from(e.target.files);
         if (images.length + files.length > 3) {
             showToast("You can only upload up to 3 images in total.");
@@ -114,7 +115,6 @@ const AddRequirement = () => {
         });
     };
 
-
     const validateInputs = () => {
         const {
             title,
@@ -132,114 +132,161 @@ const AddRequirement = () => {
             showToast("Title is required");
             return false;
         }
-        if (!approx_rent) {
-            showToast("Valid approx rent amount is required");
+
+        if (!number_of_people) {
+            showToast("Valid number of people is required");
             return false;
         }
-        if (!room_type) {
-            showToast("Room type is required");
+
+        if (!address_1) {
+            showToast("address_1 is required");
+            return false;
+        }
+        if (!address_2) {
+            showToast("address_2 is required");
+            return false;
+        }
+        if (!address_2) {
+            showToast("address_2 is required");
+            return false;
+        }
+        if (!PIN) {
+            showToast("PIN is required");
+            return false;
+        }
+        // if (!selectedState) {
+        //     showToast("state is required");
+        //     return false;
+        // }
+
+        if (!occupancy) {
+            showToast("Valid occupancy is required");
+            return false;
+        }
+        if (!approx_rent) {
+            showToast("Valid approx rent amount is required");
             return false;
         }
         if (!looking_for) {
             showToast("Looking for is required");
             return false;
         }
-        if (highlighted_features.length === 0) {
+
+        if (highlighted_features.length == 0) {
             showToast("At least one highlight is required");
             return false;
         }
-        if (!occupancy) {
-            showToast("Valid occupancy is required");
+        if (amenities.length == 0) {
+            showToast("At least one amenities is required");
             return false;
         }
-        if (!number_of_people) {
-            showToast("Valid number of people is required");
-            return false;
-        }
-        if (images.length === 0) {
+        if (images.length == 0) {
             showToast("House image is required");
             return false;
         }
+
+        if (!post) {
+            showToast("post for is required");
+            return false;
+        }
+
         return true;
     };
 
-
-   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validateInputs()) return;
-
-    const formDataObj = new FormData();
-
-    const address_1_Value = address_1.split(",");
-    const address_2_Value = address_2.split(",");
-
-    if (address_1_Value.length < 3 || address_2_Value.length < 2) {
-        showToast("Invalid address format.", "error");
-        return;
-    }
-
-    const doorNoValue = address_1_Value[0].trim();
-    const streetValue = address_1_Value[1].trim();
-    const areaValue = address_1_Value[2].trim();
-
-    const cityValue = address_2_Value[0].trim();
-    const districtValue = address_2_Value[1].trim();
-
-    const formattedFormData = {
-        user_id: localStorage.getItem("user_id"), // Ensure user_id is being set
-        title: formData.title, // Ensure title is being set
-        looking_for: formData.looking_for, // Ensure looking_for is being set
-        listing_type: formData.listing_type, // Ensure listing_type is being set
-        room_type: formData.room_type, // Ensure room_type is being set
-        approx_rent: formData.approx_rent, // Ensure approx_rent is being set
-        occupancy: formData.occupancy, // Ensure occupancy is being set
-        number_of_people: formData.number_of_people, // Ensure number_of_people is being set
-        location: JSON.stringify({
-            doorNo: doorNoValue,
-            street: streetValue,
-            area: areaValue,
-            city: cityValue,
-            district: districtValue,
-            pin: PIN,
-            state: state,
-            country: countryData,
-        }),
-        highlighted_features: JSON.stringify(formData.highlighted_features),
-        amenities: JSON.stringify(formData.amenities),
+    const showToast = (message, type = "error") => {
+        if (type === "success") {
+            toast.success(message, { position: "top-center" });
+        } else {
+            toast.error(message, { position: "top-center" });
+        }
     };
 
-    Object.keys(formattedFormData).forEach((key) => {
-        formDataObj.append(key, formattedFormData[key]);
-    });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    images.forEach((image, index) => {
-        formDataObj.append(`photos[${index}]`, image);
-    });
+        if (!validateInputs()) return;
 
-    try {
-        const response = await axios.post(
-            "http://127.0.0.1:8000/api/roommates",
-            formDataObj,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
-        setRequirements((prevRequirements) => [
-            ...prevRequirements,
-            response.data,
-        ]);
-        handleCancel(); // Reset the form
-        showToast("Requirement added successfully!", "success");
-    } catch (error) {
-        console.error("Error adding requirement:", error);
-        showToast(`Failed to add requirement: ${error.response?.data?.message || error.message}`, "error");
-    }
-};
+        const formDataObj = new FormData();
 
+        const address_1_Value = address_1.split(",");
+        const address_2_Value = address_2.split(",");
 
+        if (address_1_Value.length < 3 || address_2_Value.length < 2) {
+            showToast("Invalid address format.", "error");
+            return;
+        }
+
+        const doorNoValue = address_1_Value[0].trim();
+        const streetValue = address_1_Value[1].trim();
+        const areaValue = address_1_Value[2].trim();
+
+        const cityValue = address_2_Value[0].trim();
+        const districtValue = address_2_Value[1].trim();
+
+        const formattedFormData = {
+            user_id: localStorage.getItem("user_id"),
+            title: formData.title,
+            looking_for: "room",
+            listing_type: formData.listing_type,
+            room_type: formData.room_type,
+            approx_rent: formData.approx_rent,
+            post: formData.post,
+            looking_for_gender: formData.looking_for,
+            occupancy: formData.occupancy,
+            number_of_people: formData.number_of_people,
+            location: JSON.stringify({
+                doorNo: doorNoValue,
+                street: streetValue,
+                area: areaValue,
+                city: cityValue,
+                district: districtValue,
+                pin: PIN,
+                state: selectedState,
+                country: selectedCountry,
+            }),
+            highlighted_features: JSON.stringify(formData.highlighted_features),
+            amenities: JSON.stringify(formData.amenities),
+        };
+
+        Object.keys(formattedFormData).forEach((key) => {
+            formDataObj.append(key, formattedFormData[key]);
+        });
+
+        images.forEach((image, index) => {
+            console.log(index);
+            formDataObj.append(`photos[${index}]`, image);
+        });
+
+        for (let [key, value] of formDataObj.entries()) {
+            console.log(key + "  " + value);
+        }
+
+        try {
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/roommates",
+                formDataObj,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+            setRequirements((prevRequirements) => [
+                ...prevRequirements,
+                response.data,
+            ]);
+            handleCancel(); // Reset the form
+            showToast("Requirement added successfully!", "success");
+        } catch (error) {
+            console.error("Error adding requirement:", error);
+            showToast(
+                `Failed to add requirement: ${
+                    error.response?.data?.message || error.message
+                }`,
+                "error"
+            );
+        }
+    };
 
     const handleCancel = () => {
         setFormData({
@@ -259,6 +306,7 @@ const AddRequirement = () => {
         setImages([]);
         fileInputRef.current.value = null;
     };
+
     return (
         <div className="max-w-6xl mx-auto p-8 bg-white shadow-md rounded-md mt-4 relative">
             <Link to="/PostRequirementPage">
@@ -297,24 +345,10 @@ const AddRequirement = () => {
                                 Number of People
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 name="number_of_people"
                                 placeholder="No people"
                                 value={formData.number_of_people}
-                                onChange={handleInputChange}
-                                className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Occupancy
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="Occupancy"
-                                name="occupancy"
-                                value={formData.occupancy}
                                 onChange={handleInputChange}
                                 className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                             />
@@ -438,44 +472,91 @@ const AddRequirement = () => {
                 <div className="flex gap-14">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                            state
+                            State
                         </label>
-                        <input
-                            type="text"
-                            onChange={handleChangeState}
-                            value={state}
-                            name="state"
-                            placeholder="state"
+                        <select
+                            value={selectedState}
+                            onChange={handleStateChange}
                             className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
+                            disabled={!selectedCountry} // Disable state dropdown if no country is selected
+                        >
+                            <option disabled>Select a state</option>
+
+                            {selectedCountry &&
+                                countryDataJSON
+                                    .find(
+                                        (country) =>
+                                            country.name === selectedCountry
+                                    ) // Find the selected country
+                                    ?.states.map((state) => (
+                                        <option
+                                            key={state.code}
+                                            value={state.name}
+                                        >
+                                            {state.name}
+                                        </option>
+                                    ))}
+                        </select>
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
+                            Country
+                        </label>
+                        <select
+                            value={selectedCountry}
+                            onChange={handleCountryChange}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        >
+                            <option value="" disabled>
+                                Select a country
+                            </option>
+                            {countryDataJSON.map((country) => (
+                                <option
+                                    key={country.region_id}
+                                    value={country.name}
+                                >
+                                    {country.name + " " + country.emoji}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                <div className="flex gap-14">
+                    <div className="relative">
+                        <label className="block text-sm font-medium text-gray-700">
                             Approx Rent
                         </label>
                         <input
-                            type="text"
+                            type="number"
                             name="approx_rent"
                             placeholder="approx_rent"
                             value={formData.approx_rent}
                             onChange={handleInputChange}
                             className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
+                        {selectedCountry && (
+                            <span className="absolute top-8 right-8">
+                                {countryDataJSON.find(
+                                    (cn) => cn.name === selectedCountry
+                                )?.currency_symbol || "Currency Symbol"}
+                            </span>
+                        )}
                     </div>
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        country
-                    </label>
-                    <input
-                        type="text"
-                        onChange={handleChangeCuntry}
-                        value={countryData}
-                        name="country"
-                        placeholder="country"
-                        className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                    />
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Occupancy
+                        </label>
+                        <input
+                            type="number"
+                            placeholder="Occupancy"
+                            name="occupancy"
+                            value={formData.occupancy}
+                            onChange={handleInputChange}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
+                    </div>
                 </div>
 
                 <div className="flex  items-center gap-48">
@@ -533,19 +614,6 @@ const AddRequirement = () => {
                     </div>
                 </div>
                 <div>
-                    {/* <label className="block text-sm font-medium text-black">
-                       Upload Photos (up to 3)
-                   </label>
-                   <input
-                       type="file"
-                       accept="image/*"
-                       multiple
-                       onChange={handleFileChange}
-                       ref={fileInputRef}
-                       className="block w-full mt-1"
-
-/> */}
-
                     <div className="mt-10">
                         <label className="block text-sm font-medium text-black">
                             Upload Photos (up to 3)

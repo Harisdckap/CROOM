@@ -13,13 +13,13 @@ const DistrictModal = ({ isOpen, onClose, districts, onSelectDistrict }) => {
                 >
                     <XCircleIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
-                <h2 className="text-2xl font-bold mb-6 text-gray-800">Select a Popular City in India</h2>
+                <h2 className="text-3xl font-bold mb-6 gradient-text animate-slideUpFadeIn">Select a Popular City in India</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 h-96 overflow-y-scroll">
                     {districts.map((district) => (
                         <button
                             key={district.name}
                             onClick={() => onSelectDistrict(district)}
-                            className="flex flex-col items-center bg-gray-100 rounded-lg p-4 shadow hover:shadow-lg transition duration-300"
+                            className="flex flex-col items-center bg-gray-200 rounded-lg p-4 shadow hover:shadow-lg transition duration-300"
                         >
                             <img
                                 src={district.image}

@@ -14,11 +14,9 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "@fortawesome/free-regular-svg-icons": "^6.6.0",
-        "@fortawesome/free-solid-svg-icons": "^6.6.0",
-        "@fortawesome/react-fontawesome": "^0.2.2",
-        "@react-google-maps/api": "^2.19.3",
-        "antd": "^5.19.3",
+        "@headlessui/react": "^2.1.2",
+        "@heroicons/react": "^2.1.5",
+        "antd": "^5.20.2",
         "bootstrap": "^5.3.3",
         "framer-motion": "^11.3.19",
         "prop-types": "^15.8.1",

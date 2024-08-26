@@ -3,18 +3,19 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
+import countryDataJSON from "../RentPageComponent/country JSON/countries+states.json";
 
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
         user_id: localStorage.getItem("user_id"),
         title: "",
-        location: [],
+        location: {},
         price: "",
         room_type: "1RK",
         contact: "",
         looking_for_gender: "any",
         looking_for: "Roommate",
-        occupancy: "Single Occupancy",
+        ocgicupancy: "",
         photos: [],
         highlighted_features: [],
         amenities: [],
@@ -24,10 +25,9 @@ const AddRoomForm = () => {
 
     const [images, setImages] = useState([]);
     const [message, setMessage] = useState("");
-    const [countryData, setcountryData] = useState();
+    const [countryData, setcountryData] = useState("");
 
     const fileInputRef = useRef(null);
-    // const navigate = useNavigate();
 
     const [address_1, setaddress_1] = useState("");
     const [address_2, setaddress_2] = useState("");
@@ -35,11 +35,15 @@ const AddRoomForm = () => {
     const [state, setstate] = useState("");
 
     const handleChangeAddress_1 = (e) => {
-        setaddress_1(e.target.value);
+        setaddress_1(e.target.value.trim());
     };
 
     const handleChangeAddress_2 = (e) => {
         setaddress_2(e.target.value.trim());
+    };
+
+    const handleChangeCuntry = (e) => {
+        setcountryData(e.target.value);
     };
 
     const handleChangeState = (e) => {
@@ -47,7 +51,7 @@ const AddRoomForm = () => {
     };
 
     const handleChangePIN = (e) => {
-        setPIN(e.target.value);
+        setPIN(e.target.value.trim());
     };
 
     const deleteIMG = (index) => {
@@ -57,35 +61,23 @@ const AddRoomForm = () => {
     const allHighlightedFeatures = [
         "Attached Bathroom",
         "Balcony",
+        "Air conditioning",
         "Swimming pool",
         "Gym",
         "Parking",
     ];
+    
     const allAmenities = [
         "WiFi",
-        "Air Condition",
-        "Fridge",
-        "Kitchen",
-        "Washing_machine"
+        "Air Conditioning",
+        "Heating",
+        "Hot Water",
+        "Refrigerator",
+        "Microwave",
     ];
 
-    //   useEffect(() => {
-    //     const fetchData = async () => {
-    //        try{
-
-    //         const res = await fetch("./JSON/countries.json")
-    //         const cuntry = await res.json()
-    //         console.log(cuntry)
-    //        } catch{
-
-    //        }
-    //     };
-    //     fetchData();
-    // }, []);
-
-    const handleChangeCuntry = (e) => {
-        setcountryData(e.target.value);
-    };
+    console.log(formData);
+    console.log(formData.ocgicupancy);
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
@@ -94,7 +86,6 @@ const AddRoomForm = () => {
             setMessage("You can only upload up to 3 images in total.");
             return;
         }
-
         setImages((prevImages) => [...prevImages, ...files]);
     };
 
@@ -133,7 +124,7 @@ const AddRoomForm = () => {
     };
 
     const validateInputs = () => {
-        if (!formData.title) {
+        if (!formData.title.trim()) {
             showToast("Title is required");
             return false;
         }
@@ -142,14 +133,61 @@ const AddRoomForm = () => {
             showToast("Valid rent amount is required");
             return false;
         }
+        if (!address_1.trim()) {
+            showToast("Address_1 is required");
+            return false;
+        }
+
+        if (!address_2.trim()) {
+            showToast("Address_2 is required");
+            return false;
+        }
+
+        if (!PIN.trim()) {
+            showToast("PIN is required");
+            return false;
+        }
+
+        if (!state.trim()) {
+            showToast("state is required");
+            return false;
+        }
+
+        if (!countryData.trim()) {
+            showToast("country is required");
+            return false;
+        }
 
         if (!formData.room_type) {
             showToast("Room type is required");
             return false;
         }
-
+        if (!formData.ocgicupancy) {
+            showToast("ocgicupancy is required");
+            return false;
+        }
         if (!formData.contact) {
             showToast("Contact is required");
+            return false;
+        }
+        if (formData.highlighted_features.length == 0) {
+            showToast("highlighted_features is required");
+            return false;
+        }
+        if (formData.amenities.length == 0) {
+            showToast("amenities is required");
+            return false;
+        }
+        if (!formData.description) {
+            showToast("description is required");
+            return false;
+        }
+        if (images.length == 0) {
+            showToast("Atleast 1 image is required");
+            return false;
+        }
+        if (images.length > 3) {
+            showToast("You can upload a maximum of 3 images");
             return false;
         }
 
@@ -166,8 +204,8 @@ const AddRoomForm = () => {
         const streetValue = address_1_Value[1];
         const areaValue = address_1_Value[2];
 
-        console.log(addres_2_Value);
-
+        // console.log(address_1_Value)
+        // console.log("door no :"+ doorNoValue + " "+" streetValue :"+streetValue +" "+"area : "+areaValue)
 
         const cityValue = addres_2_Value[0];
         const districtValue = addres_2_Value[1];
@@ -204,7 +242,6 @@ const AddRoomForm = () => {
         for (let pair of uploadData.entries()) {
             console.log(pair[0] + ", " + pair[1]);
         }
-
 
         try {
             const response = await axios.post(
@@ -274,8 +311,8 @@ const AddRoomForm = () => {
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
+                            <div className="relative">
+                                <label className="block  text-sm font-medium text-gray-700">
                                     Price
                                 </label>
                                 <input
@@ -284,8 +321,14 @@ const AddRoomForm = () => {
                                     value={formData.price}
                                     onChange={handleChange}
                                     placeholder="Price"
-                                    className="mt-1 block  px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
-                                />
+                                    className="mt-1 block   px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
+                                ></input>
+                                <span className="absolute top-8 right-8">
+                                    {countryData &&
+                                        countryDataJSON.find(
+                                            (c) => c.name == countryData
+                                        )?.currency_symbol}
+                                </span>
                             </div>
                         </div>
                         <fieldset className="border text-center w-96 p-4 rounded-md">
@@ -384,21 +427,20 @@ const AddRoomForm = () => {
                             <legend className="text-base font-medium text-gray-900">
                                 occupancy
                             </legend>
-
                             <div className="mt-2 space-x-4">
                                 {["Bachelar ", "Family "].map((option) => (
                                     <button
                                         type="button"
                                         key={option}
                                         className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                            formData.occupancy === option
-                                                ? "bg-blue-500  "
+                                            formData.ocgicupancy === option
+                                                ? "bg-blue-400 text-white"
                                                 : "hover:bg-gray-100"
                                         }`}
                                         onClick={() =>
                                             handleChange({
                                                 target: {
-                                                    name: "occupancy",
+                                                    name: "ocgicupancy",
                                                     value: option,
                                                 },
                                             })
@@ -420,6 +462,7 @@ const AddRoomForm = () => {
                             name="contact"
                             value={formData.contact}
                             onChange={handleChange}
+                            type="tel"
                             placeholder="Mobile Number"
                             className="mt-1 block  px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
@@ -442,30 +485,47 @@ const AddRoomForm = () => {
 
                 <div className="flex gap-14">
                     <div>
-                        <label className="block  text-sm font-medium text-gray-700">
-                            state
+                        <label className="block text-sm font-medium text-gray-700">
+                            State
                         </label>
-                        <input
+                        <select
                             name="state"
                             value={state}
                             onChange={handleChangeState}
                             placeholder="state"
                             className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                            // className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
+                            disabled={!countryData}
+                        >
+                            <option>Select state</option>
+
+                            {countryData &&
+                                countryDataJSON
+                                    .find((cl) => cl.name == countryData)
+                                    ?.states.map((sn) => (
+                                        <option key={sn.name}>{sn.name}</option>
+                                    ))}
+                        </select>
                     </div>
+
                     <div>
                         <label className="block  text-sm font-medium text-gray-700">
                             country
                         </label>
-                        <input
+                        <select
                             name="country"
                             value={countryData}
                             onChange={handleChangeCuntry}
                             placeholder="country"
                             className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                            // className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
+                        >
+                            <option>select country</option>
+
+                            {countryDataJSON.map((country) => (
+                                <option value={country.name} key={country.name}>
+                                    {country.name + country.emoji}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 

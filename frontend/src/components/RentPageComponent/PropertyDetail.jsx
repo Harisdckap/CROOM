@@ -17,6 +17,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import HomeNavBar from "../Header";
 import { CustomNextArrow, CustomPrevArrow } from "./ArrowComponent";
+import SocialShare from './ShareBtn';
+
+
 import wifi from "../../assets/wifi.png";
 import fridge from "../../assets/fridge.png";
 import air_conditioner from "../../assets/air_conditioner.png";
@@ -25,10 +28,17 @@ import washingMachine from "../../assets/washing_machine.png";
 
 // features
 import swiming_pool from "../../assets/swiming_pool.jpeg";
-import balcony from "../../assets/balcony.jpeg";
+import balcony from "../../assets/balcony.png";
 import parking from "../../assets/parking.png";
-import gym from "../../assets/gym.png";
-import bathroom from "../../assets/bathroom.jpg";
+import gym from "../../assets/gym.jpg";
+import bathroom from "../../assets/bathroom.png";
+import working_full_time from "../../assets/working_full_time.png";
+import College_student from "../../assets/college_student.jpg";
+import pure_vegetarian from "../../assets/pure_vegetarian.jpg";
+import working_night_shift from "../../assets/working_night_shift.webp";
+import men from "../../assets/men.jpg";
+
+
 
 const PropertyDetail = () => {
     const { id, location, listingType } = useParams();
@@ -72,47 +82,47 @@ const PropertyDetail = () => {
         "Swimming pool": swiming_pool,
         Gym: gym,
         Parking: parking,
+        "Working full time":working_full_time,
+        "College student":College_student,
+        "25+ age":men,
+        "Working night shift":working_night_shift,
+        "Pure vegetarian":pure_vegetarian,
     };
-
     let locationData = {};
 
     if (property && property.location) {
         try {
-            const OuterData = JSON.parse(property.location);
-            locationData = JSON.parse(OuterData);
+            const outerData = JSON.parse(property.location);
+            locationData = JSON.parse(outerData);
             console.log(locationData);
         } catch (error) {
             console.error("Failed to parse location data:", error);
             locationData = { city: "Unknown Location", district: "" };
         }
     }
-
-    const city =
-        (typeof locationData.city === "string" && locationData.city.trim()) ||
-        "Unknown City";
-    const district =
-        (typeof locationData.district === "string" &&
-            locationData.district.trim()) ||
-        "Unknown District";
-    const street =
-        (typeof locationData.street === "string" &&
-            locationData.street.trim()) ||
-        "Unknown District";
-
-    console.log(street);
-    const Doorno =
-        (typeof locationData.doorNo === "string" &&
-            locationData.doorNo.trim()) ||
-        "Unknown District";
-
-    console.log(Doorno);
-
+    
+    const city = (typeof locationData.city === "string" && locationData.city.trim()) || "Unknown City";
+    const district = (typeof locationData.district === "string" && locationData.district.trim()) || "Unknown District";
+    const street = (typeof locationData.street === "string" && locationData.street.trim()) || "Unknown Street";
+    const doorNo = (typeof locationData.doorNo === "string" && locationData.doorNo.trim()) || "Unknown Door No";
+    const state = (typeof locationData.state === "string" && locationData.state.trim()) || "Unknown State";
+    const pinCode = (typeof locationData.pinCode === "string" && locationData.pinCode.trim()) || "000000";
+    const country = (typeof locationData.country === "string" && locationData.country.trim()) || "Unknown Country";
+    
+    // console.log(street);
+    // console.log(doorNo);
+    
     if (!property) {
         return <p>Loading property details...</p>;
     }
-
-    const location_name = encodeURIComponent(`${Doorno} ${street} ${location}`);
+    
+    // Encode the location details into a URI component
+    const location_name = encodeURIComponent(`${doorNo} ${street}, ${district}, ${city}, ${state} ${pinCode}, ${country}`);
     const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
+    
+    // console.log(mapUrl);
+
+    console.log(location_name)
 
     const renderPropertyDetails = (type) => {
         switch (type) {
@@ -195,7 +205,7 @@ const PropertyDetail = () => {
                             value={property.pg_type}
                         />
                         <DetailItem
-                            icon={<FaTag />}
+                            icon={<FaUser />}
                             label="Looking For Gender"
                             value={property.looking_for_gender}
                         />
@@ -310,7 +320,7 @@ const PropertyDetail = () => {
                             <motion.iframe
                                 src={mapUrl}
                                 width="100%"
-                                height="450"
+                                height="500"
                                 className="rounded-lg mt-4 shadow-lg"
                                 allowFullScreen
                                 title="Property Location"
@@ -319,6 +329,13 @@ const PropertyDetail = () => {
                                 transition={{ duration: 1 }}
                             ></motion.iframe>
                         )}
+                              <div className="social-share mt-6">
+                        <SocialShare
+                            url={`http://localhost:3000/property/${property.id}`}
+                            title={property.title}
+                        />
+                       </div>
+                      
                     </motion.div>
 
                     {/* Details Section */}
@@ -332,6 +349,8 @@ const PropertyDetail = () => {
                             {property.title || property.pg_name}
                         </h1>
 
+                   
+
                         <div className="grid  gap-4 text-gray-800">
                             {/* Render specific property details */}
                             {renderPropertyDetails(property.listing_type)}
@@ -341,8 +360,8 @@ const PropertyDetail = () => {
                                 property.listing_type
                             ) && (
                                 <>
-                                    <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md col-span-2">
-                                        <h3 className="text-2xl font-semibold mb-4 gradient-text">
+                                    <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border border-gray-200 col-span-2">
+                                        <h3 className="text-2xl font-bold mb-6 text-gray-800 gradient-text">
                                             Highlighted Features
                                         </h3>
                                         {Array.isArray(
@@ -350,12 +369,12 @@ const PropertyDetail = () => {
                                         ) &&
                                         property.highlighted_features.length >
                                             0 ? (
-                                            <ul className="grid grid-cols-2 gap-x-8 gap-y-4 text-gray-700 pl-5">
+                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
                                                 {property.highlighted_features.map(
                                                     (feature, index) => (
                                                         <li
                                                             key={index}
-                                                            className="flex items-center"
+                                                            className="flex items-center space-x-3 p-4 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 transition duration-200"
                                                         >
                                                             <img
                                                                 src={
@@ -364,9 +383,11 @@ const PropertyDetail = () => {
                                                                     ]
                                                                 }
                                                                 alt={feature}
-                                                                className="w-6 h-6 mr-2"
+                                                                className="w-8 h-8"
                                                             />
-                                                            {feature}
+                                                            <span className="text-lg font-medium">
+                                                                {feature}
+                                                            </span>
                                                         </li>
                                                     )
                                                 )}
@@ -380,18 +401,18 @@ const PropertyDetail = () => {
                                     </div>
 
                                     {/* Amenities Section */}
-                                    <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md col-span-2">
-                                        <h3 className="text-2xl font-semibold mb-4  gradient-text">
+                                    <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border border-gray-200 col-span-2">
+                                        <h3 className="text-2xl font-bold mb-6 text-gray-800 gradient-text">
                                             Amenities
                                         </h3>
                                         {Array.isArray(property.amenities) &&
                                         property.amenities.length > 0 ? (
-                                            <ul className="grid grid-cols-2 gap-x-8 gap-y-4 text-gray-700 pl-5">
+                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
                                                 {property.amenities.map(
                                                     (amenity, index) => (
                                                         <li
                                                             key={index}
-                                                            className="flex items-center"
+                                                            className="flex items-center space-x-3 p-4 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 transition duration-200"
                                                         >
                                                             {amenitiesImages[
                                                                 amenity
@@ -405,10 +426,10 @@ const PropertyDetail = () => {
                                                                     alt={
                                                                         amenity
                                                                     }
-                                                                    className="w-6 h-6 mr-2"
+                                                                    className="w-8 h-8"
                                                                 />
                                                             )}
-                                                            <span>
+                                                            <span className="text-lg font-medium">
                                                                 {amenity}
                                                             </span>
                                                         </li>
@@ -426,30 +447,37 @@ const PropertyDetail = () => {
                         </div>
 
                         {/* Description Section */}
-                        <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md">
-                            <h2 className="text-2xl font-semibold mb-4 text-gray-800 gradient-text">
+                        <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+                            <h2 className="text-2xl font-bold mb-4 text-gray-800 gradient-text">
                                 Description
                             </h2>
-                            <p className="text-gray-700">
+                            <p className="text-gray-700 leading-relaxed">
                                 {property.description ||
                                     property.pg_post_content ||
-                                    property.post}
+                                    property.post ||
+                                    "No description available."}
                             </p>
                         </div>
                     </motion.div>
                 </div>
+              
             </motion.div>
+            
         </div>
     );
 };
+
+
+// Helper component to render each detail item
 const DetailItem = ({ icon, label, value }) => (
-    <div className="flex items-center mb-4">
-        <div className="text-blue-900 text-2xl mr-4">{icon}</div>
+    <div className="flex items-center mb-2">
+        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-500 mr-4">
+            {icon}
+        </div>
         <div>
-            <h4 className="text-lg font-semibold text-gray-800">{label}</h4>
-            <p className="text-gray-700">{value}</p>
+            <p className="text-sm text-gray-500">{label}</p>
+            <p className="text-lg font-semibold text-gray-800">{value}</p>
         </div>
     </div>
 );
-
 export default PropertyDetail;

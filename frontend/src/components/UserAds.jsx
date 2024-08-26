@@ -1,12 +1,12 @@
-import React from 'react';
-import UserAdsComponent from './UserAdsomponent';
+import React from "react";
+import UserAdsComponent from "./UserAdsomponent";
 
 const UserAds = () => {
-  return (
-    <>
-    <UserAdsComponent />
-    </>
-  );
+    return (
+        <>
+            <UserAdsComponent />
+        </>
+    );
 };
 
 export default UserAds;

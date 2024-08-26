@@ -10,7 +10,7 @@ const PlansPage = () => {
         {
             id: 1,
             name: "Basic Plan",
-            price: "$10",
+            price: "₹1000",
             duration: "month",
             features: [
                 "Access to basic listings",
@@ -22,7 +22,7 @@ const PlansPage = () => {
         {
             id: 2,
             name: "Standard Plan",
-            price: "$20",
+            price: "₹2000",
             duration: "month",
             features: [
                 "Access to standard listings",
@@ -34,7 +34,7 @@ const PlansPage = () => {
         {
             id: 3,
             name: "Premium Plan",
-            price: "$30",
+            price: "₹3000",
             duration: "month",
             features: [
                 "Access to all listings",
@@ -64,7 +64,7 @@ const PlansPage = () => {
                     <img src={logo} alt="Logo" className="w-20 h-auto" />
                 </div>
             </nav>
-            <h1 className="text-4xl font-bold mb-8">Choose Your Plan</h1>
+            <h1 className="text-4xl font-bold mb-8 gradient-text">Choose Your Plan</h1>
             <div className="flex flex-wrap justify-center">
                 {plans.map((plan) => (
                     <PlanCard

@@ -70,13 +70,10 @@ npm install @vitejs/plugin-react
 npm install vite
 composer install
 npm i
-<<<<<<< HEAD
-=======
+
+npm install @fortawesome/fontawesome-free
+
+npm install react-icons
 
 
-<!-- created -->
-<!-- Merge-Branch -->
 
-
-<!-- OTP PAGE npm i react-otp-input -->
->>>>>>> 79382a85fe44040c0f6a78df305bd65558c30cb6

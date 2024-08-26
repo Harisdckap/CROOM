@@ -1,13 +1,16 @@
+
 import React, { useState, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
+import countryDataJSON from '../RentPageComponent/country JSON/countries+states.json'
+
 // import "./Roommate.css";
 
 const Add_PG = () => {
     const [pg_type, setPgType] = useState("Both");
-    const [mobile_num, setMobileNum] = useState("");
+    const [mobile_num, setMobileNum] = useState(null);
     const [pg_name, setPgName] = useState("");
     const [occupancy_type, setOccupancyType] = useState("");
     const [occupancy_amount, setOccupancyAmount] = useState("");
@@ -25,38 +28,42 @@ const Add_PG = () => {
     const [countryData, setcountryData] = useState();
 
     const handleChangeAddress_1 = (e) => {
-        setaddress_1(e.target.value);
+        setaddress_1(e.target.value.trim());
     };
 
     const handleChangeAddress_2 = (e) => {
-        setaddress_2(e.target.value);
+        setaddress_2(e.target.value.trim());
     };
 
     const handleChangeState = (e) => {
-        setstate(e.target.value);
+        setstate(e.target.value.trim());
     };
 
     const handleChangeCuntry = (e) => {
-        setcountryData(e.target.value);
+        setcountryData(e.target.value.trim());
     };
 
     const handleChangePIN = (e) => {
-        setPIN(e.target.value);
+        setPIN(e.target.value.trim());
     };
 
     const allHighlightedFeatures = [
-        "Furnished",
         "Attached Bathroom",
         "Balcony",
+        "Air conditioning",
+        "Swimming pool",
+        "Gym",
         "Parking",
     ];
     const allAmenities = [
         "WiFi",
-        "Air Condition",
-        "Fridge",
-        "Kitchen",
-        "Washing_machine"
+        "Air Conditioning",
+        "Heating",
+        "Hot Water",
+        "Refrigerator",
+        "Microwave",
     ];
+
 
     const handleFeatureClick = (feature) => {
         sethighlighted_features((prevFeatures) =>
@@ -91,57 +98,73 @@ const Add_PG = () => {
         toast.error(message, { position: "top-center" });
     };
 
-    //    const validateInputs = () => {
+       const validateInputs = () => {
 
-    //        if (!pg_name) {
-    //            showToastMessage("PG name is required");
-    //            return false;
-    //        }
+           if (!pg_name) {
+               showToastMessage("PG name is required");
+               return false;
+           }
 
-    //        if (!address_1) {
-    //         showToastMessage("address_1 is required");
-    //         return false;
-    //     }
-    //     if (!address_2) {
-    //         showToastMessage("address_2 is required");
-    //         return false;
-    //     }
-    //     if (!PIN) {
-    //         showToastMessage("PIN name is required");
-    //         return false;
-    //     }
-    //     if (!state) {
-    //         showToastMessage("state is required");
-    //         return false;
-    //     }
+           if (!occupancy_type) {
+            showToastMessage(
+                "Please select an occupancy type and provide a valid amount"
+            );
+            return false;
+        }
+           if (!address_1) {
+            showToastMessage("address_1 is required");
+            return false;
+        }
+        if (!address_2) {
+            showToastMessage("address_2 is required");
+            return false;
+        }
 
-    //        if (!mobile_num) {
-    //            showToastMessage("Valid Mobile Number is required");
-    //            return false;
-    //        }
+        if (!mobile_num) {
+            showToastMessage("Valid Mobile Number is required");
+            return false;
+        }
+        if (!PIN) {
+            showToastMessage("PIN number is required");
+            return false;
+        }
+        if (!state) {
+            showToastMessage("state is required");
+            return false;
+        }
+        if (!countryData) {
+            showToastMessage("country is required");
+            return false;
+        }
+        if (highlighted_features.length == 0) {
+            showToastMessage("highlighted_features atleast 1 is required");
+            return false;
+        }
+        if (amenities.length == 0) {
+            showToastMessage("amenities atleast 1 is required");
+            return false;
+        }
 
-    //        if (!occupancy_type) {
-    //            showToastMessage(
-    //                "Please select an occupancy type and provide a valid amount"
-    //            );
-    //            return false;
-    //        }
-
-    //        if (images.length === 0) {
-    //            showToastMessage("Please upload at least 1 photo of your room");
-    //            return false;
-    //        }
-
-    //        if (!pg_post_content) {
-    //            showToastMessage("PG post content is required");
-    //            return false;
-    //        }
-    //        return true;
-    //    };
+           if (images.length === 0) {
+               showToastMessage("Please upload at least 1 photo of your room");
+               return false;
+           }
+           if (images.length > 3) {
+            showToast("You can upload a maximum of 3 images");
+            return false;
+        }
+        
+        if (!pg_post_content) {
+            showToastMessage("PG post content is required");
+            return false;
+        }
+        
+           return true;
+       };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        //    if (!validateInputs()) return;
+           if (!validateInputs()) return;
 
         const address_1_Value = address_1.split(",");
         const addres_2_Value = address_2.split(",");
@@ -212,6 +235,8 @@ const Add_PG = () => {
             toast.success("Form submitted successfully", {
                 position: "top-center",
             });
+            
+            
             console.log(response.data);
         } catch (error) {
             console.error(
@@ -266,24 +291,27 @@ const Add_PG = () => {
                                 </label>
                                 <input
                                     value={pg_name}
-                                    onChange={(e) => setPgName(e.target.value)}
+                                    onChange={(e) => setPgName(e.target.value.trim())}
                                     type="text"
                                     placeholder="PG Name"
                                     className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div>
 
-                            <div className="mt-0">
+                            <div className="mt-0 relative">
                                 <label className="block text-sm font-medium text-gray-700">{`Amount for ${occupancy_type} Occupancy`}</label>
                                 <input
                                     value={occupancy_amount}
                                     onChange={(e) =>
-                                        setOccupancyAmount(e.target.value)
+                                        setOccupancyAmount(e.target.value.trim())
                                     }
                                     type="number"
                                     placeholder="Amount"
                                     className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
+                                <span className="absolute top-8 right-8">
+                                    {countryData&& countryDataJSON.find((c)=>c.name == countryData)?.currency_symbol}
+                                </span>
                             </div>
                         </div>
                         <fieldset className="border text-center w-96 p-4 rounded-md">
@@ -381,6 +409,18 @@ const Add_PG = () => {
 
                 <div className="flex ">
                     <div className="flex mt-5 gap-14">
+                    <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                contact
+                            </label>
+                            <input
+                                value={mobile_num}
+                                onChange={(e) => setMobileNum(e.target.value)}
+                                type="number"
+                                placeholder="Mobile Number"
+                                className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm "
+                            />
+                        </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
                                 PIN code
@@ -388,23 +428,13 @@ const Add_PG = () => {
                             <input
                                 value={PIN}
                                 onChange={handleChangePIN}
+                                type="number"
                                 name="pincode"
                                 placeholder="PIN code"
                                 className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                contact
-                            </label>
-                            <input
-                                value={mobile_num}
-                                onChange={(e) => setMobileNum(e.target.value)}
-                                type="tel"
-                                placeholder="Mobile Number"
-                                className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm "
-                            />
-                        </div>
+                       
                     </div>
                 </div>
 
@@ -413,25 +443,41 @@ const Add_PG = () => {
                         <label className="block text-sm font-medium text-gray-700">
                             state
                         </label>
-                        <input
+                        <select
                             value={state}
                             onChange={handleChangeState}
                             name="state"
                             placeholder="state"
                             className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
+                            disabled = {!countryData}
+                        >
+                            <option value="">
+                                select state
+                            </option>
+                            {countryData && 
+                            countryDataJSON.find((c)=>c.name == countryData)
+                            ?.states.map((s)=>(
+                                <option value={s.name} key={s.name}>{s.name}</option>
+                            ))}
+                        </select>
                     </div>
                     <div className="mt-5">
                         <label className="block text-sm font-medium text-gray-700">
                             country
                         </label>
-                        <input
+                        <select
                             value={countryData}
                             onChange={handleChangeCuntry}
                             name="cuntry"
                             placeholder="cuntry"
                             className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
+                        >
+                            <option value="">select country</option>
+                            {countryDataJSON.map((c)=>(
+                                <option value={c.name} key={c.name}>{c.name+c.emoji}</option>
+                            ))}
+                            
+                        </select>
                     </div>
                 </div>
 
@@ -490,19 +536,6 @@ const Add_PG = () => {
                         </fieldset>
                     </div>
                 </div>
-
-                {/* PG Type */}
-
-                {/* Occupancy */}
-
-                {/* HIGHLIGHTED */}
-
-                {/* Amenities */}
-
-                {/* PG Post Content */}
-
-                {/* Image Upload */}
-
                 <div>
                     <label className="block text-sm font-medium text-black">
                         Upload Photos (up to 3)
@@ -567,7 +600,7 @@ const Add_PG = () => {
                     </label>
                     <textarea
                         value={pg_post_content}
-                        onChange={(e) => setPgPostContent(e.target.value)}
+                        onChange={(e) => setPgPostContent(e.target.value.trim())}
                         className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full h-32"
                     />
                 </div>

@@ -23,13 +23,13 @@ class PropertyController extends Controller
 
         // Queries
         $roommateQuery = Roommate::query()
-            ->whereRaw('LOWER(location) LIKE ?', ["%".strtolower($address)."%"]);
+            ->whereRaw('LOWER(location) LIKE ?', ["%" . strtolower($address) . "%"]);
 
         $listingQuery = Rooms::query()
-            ->whereRaw('LOWER(location) LIKE ?', ["%".strtolower($address)."%"]);
+            ->whereRaw('LOWER(location) LIKE ?', ["%" . strtolower($address) . "%"]);
 
         $pgQuery = PgListing::query()
-            ->whereRaw('LOWER(location) LIKE ?', ["%".strtolower($address)."%"])
+            ->whereRaw('LOWER(location) LIKE ?', ["%" . strtolower($address) . "%"])
             ->where('listing_type', 'pg');
 
         if ($gender !== 'all') {
@@ -161,6 +161,117 @@ class PropertyController extends Controller
     }
 
 
+    public function deleteProperty($listingType, $id)
+    {
+        $decodedId = $id;
+        $property = null;
+
+        // Find the property based on listing type
+        switch (strtolower($listingType)) {
+            case 'roommates':
+                $property = Roommate::find($decodedId);
+                break;
+            case 'pg':
+                $property = PgListing::find($decodedId);
+                break;
+            case 'room':
+                $property = Rooms::find($decodedId);
+                break;
+            default:
+                return response()->json(['message' => 'Invalid listing type'], 400);
+        }
+
+        if (!$property) {
+            return response()->json(['message' => 'Property not found'], 404);
+        }
+
+        // Delete the property
+        $property->delete();
+
+        return response()->json(['message' => 'Property deleted successfully']);
+    }
+
+
+
+    public function updateProperty(Request $request, $listingType, $id)
+    {
+        // Define validation rules based on the listing type
+        switch ($listingType) {
+
+            case 'roommates':
+                $validatedData = $request->validate([
+                    'user_id' => 'required|exists:users,id',
+                    'title' => 'required|string|max:255',
+                    'location' => 'required|json',
+                    'looking_for' => 'required|string|max:255',
+                    'looking_for_gender' => 'nullable|string|max:255',
+                    'approx_rent' => 'required|numeric',
+                    'room_type' => 'required|string|max:255',
+                    'highlighted_features' => 'nullable|json',
+                    'amenities' => 'nullable|json',
+                    'post' => 'nullable|string',
+                    'listing_type' => 'required|string|max:255|in:roommates',
+                    'occupancy' => 'required|integer',
+                    'number_of_people' => 'required|integer',
+                    'photos.*' => 'image|mimes:jpg,png,jpeg,gif,webp|max:2048',
+                ]);
+
+                $property = Roommate::where('id', $id)->first();
+                break;
+
+            case 'pg':
+                $validatedData = $request->validate([
+                    'user_id' => 'required|exists:users,id',
+                    'pg_type' => 'required|string|max:255',
+                    'looking_for_gender' => 'nullable|string|max:255',
+                    'mobile_num' => 'required|numeric',
+                    'pg_name' => 'required|string|max:255',
+                    'location' => 'required|json',
+                    'occupancy_type' => 'required|string|max:255',
+                    'occupancy_amount' => 'required|numeric',
+                    'pg_post_content' => 'required|string',
+                    'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+                    'highlighted_features' => 'nullable|json',
+                    'amenities' => 'nullable|json',
+                ]);
+                $property = PgListing::where('id', $id)->first();
+                break;
+
+            case 'rooms':
+                $validatedData = $request->validate([
+                    'user_id' => 'required|exists:users,id',
+                    'title' => 'required|string|max:255',
+                    'location' => 'required|json',
+                    'price' => 'required|numeric',
+                    'room_type' => 'required|string',
+                    'contact' => 'required|string|max:255',
+                    'looking_for' => 'nullable|string|max:255',
+                    'occupancy' => 'nullable|string|max:255',
+                    'highlighted_features' => 'nullable|json',
+                    'amenities' => 'nullable|json',
+                    'description' => 'nullable|string',
+                    'listing_type' => 'required|string|max:255',
+                    'looking_for_gender' => 'nullable|string|max:255',
+                    'photos.*' => 'image|mimes:jpg,png,jpeg,gif,webp|max:2048',
+                ]);
+
+                $property = Rooms::where('id', $id)->first();
+                break;
+
+            default:
+                return response()->json(['message' => 'Invalid listing type'], 400);
+        }
+
+        // Check if property exists
+        if (!$property) {
+            return response()->json(['message' => 'Property not found'], 404);
+        }
+
+        // Update the property with validated data
+        $property->update($validatedData);
+
+        return response()->json(['message' => 'Property updated successfully', 'property' => $property]);
+    }
 }
 
 
