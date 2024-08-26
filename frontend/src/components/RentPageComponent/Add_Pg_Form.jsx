@@ -3,8 +3,6 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
-// import "./Roommate.css";
-
 const Add_PG = () => {
     const [pg_type, setPgType] = useState("Both");
     const [mobile_num, setMobileNum] = useState("");
@@ -16,8 +14,6 @@ const Add_PG = () => {
     const [amenities, setAmenities] = useState([]);
     const [pg_post_content, setPgPostContent] = useState("");
     const fileInputRef = useRef(null);
-
-    // const navigate = useNavigate();
     const [address_1, setaddress_1] = useState("");
     const [address_2, setaddress_2] = useState("");
     const [PIN, setPIN] = useState("");
@@ -91,68 +87,14 @@ const Add_PG = () => {
         toast.error(message, { position: "top-center" });
     };
 
-    //    const validateInputs = () => {
-
-    //        if (!pg_name) {
-    //            showToastMessage("PG name is required");
-    //            return false;
-    //        }
-
-    //        if (!address_1) {
-    //         showToastMessage("address_1 is required");
-    //         return false;
-    //     }
-    //     if (!address_2) {
-    //         showToastMessage("address_2 is required");
-    //         return false;
-    //     }
-    //     if (!PIN) {
-    //         showToastMessage("PIN name is required");
-    //         return false;
-    //     }
-    //     if (!state) {
-    //         showToastMessage("state is required");
-    //         return false;
-    //     }
-
-    //        if (!mobile_num) {
-    //            showToastMessage("Valid Mobile Number is required");
-    //            return false;
-    //        }
-
-    //        if (!occupancy_type) {
-    //            showToastMessage(
-    //                "Please select an occupancy type and provide a valid amount"
-    //            );
-    //            return false;
-    //        }
-
-    //        if (images.length === 0) {
-    //            showToastMessage("Please upload at least 1 photo of your room");
-    //            return false;
-    //        }
-
-    //        if (!pg_post_content) {
-    //            showToastMessage("PG post content is required");
-    //            return false;
-    //        }
-    //        return true;
-    //    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        //    if (!validateInputs()) return;
-
         const address_1_Value = address_1.split(",");
         const addres_2_Value = address_2.split(",");
 
         const doorNoValue = address_1_Value[0];
         const streetValue = address_1_Value[1];
         const areaValue = address_1_Value[2];
-
-        // console.log(address_1_Value)
-        // console.log("door no :"+ doorNoValue + " "+" streetValue :"+streetValue +" "+"area : "+areaValue)
-
         const cityValue = addres_2_Value[0];
         const districtValue = addres_2_Value[1];
 
@@ -187,13 +129,6 @@ const Add_PG = () => {
         images.forEach((image, index) => {
             formData.append(`photos[${index}]`, image);
         });
-
-        //   for (const [key, value] of formDataObj.entries()) {
-        //     for (const [key, value] of formData.entries()) {
-        //     if (key === "location") {
-        //         console.log("Location:", value);
-        //     }
-        // }
 
         for (let [key, value] of formData.entries()) {
             console.log(key + " " + value);
@@ -347,19 +282,6 @@ const Add_PG = () => {
                     </fieldset>
                 </div>
 
-                {/*                  
-    <div className="mt-6">
-                   <label className="block text-sm font-medium text-gray-700">
-                       PG Address
-                   </label>
-                   <input
-                       value={location}
-                       onChange={(e) => setLocation(e.target.value)}
-                       type="text"
-                       className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full"
-                   />
-               </div>          */}
-
                 {/* PG Address */}
 
                 <div className="flex justify-between">
@@ -491,18 +413,6 @@ const Add_PG = () => {
                     </div>
                 </div>
 
-                {/* PG Type */}
-
-                {/* Occupancy */}
-
-                {/* HIGHLIGHTED */}
-
-                {/* Amenities */}
-
-                {/* PG Post Content */}
-
-                {/* Image Upload */}
-
                 <div>
                     <label className="block text-sm font-medium text-black">
                         Upload Photos (up to 3)
@@ -571,7 +481,6 @@ const Add_PG = () => {
                         className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full h-32"
                     />
                 </div>
-                {/* Buttons */}
 
                 <div className="mt-12 text-center">
                     <button
