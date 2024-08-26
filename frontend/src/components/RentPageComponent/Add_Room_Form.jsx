@@ -8,7 +8,6 @@ import EmojiPicker from 'emoji-picker-react';
 import { FaBold, FaItalic, FaUnderline, FaAlignLeft, FaAlignRight, FaSmile } from "react-icons/fa";
 import { Description } from "@headlessui/react";
 
-
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
         user_id: localStorage.getItem("user_id"),
@@ -407,7 +406,7 @@ const deleteIMG = (index) => {
 <div className="">
 
 
-                        <div className="flex gap-14">
+                        <div className="flex  justify-between">
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
@@ -488,7 +487,7 @@ const deleteIMG = (index) => {
                     
 
             
-                <div  className="flex mt-4 gap-14">
+                <div  className="flex mt-4  justify-between">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
                                     contact
@@ -517,6 +516,7 @@ const deleteIMG = (index) => {
                                 />
 </div>
 </div>
+
 
 
 
@@ -601,7 +601,7 @@ const deleteIMG = (index) => {
 
 
 
-                         <fieldset className="border text-center w-96 p-4 rounded-md">
+                         <fieldset className="border mt-2 text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
                                 room_type
                             </legend>
@@ -620,12 +620,9 @@ const deleteIMG = (index) => {
                                     </button>
                                 ))} 
                             </div>  
-                            
-                          
-
                         </fieldset> 
 
-                        <fieldset className="border text-center w-96 p-4 rounded-md">
+                        <fieldset className="border mt-2 text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
                                 occupancy
                             </legend>

@@ -9,7 +9,6 @@ import { FaBold, FaItalic, FaUnderline, FaAlignLeft, FaAlignRight, FaSmile } fro
 
 
 import countryDataJSON from "../RentPageComponent/country JSON/countries+states.json";
-// import { FaT } from "react-icons/fa6";/
 
 const AddRequirement = () => {
     const [formData, setFormData] = useState({
@@ -43,6 +42,7 @@ const AddRequirement = () => {
 
 
 
+// Descripton fucture
     const [text, setText] = useState("");
   const [format, setFormat] = useState({
     bold: false,
@@ -53,16 +53,12 @@ const AddRequirement = () => {
   });
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-
-
   const handleFormat = (type) => {
     setFormat((prevFormat) => ({
       ...prevFormat,
       [type]: !prevFormat[type],
     }));
   };
-
-
 
   const formatClasses = () => {
     let classes = "border p-2 w-full ";
@@ -77,8 +73,6 @@ const AddRequirement = () => {
   const onEmojiClick = (emojiObject) => {
     setText((prevText) => prevText + emojiObject.emoji);
   };
-
-
 
 
 
@@ -401,11 +395,11 @@ const AddRequirement = () => {
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
 
-<div className="flex justify-between">
+<div className="flex mt-6 justify-between">
     
-    <div>
+    <div className="">
 
-                    <div className="flex items-center gap-14">
+                    <div className="flex items-center justify-between">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
                                 Title
@@ -446,7 +440,7 @@ const AddRequirement = () => {
                             <input
                                 value={address_1}
                                 onChange={handleChangeAddress_1}
-                                style={{width:"466px"}}
+                                style={{width:"472px"}}
                                 name="address_1"
                                 placeholder="example( door no , street , area )"
                                 className="mt-1 block px-3 w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
@@ -464,7 +458,7 @@ const AddRequirement = () => {
                             <input
                                 name="  address_2"
                                 value={address_2}
-                                style={{width:"466px"}}
+                                style={{width:"472px"}}
                                 onChange={handleChangeAddress_2}
                                 placeholder="example( city , district )"
                                 className="mt-1 block px-3 min-w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
@@ -474,7 +468,7 @@ const AddRequirement = () => {
            
 
               
-                    <div className="flex mt-4 gap-14">
+                    <div className="flex mt-4 justify-between">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
                                 contact
@@ -549,7 +543,7 @@ const AddRequirement = () => {
     </div>   
 
     </div>
-<div className="flex mt-4 gap-14">
+<div className="flex mt-4 justify-between">
 
 <div className="relative">
   <label className="block text-sm font-medium text-gray-700">
@@ -572,9 +566,6 @@ const AddRequirement = () => {
 
   )}
 </div>
-
-
-
                 <div>
                             <label className="block text-sm font-medium text-gray-700">
                                 Occupancy
@@ -590,15 +581,12 @@ const AddRequirement = () => {
                         </div>
 </div>
 </div>
-
-
-
 <div>
-  <fieldset className="border text-center w-96 p-4 rounded-md">
+  <fieldset className="border text-center mt-2 w-96 p-4 rounded-md">
                         <legend className="text-base font-medium text-gray-900">
                             Room Type
                         </legend>
-                        <div className="mt-2 space-x-4">
+                        <div className="space-x-4">
                             {["1RK", "1BHK", "2BHK", "3BHK"].map((option) => (
                                 <button
                                     type="button"
@@ -622,7 +610,7 @@ const AddRequirement = () => {
                     </fieldset> 
 
 
-                        <fieldset className="border text-center w-96 p-4 rounded-md">
+                        <fieldset className="border mt-2 text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
                                 Looking Gender For
                             </legend>
@@ -674,9 +662,9 @@ const AddRequirement = () => {
 
 
 
-                <div className="flex  items-center gap-48">
-                    <div className="w-1/2 tex">
-                        <fieldset className="border  text-center w p-4 rounded-md mt-12">
+                <div className="flex bg-red items-center  gap-48">
+                    <div className="w-1/2">
+                        <fieldset className="border  text-center w p-4 rounded-md mt-4">
                             <legend className="text-base font-medium text-gray-900">
                                 Highlighted Features
                             </legend>
@@ -703,7 +691,7 @@ const AddRequirement = () => {
                         </fieldset>
                     </div>
                     <div className="w-1/2">
-                        <fieldset className="border text-center p-4 rounded-md mt-12">
+                        <fieldset className="border text-center p-4 rounded-md mt-4">
                             <legend className="text-base font-medium text-gray-900">
                                 Select Amenities
                             </legend>
@@ -731,7 +719,7 @@ const AddRequirement = () => {
                 <div>
                   
 
-                    <div className="mt-10">
+                    <div className="mt-4">
                         <label className="block text-sm font-medium text-black">
                             Upload Photos (up to 3)
                         </label>
@@ -804,7 +792,7 @@ const AddRequirement = () => {
 
 
 
-<div className="mt-8 relative">
+<div className="mt-4 relative">
           <h4 className="">Description</h4>
           <div className="mb-2">
             <button

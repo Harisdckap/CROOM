@@ -349,10 +349,10 @@ const Add_PG = () => {
                 </p>
             </div>
 
-            <div className="flex justify-between">
-                <div>
+            <div  className="flex justify-between mt-6">
+                <div className="">
 
-                        <div className="flex  m-0 items-center gap-14">
+                        <div className="flex  m-0 items-center justify-between ">
                             <div className="mt-0">
                                 <label className="block text-sm font-medium text-gray-700">
                                     PG Name
@@ -390,7 +390,7 @@ const Add_PG = () => {
                             </label>
                             <input
                                 value={address_1}
-                                style={{width:"466px"}}
+                                style={{width:"476px"}}
                                 onChange={handleChangeAddress_1}
                                 name="  address_1"
                                 placeholder="example( door no , street , area )"
@@ -405,7 +405,7 @@ const Add_PG = () => {
                             </label>
                             <input
                                 name="address_2"
-                                style={{width:"466px"}}
+                                style={{width:"476px"}}
                                 placeholder="example( city , district )"
                                 value={address_2}
                                 onChange={handleChangeAddress_2}
@@ -413,7 +413,7 @@ const Add_PG = () => {
                             />
                         </div>
                   
-                    <div className="flex mt-4 gap-14">
+                    <div className="flex mt-4 justify-between">
                     <div>
                             <label className="block text-sm font-medium text-gray-700">
                                 contact
@@ -442,7 +442,7 @@ const Add_PG = () => {
                        
                 </div>
 
-                <div className="flex gap-14">
+                <div className="flex justify-between">
                     <div className="mt-4">
                         <label className="block text-sm font-medium text-gray-700">
                             state
@@ -489,7 +489,7 @@ const Add_PG = () => {
                 </div>
 
                 </div>
-<div>
+<div className="">
 <fieldset className="border text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
                                 PG Type
@@ -510,7 +510,7 @@ const Add_PG = () => {
                                 ))}
                             </div>
                         </fieldset>
-                        <fieldset className="border text-center w-96 p-4 rounded-md">
+                        <fieldset className="border text-center mt-2 w-96 p-4 rounded-md">
                         <legend className="text-base font-medium text-gray-900">
                             Occupancy
                         </legend>
@@ -564,17 +564,7 @@ const Add_PG = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-                <div className="flex  items-center gap-48">
+                <div className="flex mt-8 text-center gap-48">
                     <div className="w-1/2">
                         <fieldset className="border text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
@@ -629,7 +619,8 @@ const Add_PG = () => {
                         </fieldset>
                     </div>
                 </div>
-                <div>
+
+                <div className="mt-8">
                     <label className="block text-sm font-medium text-black">
                         Upload Photos (up to 3)
                     </label>
