@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import countryDataJSON from "../RentPageComponent/country JSON/countries+states.json"
 import EmojiPicker from 'emoji-picker-react';
 import { FaBold, FaItalic, FaUnderline, FaAlignLeft, FaAlignRight, FaSmile } from "react-icons/fa";
+import { Description } from "@headlessui/react";
 
 
 const AddRoomForm = () => {
@@ -308,6 +309,7 @@ const deleteIMG = (index) => {
         const uploadData = new FormData()
         const formattedFormData = {
             ...formData,
+            description:text,
             location: JSON.stringify({
               doorNo: doorNoValue,
               street: streetValue,

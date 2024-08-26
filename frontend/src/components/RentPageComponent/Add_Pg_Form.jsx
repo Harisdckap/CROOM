@@ -256,7 +256,7 @@ const Add_PG = () => {
         formData.append("pg_name", pg_name);
         formData.append("occupancy_type", occupancy_type);
         formData.append("occupancy_amount", occupancy_amount);
-        formData.append("pg_post_content", pg_post_content);
+        formData.append("pg_post_content", text);
 
         formData.append(
             "location",
