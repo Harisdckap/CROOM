@@ -5,6 +5,9 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
 import countryDataJSON from '../RentPageComponent/country JSON/countries+states.json'
+import EmojiPicker from 'emoji-picker-react';
+import { FaBold, FaItalic, FaUnderline, FaAlignLeft, FaAlignRight, FaSmile } from "react-icons/fa";
+
 
 // import "./Roommate.css";
 
@@ -26,6 +29,62 @@ const Add_PG = () => {
     const [PIN, setPIN] = useState("");
     const [state, setstate] = useState("");
     const [countryData, setcountryData] = useState();
+
+
+
+    const [text, setText] = useState("");
+  const [format, setFormat] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    alignLeft: false,
+    alignRight: false,
+  });
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+
+
+  const handleFormat = (type) => {
+    setFormat((prevFormat) => ({
+      ...prevFormat,
+      [type]: !prevFormat[type],
+    }));
+  };
+
+
+
+  const formatClasses = () => {
+    let classes = "border p-2 w-full ";
+    if (format.bold) classes += "font-bold ";
+    if (format.italic) classes += "italic ";
+    if (format.underline) classes += "underline ";
+    if (format.alignLeft) classes += "text-left ";
+    if (format.alignRight) classes += "text-right ";
+    return classes;
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    setText((prevText) => prevText + emojiObject.emoji);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // navigate
     const navigate = useNavigate();
@@ -165,7 +224,7 @@ const Add_PG = () => {
             return false;
         }
         
-        if (!pg_post_content) {
+        if (!text) {
             showToastMessage("PG post content is required");
             return false;
         }
@@ -290,9 +349,9 @@ const Add_PG = () => {
                 </p>
             </div>
 
-            <div className="">
+            <div className="flex justify-between">
                 <div>
-                    <div className="flex m-0 justify-between">
+
                         <div className="flex  m-0 items-center gap-14">
                             <div className="mt-0">
                                 <label className="block text-sm font-medium text-gray-700">
@@ -322,102 +381,39 @@ const Add_PG = () => {
                                     {countryData&& countryDataJSON.find((c)=>c.name == countryData)?.currency_symbol}
                                 </span>
                             </div>
-                        </div>
-                        <fieldset className="border text-center w-96 p-4 rounded-md">
-                            <legend className="text-base font-medium text-gray-900">
-                                PG Type
-                            </legend>
-                            <div className="flex gap-4 mt-2">
-                                {["Boys", "Girls", "Both"].map((option) => (
-                                    <button
-                                        key={option}
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                            pg_type === option
-                                                ? "bg-blue-500 text-white"
-                                                : "hover:bg-gray-100"
-                                        }`}
-                                        onClick={() => setPgType(option)}
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </fieldset>
+                        
                     </div>
-                </div>
 
-                <div className="flex mt-0 justify-between">
-                    <div className="flex items-center gap-14">
-                        <div>
+                        <div className="mt-4">
                             <label className="block text-sm font-medium text-gray-700">
                                 address 1
                             </label>
                             <input
                                 value={address_1}
+                                style={{width:"466px"}}
                                 onChange={handleChangeAddress_1}
                                 name="  address_1"
                                 placeholder="example( door no , street , area )"
                                 className="mt-1 block px-3 w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                             />
                         </div>
-                    </div>
-                    <fieldset className="border text-center w-96 p-4 rounded-md">
-                        <legend className="text-base font-medium text-gray-900">
-                            Occupancy
-                        </legend>
-                        <div className="mt-2 space-x-4">
-                            {["Bacheler", "Family"].map((option) => (
-                                <button
-                                    type="button"
-                                    key={option}
-                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                        occupancy_type === option
-                                            ? "bg-blue-500 text-white"
-                                            : "hover:bg-gray-100"
-                                    }`}
-                                    onClick={() => setOccupancyType(option)}
-                                >
-                                    {option}
-                                </button>
-                            ))}
-                        </div>
-                    </fieldset>
-                </div>
-
-                {/*                  
-    <div className="mt-6">
-                   <label className="block text-sm font-medium text-gray-700">
-                       PG Address
-                   </label>
-                   <input
-                       value={location}
-                       onChange={(e) => setLocation(e.target.value)}
-                       type="text"
-                       className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full"
-                   />
-               </div>          */}
-
-                {/* PG Address */}
-
-                <div className="flex justify-between">
-                    <div className="flex items-center gap-14">
-                        <div>
+                    
+              
+                        <div className="mt-4">
                             <label className="block mt-3 text-sm font-medium text-gray-700">
                                 address 2
                             </label>
                             <input
                                 name="address_2"
+                                style={{width:"466px"}}
                                 placeholder="example( city , district )"
                                 value={address_2}
                                 onChange={handleChangeAddress_2}
                                 className="mt-1 block px-3 min-w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                             />
                         </div>
-                    </div>
-                </div>
-
-                <div className="flex ">
-                    <div className="flex mt-5 gap-14">
+                  
+                    <div className="flex mt-4 gap-14">
                     <div>
                             <label className="block text-sm font-medium text-gray-700">
                                 contact
@@ -444,16 +440,17 @@ const Add_PG = () => {
                             />
                         </div>
                        
-                    </div>
                 </div>
 
                 <div className="flex gap-14">
-                    <div className="mt-5">
+                    <div className="mt-4">
                         <label className="block text-sm font-medium text-gray-700">
                             state
                         </label>
                         <select
                             value={state}
+                            style={{width:"210px"}}
+
                             onChange={handleChangeState}
                             name="state"
                             placeholder="state"
@@ -470,7 +467,7 @@ const Add_PG = () => {
                             ))}
                         </select>
                     </div>
-                    <div className="mt-5">
+                    <div className="mt-4">
                         <label className="block text-sm font-medium text-gray-700">
                             country
                         </label>
@@ -478,6 +475,7 @@ const Add_PG = () => {
                             value={countryData}
                             onChange={handleChangeCuntry}
                             name="cuntry"
+                            style={{width:"210px"}}
                             placeholder="cuntry"
                             className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                         >
@@ -489,6 +487,92 @@ const Add_PG = () => {
                         </select>
                     </div>
                 </div>
+
+                </div>
+<div>
+<fieldset className="border text-center w-96 p-4 rounded-md">
+                            <legend className="text-base font-medium text-gray-900">
+                                PG Type
+                            </legend>
+                            <div className="flex gap-4 mt-2">
+                                {["Boys", "Girls", "Both"].map((option) => (
+                                    <button
+                                        key={option}
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                            pg_type === option
+                                                ? "bg-blue-500 text-white"
+                                                : "hover:bg-gray-100"
+                                        }`}
+                                        onClick={() => setPgType(option)}
+                                    >
+                                        {option}
+                                    </button>
+                                ))}
+                            </div>
+                        </fieldset>
+                        <fieldset className="border text-center w-96 p-4 rounded-md">
+                        <legend className="text-base font-medium text-gray-900">
+                            Occupancy
+                        </legend>
+                        <div className="mt-2 space-x-4">
+                            {["Bacheler", "Family"].map((option) => (
+                                <button
+                                    type="button"
+                                    key={option}
+                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                        occupancy_type === option
+                                            ? "bg-blue-500 text-white"
+                                            : "hover:bg-gray-100"
+                                    }`}
+                                    onClick={() => setOccupancyType(option)}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    </fieldset>
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 <div className="flex  items-center gap-48">
                     <div className="w-1/2">
@@ -603,7 +687,8 @@ const Add_PG = () => {
                         </div>
                     )}
                 </div>
-                <div className="mt-6">
+
+                {/* <div className="mt-6">
                     <label className="block text-sm font-medium text-gray-700">
                         PG Post Content
                     </label>
@@ -612,8 +697,78 @@ const Add_PG = () => {
                         onChange={(e) => setPgPostContent(e.target.value.trim())}
                         className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full h-32"
                     />
-                </div>
-                {/* Buttons */}
+                </div> */}
+
+<div className="mt-8 relative">
+          <h4 className="">Description</h4>
+          <div className="mb-2">
+            <button
+              type="button"
+              onClick={() => handleFormat("bold")}
+              className={`p-2 ${format.bold ? "bg-gray-200" : ""}`}
+            >
+              <FaBold />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("italic")}
+              className={`p-2 ${format.italic ? "bg-gray-200" : ""}`}
+            >
+              <FaItalic />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("underline")}
+              className={`p-2 ${format.underline ? "bg-gray-200" : ""}`}
+            >
+              <FaUnderline />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("alignLeft")}
+              className={`p-2 ${format.alignLeft ? "bg-gray-200" : ""}`}
+            >
+              <FaAlignLeft />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("alignRight")}
+              className={`p-2 ${format.alignRight ? "bg-gray-200" : ""}`}
+            >
+              <FaAlignRight />
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="p-2 "
+            >
+              <FaSmile/>
+            </button>
+          </div>
+          {showEmojiPicker &&(
+            <div className="absolute bottom-44">
+
+           <EmojiPicker 
+          onEmojiClick={onEmojiClick} />
+                      </div>
+)}
+                   
+
+          <textarea
+            name="description"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className={formatClasses()}
+              placeholder="Type your text here..."
+        rows="4"
+          />
+        </div>
+
+
+
+
+
+
 
                 <div className="mt-12 text-center">
                     <button
@@ -623,7 +778,6 @@ const Add_PG = () => {
                         Add PG
                     </button>
                 </div>
-            </div>
             <ToastContainer />
         </div>
     );

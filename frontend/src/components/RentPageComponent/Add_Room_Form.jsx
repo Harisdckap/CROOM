@@ -4,6 +4,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
 import countryDataJSON from "../RentPageComponent/country JSON/countries+states.json"
+import EmojiPicker from 'emoji-picker-react';
+import { FaBold, FaItalic, FaUnderline, FaAlignLeft, FaAlignRight, FaSmile } from "react-icons/fa";
+
 
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
@@ -23,6 +26,54 @@ const AddRoomForm = () => {
         listing_type: "room"
         
     });
+    
+
+
+
+    const [text, setText] = useState("");
+  const [format, setFormat] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    alignLeft: false,
+    alignRight: false,
+  });
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+
+
+  const handleFormat = (type) => {
+    setFormat((prevFormat) => ({
+      ...prevFormat,
+      [type]: !prevFormat[type],
+    }));
+  };
+
+
+
+  const formatClasses = () => {
+    let classes = "border p-2 w-full ";
+    if (format.bold) classes += "font-bold ";
+    if (format.italic) classes += "italic ";
+    if (format.underline) classes += "underline ";
+    if (format.alignLeft) classes += "text-left ";
+    if (format.alignRight) classes += "text-right ";
+    return classes;
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    setText((prevText) => prevText + emojiObject.emoji);
+  };
+
+
+
+
+
+
+
+
+
+
 
 
     const [images, setImages] = useState([]);
@@ -213,7 +264,7 @@ const deleteIMG = (index) => {
             showToast("amenities is required");
             return false;
         }
-        if (!formData.description) {
+        if (!text) {
             showToast("description is required");
             return false;
         }
@@ -346,12 +397,15 @@ const deleteIMG = (index) => {
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-800">Add Room</h1>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y">
 
-                <div>
-                    <div className="flex items-center justify-between">
 
-                        <div className="flex items-center gap-14">
+<div className="flex  justify-between">
+
+<div className="">
+
+
+                        <div className="flex gap-14">
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
@@ -362,7 +416,7 @@ const deleteIMG = (index) => {
                                     value={formData.title}
                                     onChange={handleChange}
                                     placeholder="Title"
-                                    className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                                    className="mt-1  px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div>
 
@@ -377,7 +431,7 @@ const deleteIMG = (index) => {
                                     value={formData.price}
                                     onChange={handleChange}
                                     placeholder="Price"
-                                    className="mt-1 block   px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
+                                    className="mt-1    px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                                 
                                 >
                                
@@ -392,78 +446,35 @@ const deleteIMG = (index) => {
 
 
                         </div>
-                        <fieldset className="border text-center w-96 p-4 rounded-md">
-                            <legend className="text-base font-medium text-gray-900">
-                                looking_for_gender
-                            </legend>
-                            <div className="mt-2 space-x-4">
-                                {["Any", "Male", "Female"].map((gender) => (
-                                    <button
-                                        type="button"
-                                        key={gender}
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium  ${formData.looking_for_gender === gender.toLowerCase()
-                                                ? "bg-blue-500 text-primary"
-                                                : "hover:bg-gray-100"
-                                            }`}
-                                        onClick={() => handleChange({ target: { name: "looking_for_gender", value: gender.toLowerCase() } })}
-                                    >
-                                        {gender}
-                                    </button>
-                                ))}
-                            </div>
-                        </fieldset>
-                    </div>
-
-                    <div className="flex justify-between">
-                        <div className="flex   items-center gap-14">
                         
-                            <div>
+            
+
+                    
+                      
+                        
+                            <div className="mt-4">
                                 <label className="block text-sm font-medium text-gray-700">
                                     address 1
                                 </label>
                                 <input
                                     name="address_1"
                                     value={address_1}
+                                    style={{width:"466px"}}
                                      onChange={handleChangeAddress_1}
                                     placeholder="example( door no , street , area )"
-                                    className="mt-1 w-96 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                                    className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                                 />
                             </div>
-                          
-                        </div>
-
-                        <fieldset className="border text-center w-96 p-4 rounded-md">
-                            <legend className="text-base font-medium text-gray-900">
-                                room_type
-                            </legend>
-                            <div className="mt-2 space-x-4">
-                                {["1RK", "1BHK", "2BHK", "3BHK"].map((room) => (
-                                    <button
-                                        type="button"
-                                        key={room}
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${formData.room_type === room
-                                                ? "bg-blue-500 text-white"
-                                                : "hover:bg-gray-100"
-                                            }`}
-                                        onClick={() => handleChange({ target: { name: "room_type", value: room } })}
-                                    >
-                                        {room}
-                                    </button>
-                                ))} 
-                            </div>
-                        </fieldset>
-                    </div>
-           
-                    <div className="flex  items-center justify-between">
-                        <div className="flex items-center gap-14">
+                            
                      
-                            <div>
+                            <div className="mt-4">
                                 <label className="block text-sm font-medium text-gray-700">
                                     address 2
                                 </label>
                                 <input
                                     name="  address_2"
                                     value={address_2}
+                                    style={{width:"466px"}}
                                     onChange={handleChangeAddress_2}
                                     placeholder="example( city , district )"
                                     className="mt-1 block px-3 w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
@@ -471,35 +482,11 @@ const deleteIMG = (index) => {
                             </div>
                           
                            
-                        </div>
-                        <fieldset className="border text-center w-96 p-4 rounded-md">
-                            <legend className="text-base font-medium text-gray-900">
-                                occupancy
-                            </legend>
-                            <div className="mt-2 space-x-4">
-                                {["Bachelar ", "Family "].map((option) => (
-                                    <button
-                                        type="button"
-                                        key={option}
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${formData.ocgicupancy === option
-                                                ? "bg-blue-400 text-white"
-                                                : "hover:bg-gray-100"
-                                            }`}
-                                        onClick={() => handleChange({ target: { name: "ocgicupancy", value: option } })}
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </fieldset>
+                     
+                    
 
-                    </div>
-
-                </div>
-                <div  className="flex gap-14">
-
-
-
+            
+                <div  className="flex mt-4 gap-14">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
                                     contact
@@ -531,7 +518,7 @@ const deleteIMG = (index) => {
 
 
 
-<div className="flex gap-14">
+<div className="flex mt-4 gap-14">
     
 <div>
   <label className="block text-sm font-medium text-gray-700">
@@ -540,6 +527,7 @@ const deleteIMG = (index) => {
   <select
     name="state"
     value={state}
+    style={{width:"210px"}}
     onChange={handleChangeState}
     placeholder="state"
     className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
@@ -551,7 +539,7 @@ const deleteIMG = (index) => {
     
     {countryData &&
     countryDataJSON.find((cl)=>cl.name == countryData)?.states.map((sn)=>(
-      <option key={sn.name}>{sn.name}</option>
+      <option  className="block" key={sn.name}>{sn.name}</option>
     ))
 }
   </select>
@@ -565,6 +553,7 @@ const deleteIMG = (index) => {
                                 <select
                                     name="country"
                                     value={countryData}
+                                    style={{width:"200px"}}
                                     onChange={handleChangeCuntry}
                                     placeholder="country"
                                     className="mt-0 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
@@ -572,19 +561,127 @@ const deleteIMG = (index) => {
     <option>
         select country
     </option>
-
 {countryDataJSON.map((country)=>( 
-<option value={country.name} key={country.name}>{country.name+country.emoji}</option>
-  
+<option className="block" value={country.name} key={country.name}>{country.name+country.emoji}</option>
 ))}
 </select>
        
 </div>
 </div>
+</div>
 
         
 
-                <div className="flex  items-center gap-48">
+<div className="">
+
+ <fieldset className="border text-center w-96 p-4 rounded-md">
+                            <legend className="text-base font-medium text-gray-900">
+                                looking_for_gender
+                            </legend>
+                            <div className="mt-2 space-x-4">
+                                {["Any", "Male", "Female"].map((gender) => (
+                                    <button
+                                        type="button"
+                                        key={gender}
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium  ${formData.looking_for_gender === gender.toLowerCase()
+                                                ? "bg-blue-500 text-primary"
+                                                : "hover:bg-gray-100"
+                                            }`}
+                                        onClick={() => handleChange({ target: { name: "looking_for_gender", value: gender.toLowerCase() } })}
+                                    >
+                                        {gender}
+                                    </button>
+                                ))}
+                            </div>
+                        </fieldset>
+
+
+
+
+
+                         <fieldset className="border text-center w-96 p-4 rounded-md">
+                            <legend className="text-base font-medium text-gray-900">
+                                room_type
+                            </legend>
+                            <div className="mt-2 space-x-4">
+                                {["1RK", "1BHK", "2BHK", "3BHK"].map((room) => (
+                                    <button
+                                        type="button"
+                                        key={room}
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${formData.room_type === room
+                                                ? "bg-blue-500 text-white"
+                                                : "hover:bg-gray-100"
+                                            }`}
+                                        onClick={() => handleChange({ target: { name: "room_type", value: room } })}
+                                    >
+                                        {room}
+                                    </button>
+                                ))} 
+                            </div>  
+                            
+                          
+
+                        </fieldset> 
+
+                        <fieldset className="border text-center w-96 p-4 rounded-md">
+                            <legend className="text-base font-medium text-gray-900">
+                                occupancy
+                            </legend>
+                            <div className="mt-2 space-x-4">
+                                {["Bachelar ", "Family "].map((option) => (
+                                    <button
+                                        type="button"
+                                        key={option}
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${formData.ocgicupancy === option
+                                                ? "bg-blue-400 text-white"
+                                                : "hover:bg-gray-100"
+                                            }`}
+                                        onClick={() => handleChange({ target: { name: "ocgicupancy", value: option } })}
+                                    >
+                                        {option}
+                                    </button>
+                                ))}
+                            </div>
+                        </fieldset>
+     
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div className="flex gap-48">
 
                     <div className="w-1/2">
                         <fieldset className="border  text-center w p-4 rounded-md mt-12">
@@ -645,8 +742,7 @@ const deleteIMG = (index) => {
                 </div>
 
 
-
-                <div>
+                    <div className="mt-8">
                     <label className="block text-sm font-medium text-black">
                         Upload Photos (up to 3)
                     </label>
@@ -709,7 +805,7 @@ const deleteIMG = (index) => {
 
                 </div>
 
-                <div>
+                {/* <div>
                     <label className="block text-sm font-medium text-black">
                         Description
                     </label>
@@ -721,7 +817,98 @@ const deleteIMG = (index) => {
                         className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         rows={4}
                     />
-                </div>
+                </div> */}
+    
+        <div className="mt-8 relative">
+          <h4 className="">Description</h4>
+          <div className="mb-2">
+            <button
+              type="button"
+              onClick={() => handleFormat("bold")}
+              className={`p-2 ${format.bold ? "bg-gray-200" : ""}`}
+            >
+              <FaBold />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("italic")}
+              className={`p-2 ${format.italic ? "bg-gray-200" : ""}`}
+            >
+              <FaItalic />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("underline")}
+              className={`p-2 ${format.underline ? "bg-gray-200" : ""}`}
+            >
+              <FaUnderline />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("alignLeft")}
+              className={`p-2 ${format.alignLeft ? "bg-gray-200" : ""}`}
+            >
+              <FaAlignLeft />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("alignRight")}
+              className={`p-2 ${format.alignRight ? "bg-gray-200" : ""}`}
+            >
+              <FaAlignRight />
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="p-2 "
+            >
+              <FaSmile/>
+            </button>
+          </div>
+          {showEmojiPicker &&(
+            <div className="absolute bottom-44">
+
+           <EmojiPicker 
+          onEmojiClick={onEmojiClick} />
+                      </div>
+)}
+                   
+
+          <textarea
+            name="description"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className={formatClasses()}
+              placeholder="Type your text here..."
+        rows="4"
+          />
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 <div className="text-center">
                     <button
@@ -737,6 +924,7 @@ const deleteIMG = (index) => {
             )}
             <ToastContainer />
         </div>
+        
     );
 };
 

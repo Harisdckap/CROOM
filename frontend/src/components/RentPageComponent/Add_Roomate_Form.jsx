@@ -3,6 +3,10 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link ,useNavigate} from "react-router-dom";
+import EmojiPicker from 'emoji-picker-react';
+import { FaBold, FaItalic, FaUnderline, FaAlignLeft, FaAlignRight, FaSmile } from "react-icons/fa";
+
+
 
 import countryDataJSON from "../RentPageComponent/country JSON/countries+states.json";
 // import { FaT } from "react-icons/fa6";/
@@ -17,7 +21,6 @@ const AddRequirement = () => {
         highlighted_features: [],
         location: {},
         approx_rent: "",
-        post: "",
         occupancy: "",
         number_of_people: "",
         amenities: [],
@@ -36,6 +39,53 @@ const AddRequirement = () => {
 
     // navigate
     const navigate = useNavigate();
+
+
+
+
+    const [text, setText] = useState("");
+  const [format, setFormat] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    alignLeft: false,
+    alignRight: false,
+  });
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+
+
+  const handleFormat = (type) => {
+    setFormat((prevFormat) => ({
+      ...prevFormat,
+      [type]: !prevFormat[type],
+    }));
+  };
+
+
+
+  const formatClasses = () => {
+    let classes = "border p-2 w-full ";
+    if (format.bold) classes += "font-bold ";
+    if (format.italic) classes += "italic ";
+    if (format.underline) classes += "underline ";
+    if (format.alignLeft) classes += "text-left ";
+    if (format.alignRight) classes += "text-right ";
+    return classes;
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    setText((prevText) => prevText + emojiObject.emoji);
+  };
+
+
+
+
+
+
+
+
+
 
 
 
@@ -199,7 +249,7 @@ const AddRequirement = () => {
             return false;
         }
         
-        if (!post) {
+        if (!text) {
             showToast("post for is required");
             return false;
         }
@@ -253,7 +303,7 @@ const AddRequirement = () => {
         listing_type: formData.listing_type, 
         room_type: formData.room_type, 
         approx_rent: formData.approx_rent, 
-        post:formData.post,
+        post:text,
         looking_for_gender:formData.looking_for, 
         occupancy: formData.occupancy, 
         number_of_people: formData.number_of_people,
@@ -350,7 +400,11 @@ const AddRequirement = () => {
                 </p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="flex items-center justify-between ">
+
+<div className="flex justify-between">
+    
+    <div>
+
                     <div className="flex items-center gap-14">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
@@ -379,97 +433,48 @@ const AddRequirement = () => {
                             />
                         </div>
 
-                    </div>
-                    <fieldset className="border text-center w-96 p-4 rounded-md">
-                        <legend className="text-base font-medium text-gray-900">
-                            Room Type
-                        </legend>
-                        <div className="mt-2 space-x-4">
-                            {["1RK", "1BHK", "2BHK", "3BHK"].map((option) => (
-                                <button
-                                    type="button"
-                                    key={option}
-                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                        formData.room_type === option
-                                            ? "bg-blue-500 text-white"
-                                            : "hover:bg-gray-100"
-                                    }`}
-                                    onClick={() =>
-                                        setFormData((prevData) => ({
-                                            ...prevData,
-                                            room_type: option,
-                                        }))
-                                    }
-                                >
-                                    {option}
-                                </button>
-                            ))}
-                        </div>
-                    </fieldset>
+               
+                   
                 </div>
 
-                <div className="">
-                    <div className="flex items-center justify-between">
-                        <div>
+          
+                    
+                        <div className="mt-4">
                             <label className="block text-sm font-medium text-gray-700">
                                 address 1
                             </label>
                             <input
                                 value={address_1}
                                 onChange={handleChangeAddress_1}
+                                style={{width:"466px"}}
                                 name="address_1"
                                 placeholder="example( door no , street , area )"
                                 className="mt-1 block px-3 w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                             />
-                        </div>
+                     
 
-                        <fieldset className="border text-center w-96 p-4 rounded-md">
-                            <legend className="text-base font-medium text-gray-900">
-                                Looking Gender For
-                            </legend>
-                            <div className="mt-2 space-x-4">
-                                {["Male", "Female", "Any"].map((option) => (
-                                    <button
-                                        type="button"
-                                        key={option}
-                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                            formData.looking_for === option
-                                                ? "bg-blue-500 text-white"
-                                                : "hover:bg-gray-100"
-                                        }`}
-                                        onClick={() =>
-                                            setFormData((prevData) => ({
-                                                ...prevData,
-                                                looking_for: option,
-                                            }))
-                                        }
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </fieldset>
                     </div>
-                </div>
-                <div className="flex justify-between">
-                    <div className="flex items-center gap-14">
-                        <div>
+    
+              
+                  
+                        <div className="mt-4">
                             <label className="block mt-3 text-sm font-medium text-gray-700">
                                 address 2
                             </label>
                             <input
                                 name="  address_2"
                                 value={address_2}
+                                style={{width:"466px"}}
                                 onChange={handleChangeAddress_2}
                                 placeholder="example( city , district )"
                                 className="mt-1 block px-3 min-w-96 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                             />
                         </div>
-                    </div>
-                </div>
+        
+           
 
-                <div className="flex ">
-                    <div className="flex mt-5 gap-14">
+              
+                    <div className="flex mt-4 gap-14">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">
                                 contact
@@ -493,16 +498,17 @@ const AddRequirement = () => {
                             />
                         </div>
                     </div>
-                </div>
+    
 
-                <div className="flex gap-14">
-                <div>
+                <div className="flex mt-4 gap-14">
+                <div className="">
   <label className="block text-sm font-medium text-gray-700">
     State
   </label>
   <select
     value={selectedState}
     onChange={handleStateChange}
+    style={{width:"208px"}}
     className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
     disabled={!selectedCountry} // Disable state dropdown if no country is selected
   >
@@ -521,13 +527,13 @@ const AddRequirement = () => {
     }
   </select>
 </div>
-
-                    <div>
+  <div>
       <label className="block text-sm font-medium text-gray-700">
         Country
       </label>
       <select
         value={selectedCountry}
+        style={{width:"208px"}}
         onChange={handleCountryChange}
         className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
       >
@@ -543,7 +549,7 @@ const AddRequirement = () => {
     </div>   
 
     </div>
-<div className="flex gap-14">
+<div className="flex mt-4 gap-14">
 
 <div className="relative">
   <label className="block text-sm font-medium text-gray-700">
@@ -583,7 +589,90 @@ const AddRequirement = () => {
                             />
                         </div>
 </div>
-              
+</div>
+
+
+
+<div>
+  <fieldset className="border text-center w-96 p-4 rounded-md">
+                        <legend className="text-base font-medium text-gray-900">
+                            Room Type
+                        </legend>
+                        <div className="mt-2 space-x-4">
+                            {["1RK", "1BHK", "2BHK", "3BHK"].map((option) => (
+                                <button
+                                    type="button"
+                                    key={option}
+                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                        formData.room_type === option
+                                            ? "bg-blue-500 text-white"
+                                            : "hover:bg-gray-100"
+                                    }`}
+                                    onClick={() =>
+                                        setFormData((prevData) => ({
+                                            ...prevData,
+                                            room_type: option,
+                                        }))
+                                    }
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    </fieldset> 
+
+
+                        <fieldset className="border text-center w-96 p-4 rounded-md">
+                            <legend className="text-base font-medium text-gray-900">
+                                Looking Gender For
+                            </legend>
+                            <div className="mt-2 space-x-4">
+                                {["Male", "Female", "Any"].map((option) => (
+                                    <button
+                                        type="button"
+                                        key={option}
+                                        className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                            formData.looking_for === option
+                                                ? "bg-blue-500 text-white"
+                                                : "hover:bg-gray-100"
+                                        }`}
+                                        onClick={() =>
+                                            setFormData((prevData) => ({
+                                                ...prevData,
+                                                looking_for: option,
+                                            }))
+                                        }
+                                    >
+                                        {option}
+                                    </button>
+                                ))}
+                            </div>
+                        </fieldset> 
+</div>
+
+
+
+</div> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 <div className="flex  items-center gap-48">
                     <div className="w-1/2 tex">
@@ -698,7 +787,7 @@ const AddRequirement = () => {
                         ))}
                     </div>
                 </div>
-                <div>
+                {/* <div>
                     <label className="block text-sm font-medium text-gray-700">
                         Add Your Post
                     </label>
@@ -710,7 +799,94 @@ const AddRequirement = () => {
                         className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         rows={4}
                     />
-                </div>
+                </div> */}
+
+
+
+
+<div className="mt-8 relative">
+          <h4 className="">Description</h4>
+          <div className="mb-2">
+            <button
+              type="button"
+              onClick={() => handleFormat("bold")}
+              className={`p-2 ${format.bold ? "bg-gray-200" : ""}`}
+            >
+              <FaBold />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("italic")}
+              className={`p-2 ${format.italic ? "bg-gray-200" : ""}`}
+            >
+              <FaItalic />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("underline")}
+              className={`p-2 ${format.underline ? "bg-gray-200" : ""}`}
+            >
+              <FaUnderline />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("alignLeft")}
+              className={`p-2 ${format.alignLeft ? "bg-gray-200" : ""}`}
+            >
+              <FaAlignLeft />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleFormat("alignRight")}
+              className={`p-2 ${format.alignRight ? "bg-gray-200" : ""}`}
+            >
+              <FaAlignRight />
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="p-2 "
+            >
+              <FaSmile/>
+            </button>
+          </div>
+          {showEmojiPicker &&(
+            <div className="absolute bottom-44">
+
+           <EmojiPicker 
+          onEmojiClick={onEmojiClick} />
+                      </div>
+)}
+                   
+
+          <textarea
+            name="description"
+            value={formData.post}
+            onChange={(e) => setText(e.target.value)}
+            className={formatClasses()}
+              placeholder="Type your text here..."
+        rows="4"
+          />
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
 
                 <div className="mt-12 text-center">
                     <button
