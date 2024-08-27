@@ -137,6 +137,8 @@ const Profile = () => {
 
         const { existingPassword, newPassword, confirmNewPassword } =
             passwordData;
+
+
         const formData = new FormData();
         formData.append("existingPassword", existingPassword);
         formData.append("newPassword", newPassword);
@@ -156,10 +158,7 @@ const Profile = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append("existingPassword", existingPassword);
-        formData.append("newPassword", newPassword);
-        formData.append("newPassword_confirmation", confirmNewPassword);
+     
 
         try {
             await axios.post(`http://localhost:8000/api/change-password/${user_id}`, formData, {

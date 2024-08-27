@@ -22,6 +22,7 @@ const MyFavPage = () => {
                 `http://127.0.0.1:8000/api/user/${userId}/favourites`
             );
             setFavourites(response.data.data);
+            console.log(setFavourites);
         } catch (error) {
             console.error("Error fetching favorite listings:", error);
         }

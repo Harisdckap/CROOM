@@ -42,15 +42,56 @@ class FavouriteController extends Controller
         }
     }
 
-
-    public function getFavourites($userId)
+    public function getFavourites($userId, $type = null, $sortOrder = 'ASC')
     {
+        // Initialize empty collections
+        $pgListings = collect();
+        $rooms = collect();
+        $roommates = collect();
 
-        $pgListings = PgListing::where('is_favourite', 1)->where('id', $userId)->get();
-        $rooms = Rooms::where('is_favourite', 1)->where('id', $userId)->get();
-        $roommates = Roommate::where('is_favourite', 1)->where('id', $userId)->get();
-        $favourites = $pgListings->merge($rooms)->merge($roommates);
-        return response()->json(['data' => $favourites]);
+        // Fetch data based on type
+        switch ($type) {
+            case 'r':
+                $rooms = Rooms::where('is_favourite', 1)->where('user_id', $userId)->get();
+                break;
+            case 'rm':
+                $roommates = Roommate::where('is_favourite', 1)->where('user_id', $userId)->get();
+                break;
+            case 'pg':
+                $pgListings = PgListing::where('is_favourite', 1)->where('user_id', $userId)->get();
+                break;
+            default:
+                $pgListings = PgListing::where('is_favourite', 1)->where('user_id', $userId)->get();
+                $rooms = Rooms::where('is_favourite', 1)->where('user_id', $userId)->get();
+                $roommates = Roommate::where('is_favourite', 1)->where('user_id', $userId)->get();
+                break;
+        }
+
+        // Combine collections into a single array
+        $combinedArray = $roommates->toArray();
+        $combinedArray = array_merge($combinedArray, $rooms->toArray());
+        $combinedArray = array_merge($combinedArray, $pgListings->toArray());
+
+        // Convert back to collection for sorting
+        $combinedCollection = collect($combinedArray);
+
+        // Sort the collection
+        $sortedCollection = $combinedCollection->sort(function ($a, $b) use ($sortOrder) {
+            $aPrice = $a['price'] ?? $a['approx_rent'] ?? $a['occupancy_amount'];
+            $bPrice = $b['price'] ?? $b['approx_rent'] ?? $b['occupancy_amount'];
+
+            if ($sortOrder === 'NEWEST') {
+                return $b['created_at'] <=> $a['created_at'];
+            }
+
+            if ($aPrice === $bPrice) {
+                return 0;
+            }
+
+            return ($sortOrder === 'ASC') ? ($aPrice < $bPrice ? -1 : 1) : ($aPrice > $bPrice ? -1 : 1);
+        });
+
+        return response()->json(['data' => $sortedCollection->values()]);
     }
 
 }
