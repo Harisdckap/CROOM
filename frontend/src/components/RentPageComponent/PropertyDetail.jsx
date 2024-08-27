@@ -337,7 +337,7 @@ const PropertyDetail = () => {
         : [];
 
     return (
-        <div>
+        <div className="bg-white">
             <HomeNavBar />
             <motion.div
                 className="container mx-auto p-6 bg-white shadow-lg pt-24"
@@ -545,10 +545,13 @@ const PropertyDetail = () => {
                     {/* Nearby properties */}
     
                 </div>
-                <NearbyProperties
-        nearbyProperties={nearbyProperties}
-        handleViewClick={handleViewClick} // Pass the function to handle clicks
-      />
+     {/* Conditionally render NearbyProperties if there are nearby properties */}
+     {nearbyProperties.length > 0 && (
+            <NearbyProperties
+                nearbyProperties={nearbyProperties}
+                handleViewClick={handleViewClick} // Pass the function to handle clicks
+            />
+        )}
             </motion.div>
             <Footer />
         </div>

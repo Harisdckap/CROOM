@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
@@ -20,18 +20,15 @@ const PropertyPage = () => {
     const [search, setSearch] = useState(searchParams.get("address") || "");
     const [gender, setGender] = useState(searchParams.get("gender") || "all");
     const [sortOrder, setSortOrder] = useState(searchParams.get("sort") || "ASC");
+    const [propertyType, setPropertyType] = useState(searchParams.get("propertyType") || "all");
     const [loading, setLoading] = useState(true);
-
-    // const toastShownRef = useRef(false); // Use useRef to keep track of toast display
-
-
 
     useEffect(() => {
         const fetchListingsWithDelay = async () => {
-            setLoading(true);  // Start loading
+            setLoading(true);
             await fetchListings();
             setTimeout(() => {
-                setLoading(false);  // Stop loading after 2 seconds
+                setLoading(false);
             }, 1000);
         };
 
@@ -45,16 +42,11 @@ const PropertyPage = () => {
                 t: searchParams.get("t") || "a",
                 gender: searchParams.get("gender") || "all",
                 sort: searchParams.get("sort") || sortOrder,
-            };
+                propertyType: searchParams.get("propertyType") || "All"
+             };
+             
             const response = await axios.get("http://127.0.0.1:8000/api/properties", { params });
             setListings(response.data.data);
-
-            // if (response.data.data.length === 0 && !toastShownRef.current) {
-            //     toast.info("No properties found in this location.");
-            //     toastShownRef.current = true; // Mark that the toast has been shown
-            // } else if (response.data.data.length > 0) {
-            //     toastShownRef.current = false; // Reset if listings are found
-            // }
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
@@ -80,6 +72,7 @@ const PropertyPage = () => {
             t: searchParams.get("t") || "a",
             gender: gender,
             sort: sortOrder,
+            propertyType: propertyType,
         });
     };
 
@@ -91,6 +84,16 @@ const PropertyPage = () => {
             return newParams;
         });
     };
+
+    const handlePropertyTypeChange = (type) => {
+        setPropertyType(type);
+        setSearchParams((prev) => {
+           const newParams = new URLSearchParams(prev);
+           newParams.set("propertyType", type);
+           return newParams;
+        });
+     };
+     
 
     const setListingType = (type) => {
         setSearchParams((prev) => {
@@ -230,39 +233,37 @@ const PropertyPage = () => {
 
     return (
         <div>
-  <HomeNavBar />
-  <Navbar
-    search={search}
-    onSearchChange={handleSearchChange}
-    onSearchSubmit={handleSearchSubmit}
-    gender={gender}
-    onGenderChange={handleGenderChange}
-    setListingType={setListingType}
-    onSortChange={handleSortChange}
-  />
+            <HomeNavBar />
+            <Navbar
+                search={search}
+                onSearchChange={handleSearchChange}
+                onSearchSubmit={handleSearchSubmit}
+                gender={gender}
+                onGenderChange={handleGenderChange}
+                setListingType={setListingType}
+                onSortChange={handleSortChange}
+                propertyType={propertyType}
+                onPropertyTypeChange={handlePropertyTypeChange}
+            />
 
-  <div className="flex justify-center mt-6">
-    {loading ? (
-      <Loader />  // Show loader if loading
-    ) : (
-      listings.length === 0 ? (
-        <NoPropertiesFound />
-      ) : (
-        <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
-          {/* Added mb-12 to create space between the listings and the footer */}
-          {listings.map((listing, index) => renderListing(listing, index))}
+            <div className="flex justify-center mt-6">
+                {loading ? (
+                    <Loader />
+                ) : (
+                    listings.length === 0 ? (
+                        <NoPropertiesFound />
+                    ) : (
+                        <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+                            {listings.map((listing, index) => renderListing(listing, index))}
+                        </div>
+                    )
+                )}
+            </div>
+
+            <ToastContainer />
+            <Footer />
         </div>
-      )
-    )}
-  </div>
-
-  <ToastContainer />
-  
-  {/* Add padding or margin to the footer */}
-  <Footer/>
-</div>
-
-      );
+    );
 };
 
 export default PropertyPage;

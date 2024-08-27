@@ -1,13 +1,23 @@
 import React from "react";
 import logo from "../assets/logo.png";
+import { useLocation } from 'react-router-dom';
+
 
 const Footer = () => {
+    const location = useLocation();
+
+  // Conditionally set margin-top based on the current route
+  const footerStyle = {
+    marginTop: location.pathname.includes('/property') ? '15px' : '0px',
+  };
     return (
-        <footer className="bg-blue-100 text-gray-700 p-8 ">
+
+        
+        <footer style={footerStyle} className="bg-blue-100 text-gray-700 p-6"> {/* Reduced padding */}
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Logo and Address Section */}
                 <div>
-                    <img src={logo} alt="Croom Logo" className="h-10 mb-4" />
+                    <img src={logo} alt="Croom Logo" className="h-10 mb-2" /> {/* Reduced margin */}
                     <h3 className="font-bold text-lg">Corporate Office</h3>
                     <p className="mt-2">
                         L76A, L Block, 21st Street, <br />
@@ -17,69 +27,66 @@ const Footer = () => {
                 </div>
 
                 {/* Company Information */}
-                <div>
-                    <h3 className="font-bold text-lg">Company Information</h3>
-                    <ul className="mt-2 space-y-2">
-                        <li>
-                            <a href="#careers" className="hover:text-blue-600">
-                                Careers
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#contact" className="hover:text-blue-600">
-                                Contact Us
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#blog" className="hover:text-blue-600">
-                                Blog
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#faqs" className="hover:text-blue-600">
-                                FAQs
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#privacy" className="hover:text-blue-600">
-                                Privacy Policy
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#terms" className="hover:text-blue-600">
-                                T&C
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#disclaimers"
-                                className="hover:text-blue-600"
-                            >
-                                Disclaimers
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#how-it-works"
-                                className="hover:text-blue-600"
-                            >
-                                How it Works
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#list-property"
-                                className="hover:text-blue-600"
-                            >
-                                List Your Property
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#sitemap" className="hover:text-blue-600">
-                                Sitemap
-                            </a>
-                        </li>
-                    </ul>
+                <div className="flex justify-between"> {/* Added flexbox to split content */}
+                    <div>
+                        <h3 className="font-bold text-lg">Company Information</h3>
+                        <ul className="mt-2 space-y-1"> {/* Reduced space between items */}
+                            <li>
+                                <a href="#careers" className="hover:text-blue-600">
+                                    Careers
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#contact" className="hover:text-blue-600">
+                                    Contact Us
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#blog" className="hover:text-blue-600">
+                                    Blog
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#faqs" className="hover:text-blue-600">
+                                    FAQs
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#privacy" className="hover:text-blue-600">
+                                    Privacy Policy
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul className="mt-8 space-y-1"> {/* Align second list with first */}
+                            <li>
+                                <a href="#terms" className="hover:text-blue-600">
+                                    T&C
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#disclaimers" className="hover:text-blue-600">
+                                    Disclaimers
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#how-it-works" className="hover:text-blue-600">
+                                    How it Works
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#list-property" className="hover:text-blue-600">
+                                    List Your Property
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#sitemap" className="hover:text-blue-600">
+                                    Sitemap
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 {/* Contact and Social Media */}
@@ -94,8 +101,7 @@ const Footer = () => {
                         <div className="flex space-x-4 mt-2">
                             {/* Social Media Icons */}
                             <a href="#facebook" className="hover:text-blue-600">
-                                <i className="fab fa-facebook"></i>{" "}
-                                {/* Add FontAwesome or SVG icon */}
+                                <i className="fab fa-facebook"></i>
                             </a>
                             <a href="#youtube" className="hover:text-blue-600">
                                 <i className="fab fa-youtube"></i>
@@ -103,19 +109,14 @@ const Footer = () => {
                             <a href="#linkedin" className="hover:text-blue-600">
                                 <i className="fab fa-linkedin"></i>
                             </a>
-                            <a
-                                href="#instagram"
-                                className="hover:text-blue-600"
-                            >
+                            <a href="#instagram" className="hover:text-blue-600">
                                 <i className="fab fa-instagram"></i>
                             </a>
                         </div>
                     </div>
                     {/* App Store Links */}
-                    <div className="mt-6">
-                        <h3 className="font-bold text-lg">
-                            Download the Croom App
-                        </h3>
+                    <div className="mt-4"> {/* Reduced margin */}
+                        <h3 className="font-bold text-lg">Download the Croom App</h3>
                         <div className="flex space-x-4 mt-2">
                             {/* Apple App Store */}
                             <a
