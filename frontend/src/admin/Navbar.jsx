@@ -44,7 +44,7 @@ const Navbar = ({ selectedMenuTitle }) => {
       </div>
       <div className="flex items-center space-x-4 relative" ref={dropdownRef}>
         <UserCircleIcon
-          className="h-10 w-10 text-green-900 cursor-pointer"
+          className="h-10 w-10 text-blue-950 cursor-pointer"
           onClick={handleUserIconClick}
         />
         {isDropdownOpen && (

@@ -1,32 +1,62 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaSortUp, FaSortDown } from 'react-icons/fa';
+import { FaSortUp, FaSortDown, FaEye } from 'react-icons/fa';
 
 const Adminlist = () => {
-  const [sellers, setSellers] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
   const [currentPage, setCurrentPage] = useState(1);
-  const [sellersPerPage, setSellersPerPage] = useState(5); //default entries per page
+  const [adminsPerPage, setAdminsPerPage] = useState(5);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAdmin, setSelectedAdmin] = useState(null);
+
+  const auth_userID = localStorage.getItem('user_id');
+  const authToken = localStorage.getItem('authToken'); 
 
   useEffect(() => {
-    const fetchSellers = async () => {
+    const fetchAdmins = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/adminList",
-          {
-              headers: {
-                  Authorization: `Bearer ${authToken}`,
-              },
-          }); 
-        setSellers(response.data);
+        const response = await axios.get(`http://127.0.0.1:8000/api/adminList/${auth_userID}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        setAdmins(response.data);
+        console.log(admins);
+        
       } catch (error) {
         console.error("There was an error fetching the admin list!", error);
       }
     };
 
-    fetchSellers();
+    fetchAdmins();
   }, []);
+
+  const handleRemoveAdmin = async (adminId) => {
+    try {
+      const response = await axios.delete(
+        `http://127.0.0.1:8000/api/removeAdmin`,
+        {
+          data: { admin_id: adminId },
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      alert(response.data.message);
+      setAdmins(admins.filter(admin => admin.id !== adminId)); 
+      setShowModal(false);
+
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message);
+      } else {
+        console.error("There was an error removing the admin!", error);
+      }
+    }
+  };
 
   const handleSort = (key) => {
     let direction = 'ascending';
@@ -36,7 +66,7 @@ const Adminlist = () => {
     setSortConfig({ key, direction });
   };
 
-  const sortedSellers = [...sellers].sort((a, b) => {
+  const sortedAdmins = [...admins].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
       return sortConfig.direction === 'ascending' ? -1 : 1;
     }
@@ -46,23 +76,23 @@ const Adminlist = () => {
     return 0;
   });
 
-  const filteredSellers = sortedSellers.filter(seller =>
-    seller.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredAdmins = sortedAdmins.filter(admin =>
+    admin.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const indexOfLastSeller = currentPage * sellersPerPage;
-  const indexOfFirstSeller = indexOfLastSeller - sellersPerPage;
-  const currentSellers = filteredSellers.slice(indexOfFirstSeller, indexOfLastSeller);
+  const indexOfLastAdmin = currentPage * adminsPerPage;
+  const indexOfFirstAdmin = indexOfLastAdmin - adminsPerPage;
+  const currentAdmins = filteredAdmins.slice(indexOfFirstAdmin, indexOfLastAdmin);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handleSellersPerPageChange = (event) => {
-    setSellersPerPage(Number(event.target.value));
-    setCurrentPage(1); //reset to first page when entries per page change
+  const handleAdminsPerPageChange = (event) => {
+    setAdminsPerPage(Number(event.target.value));
+    setCurrentPage(1);
   };
 
   const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(filteredSellers.length / sellersPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(filteredAdmins.length / adminsPerPage); i++) {
     pageNumbers.push(i);
   }
 
@@ -73,12 +103,27 @@ const Adminlist = () => {
     return null;
   };
 
+  const handleOpenModal = (admin) => {
+    setSelectedAdmin(admin);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedAdmin(null);
+  };
+
+  const handleChangeRole = () => {
+    alert(`Change role for admin ${selectedAdmin.name}`);
+    setShowModal(false);
+  };
+
   return (
     <div className='p-6 bg-white min-h-screen'>
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
-          placeholder="Search Seller by Name"
+          placeholder="Search Admin by Name"
           className="p-2 border border-gray-300 rounded"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -87,8 +132,8 @@ const Adminlist = () => {
           <label htmlFor="entries" className="mr-2 text-gray-700">Show</label>
           <select
             id="entries"
-            value={sellersPerPage}
-            onChange={handleSellersPerPageChange}
+            value={adminsPerPage}
+            onChange={handleAdminsPerPageChange}
             className="border border-gray-300 rounded py-1 px-2 text-gray-700"
           >
             <option value="5">5</option>
@@ -99,53 +144,54 @@ const Adminlist = () => {
           <label htmlFor="entries" className="ml-2 text-gray-700">entries</label>
         </div>
       </div>
-
-      <table className="min-w-full divide-y divide-gray-200 bg-white">
-        <thead className="bg-gray-50">
-          <tr>
-            <th
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-              onClick={() => handleSort('id')}
-            >
-              ID {getSortIcon('id')}
-            </th>
-            <th
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-              onClick={() => handleSort('name')}
-            >
-              Name {getSortIcon('name')}
-            </th>
-            <th
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-              onClick={() => handleSort('email')}
-            >
-              Email {getSortIcon('email')}
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {currentSellers.map(seller => (
-            <tr key={seller.id}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{seller.id}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{seller.name}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{seller.email}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button
-                  onClick={() => handleViewClick(seller.id)}
-                  className="text-indigo-600 hover:text-indigo-900"
-                >
-                  View
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+          <thead className="bg-gray-200 text-gray-800 uppercase text-sm">
+            <tr>
+              <th
+                className="py-3 px-6 text-left cursor-pointer"
+                onClick={() => handleSort('id')}
+              >
+                ID {getSortIcon('id')}
+              </th>
+              <th
+                className="py-3 px-6 text-left cursor-pointer"
+                onClick={() => handleSort('name')}
+              >
+                Name {getSortIcon('name')}
+              </th>
+              <th
+                className="py-3 px-6 text-left cursor-pointer"
+                onClick={() => handleSort('email')}
+              >
+                Email {getSortIcon('email')}
+              </th>
+              <th className="py-3 px-6 text-center">Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="text-gray-700 text-sm">
+            {currentAdmins.map(admin => (
+              <tr key={admin.id} className="border-b border-gray-200 hover:bg-gray-100 transition duration-300">
+                <td className="py-3 px-6">{admin.id}</td>
+                <td className="py-3 px-6">{admin.name}</td>
+                <td className="py-3 px-6">{admin.email}</td>
+                <td className="py-3 px-6 text-center">
+                  <button
+                    onClick={() => handleOpenModal(admin)}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    <FaEye />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <div className="flex justify-between items-center mt-4">
         <div>
-          Showing {indexOfFirstSeller + 1} to {indexOfLastSeller > filteredSellers.length ? filteredSellers.length : indexOfLastSeller} of {filteredSellers.length} entries
+          Showing {indexOfFirstAdmin + 1} to {indexOfLastAdmin > filteredAdmins.length ? filteredAdmins.length : indexOfLastAdmin} of {filteredAdmins.length} entries
         </div>
         <div className="flex space-x-1">
           {pageNumbers.map(number => (
@@ -159,6 +205,36 @@ const Adminlist = () => {
           ))}
         </div>
       </div>
+
+      {/* Modal */}
+      {showModal && selectedAdmin && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm mx-auto">
+            <h2 className="text-xl font-semibold mb-4">Admin: {selectedAdmin.name}</h2>
+            <p className="mb-4">Select an action:</p>
+            <div className="flex justify-between gap-4">
+              <button
+                onClick={handleChangeRole}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Change Role
+              </button>
+              <button
+                onClick={() => handleRemoveAdmin(selectedAdmin.id)}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+              >
+                Remove Admin
+              </button>
+            </div>
+            <button
+              onClick={handleCloseModal}
+              className="mt-4 text-gray-700 underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

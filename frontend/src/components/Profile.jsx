@@ -13,7 +13,7 @@ const Profile = () => {
             const response = await axios.get("http://127.0.0.1:8000/api/userDetail", {
                 headers: {
                     Authorization: `Bearer ${authToken}`
-                }
+                }       
             });
             
             setUser(response.data.user); 

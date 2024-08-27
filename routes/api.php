@@ -37,8 +37,11 @@ Route::post('/pg_listings', [PgListingController::class, 'store']);
 Route::get('/userDetail', [UserController::class, 'decodeToken']);
 Route::post('/userDetail', [UserController::class, 'updateProfile']);
 Route::get('user/{userId}/ads', [AdsController::class, 'getUserAds']);
-Route::get('/usersList', [UserListController::class, 'getUserList']);
-Route::get('/adminList', [UserListController::class, 'getAdminList']);
+Route::get('/usersList/{auth_userID}', [UserListController::class, 'getUserList']);
+Route::get('/adminList/{auth_userID}', [UserListController::class, 'getAdminList']);
+Route::delete('/removeUser', [UserListController::class, 'removeUser']);
+Route::post('/changeRole', [UserListController::class, 'changeRole']);
+
 
 
 
