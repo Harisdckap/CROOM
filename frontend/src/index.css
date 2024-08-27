@@ -20,6 +20,10 @@ html, body {
     color:white;
 }
 
+.primary-text{
+  color:#1F293B ;
+}
+
 /* Custom scrollbar styling */
 /* ::-webkit-scrollbar {
   width: 4px;

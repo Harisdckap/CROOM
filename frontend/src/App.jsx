@@ -15,7 +15,6 @@ import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
 import PlanPage from "./components/RentPageComponent/PlanPage";
 // import Profile from "./components/User";
 // import UserAds from "./components/UserAdsomponent";
-import CountryDropdown from "./components/RentPageComponent/CountryDropdown";
 import MyFavPage from "./components/RentPageComponent/MyFavPage";
 
 // import UserAdsPage from "./components/RentPageComponent/UserAdsPage";
@@ -53,7 +52,7 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/my-fav" element={<MyFavPage />} />
                 {/* <Route path="/my-ads" element={<UserAds />} /> */}
-                <Route path="/country-dropdown" element={<CountryDropdown />} />
+                {/* <Route path="/country-dropdown" element={<CountryDropdown />} /> */}
                 {/* <Route path="/user-ads" element={<UserAdsPage />} /> */}
             </Routes>
         </Router>

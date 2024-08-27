@@ -1121,7 +1121,7 @@ const AddRequirement = () => {
 
                         <div className="mt-4">
                             <label className="block text-sm font-medium text-black">
-                                address 1
+                                Address 1
                             </label>
                             <input
                                 value={address_1}
@@ -1135,7 +1135,7 @@ const AddRequirement = () => {
 
                         <div className="mt-4">
                             <label className="block mt-3 text-sm font-medium text-black">
-                                address 2
+                                Address 2
                             </label>
                             <input
                                 name="  address_2"
@@ -1150,7 +1150,7 @@ const AddRequirement = () => {
                         <div className="flex mt-4 justify-between">
                             <div>
                                 <label className="block text-sm font-medium text-black">
-                                    contact
+                                    Contact
                                 </label>
                                 <input
                                     type="tel"
@@ -1295,7 +1295,7 @@ const AddRequirement = () => {
 
                         <fieldset className="border mt-2 text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
-                                Looking Gender For
+                                Looking For Gender 
                             </legend>
                             <div className="mt-2 space-x-4">
                                 {["Male", "Female", "Any"].map((option) => (
@@ -1353,7 +1353,7 @@ const AddRequirement = () => {
                     <div className="w-1/2">
                         <fieldset className="border text-center p-4 rounded-md mt-4">
                             <legend className="text-base font-medium text-gray-900">
-                                Select Amenities
+                                 Amenities
                             </legend>
                             <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {allAmenities.map((amenity) => (
@@ -1519,7 +1519,7 @@ const AddRequirement = () => {
                     />
                 </div>
 
-                <div className="mt-12 text-center">
+                <div className="mt-4 text-center">
                     <button
                         type="submit"
                         className="px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm primary-btn "
