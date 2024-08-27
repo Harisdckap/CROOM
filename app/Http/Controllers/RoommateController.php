@@ -30,7 +30,7 @@ class RoommateController extends Controller
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
+            'location' => 'required|json',
             'looking_for' => 'required|string|max:255',
             'looking_for_gender' => 'nullable|string|max:255',
             'approx_rent' => 'required|numeric',
@@ -64,6 +64,7 @@ class RoommateController extends Controller
 
         // Convert image paths to JSON for storage
         $validatedData['photos'] = json_encode($imagePaths);
+        $validatedData['location'] = json_encode($validatedData['location']);
     
         Log::info('Uploaded files:', $imagePaths);
 

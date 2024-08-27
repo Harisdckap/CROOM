@@ -29,5 +29,6 @@ class Rooms extends Model
         'photos' => 'array',
         'highlighted_features' => 'array',
         'amenities' => 'array',
+        'location' => 'array',
     ];
 }

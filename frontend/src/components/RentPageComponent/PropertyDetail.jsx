@@ -17,34 +17,188 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import HomeNavBar from "../Header";
 import { CustomNextArrow, CustomPrevArrow } from "./ArrowComponent";
+import SocialShare from "./ShareBtn";
+import Footer from "../../components/Footer";
+// import MapComponent from "./MapComponet";
+
+// Amenities and Features Images
+import wifi from "../../assets/wifi.png";
+import fridge from "../../assets/fridge.png";
+import air_conditioner from "../../assets/air_conditioner.png";
+import kitchen from "../../assets/kitchen.png";
+import washingMachine from "../../assets/washing_machine.png";
+import swiming_pool from "../../assets/swiming_pool.jpeg";
+import balcony from "../../assets/balcony.png";
+import parking from "../../assets/parking.png";
+import gym from "../../assets/gym.jpg";
+import bathroom from "../../assets/bathroom.png";
+import working_full_time from "../../assets/working_full_time.png";
+import College_student from "../../assets/college_student.jpg";
+import pure_vegetarian from "../../assets/pure_vegetarian.jpg";
+import working_night_shift from "../../assets/working_night_shift.webp";
+import men from "../../assets/men.jpg";
 
 const PropertyDetail = () => {
     const { id, location, listingType } = useParams();
     const [property, setProperty] = useState(null);
+    const [nearbyProperties, setNearbyProperties] = useState([]);
+    const [LocationData, setLocationData] = useState({});
+    const [coordinates, setCoordinates] = useState({
+        latitude: null,
+        longitude: null,
+    });
+    const [error, setError] = useState(null);
 
     useEffect(() => {
+        const fetchProperty = async () => {
+            try {
+                const response = await axios.get(
+                    `http://127.0.0.1:8000/api/property/${id}/${encodeURIComponent(
+                        location.trim()
+                    )}/${listingType}`
+                );
+                setProperty(response.data.data);
+            } catch (error) {
+                console.error("Error fetching property:", error);
+            }
+        };
+
         fetchProperty();
     }, [id, location, listingType]);
 
-    const fetchProperty = async () => {
-        try {
-            const cleanLocation = location.trim();
-            const encodedId = encodeURIComponent(id);
-            const encodedLocation = encodeURIComponent(cleanLocation);
-            const encodedListingType = encodeURIComponent(listingType);
-
-            const response = await axios.get(
-                `http://127.0.0.1:8000/api/property/${encodedId}/${encodedLocation}/${encodedListingType}`
-            );
-            setProperty(response.data.data);
-        } catch (error) {
-            console.error("Error fetching property:", error);
+    useEffect(() => {
+        if (property && property.location) {
+            try {
+                const innerparse = JSON.parse(property.location);
+                const locationData = JSON.parse(innerparse);
+                setLocationData(locationData);
+                // console.log("Parsed Location Data:", locationData);
+            } catch (error) {
+                console.error("Failed to parse location data:", error);
+                setLocationData({ city: "Unknown Location", district: "" });
+            }
         }
-    };
+    }, [property]);
+
+    console.log(LocationData);
+
+    useEffect(() => {
+        const fetchGeolocation = async () => {
+            try {
+                const { doorNo, street, area, city, state, pinCode, county } =
+                    LocationData;
+                const location_name = `${doorNo || ""} ${street || ""}, ${
+                    area || ""
+                }, ${city || ""}, ${state || ""} ${pinCode || ""}, ${
+                    county || ""
+                }`;
+                //   console.log(location_name);
+
+                const apiKey = "4910c63061b247788f30a03631e1acbf";
+                const geoapifyUrl = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
+                    location_name
+                )}&apiKey=${apiKey}`;
+
+                const response = await axios.get(geoapifyUrl);
+                if (
+                    response.data.features &&
+                    response.data.features.length > 0
+                ) {
+                    const { lat, lon } = response.data.features[0].properties;
+                    setCoordinates({ latitude: lat, longitude: lon });
+                    fetchNearbyProperties(lat, lon);
+                    // console.log(lat,lon);
+                } else {
+                    setError("No geolocation data found for the address.");
+                }
+            } catch (error) {
+                setError("Error fetching geolocation data.");
+                console.error("Geoapify Error:", error);
+            }
+        };
+
+        const fetchNearbyProperties = async (latitude, longitude) => {
+            try {
+                const response = await axios.get(
+                    `http://127.0.0.1:8000/api/nearby-properties/${property.listing_type}/${property.id}`,
+                    { params: { latitude, longitude } }
+                );
+                setNearbyProperties(response.data.data);
+            } catch (error) {
+                console.error("Error fetching nearby properties:", error);
+                setError("Error fetching nearby properties.");
+            }
+        };
+
+        if (property && LocationData) {
+            fetchGeolocation();
+        }
+    }, [property, LocationData]);
 
     if (!property) {
         return <p>Loading property details...</p>;
     }
+
+    const amenitiesImages = {
+        WiFi: wifi,
+        "Air Condition": air_conditioner,
+        Fridge: fridge,
+        Kitchen: kitchen,
+        Washing_machine: washingMachine,
+    };
+
+    const featuresImages = {
+        "Attached Bathroom": bathroom,
+        Balcony: balcony,
+        "Swimming pool": swiming_pool,
+        Gym: gym,
+        Parking: parking,
+        "Working full time": working_full_time,
+        "College student": College_student,
+        "25+ age": men,
+        "Working night shift": working_night_shift,
+        "Pure vegetarian": pure_vegetarian,
+    };
+
+    const city =
+        (typeof LocationData.city === "string" && LocationData.city.trim()) ||
+        "Unknown City";
+    const district =
+        (typeof LocationData.district === "string" &&
+            LocationData.district.trim()) ||
+        "Unknown District";
+    const area =
+        (typeof LocationData.area === "string" && LocationData.area.trim()) ||
+        "Unknown District";
+    const street =
+        (typeof LocationData.street === "string" &&
+            LocationData.street.trim()) ||
+        "Unknown Street";
+    const doorNo =
+        (typeof LocationData.doorNo === "string" &&
+            LocationData.doorNo.trim()) ||
+        "Unknown Door No";
+    const state =
+        (typeof LocationData.state === "string" && LocationData.state.trim()) ||
+        "Unknown State";
+    const pinCode =
+        (typeof LocationData.pin === "string" && LocationData.pin.trim()) ||
+        "000000";
+    const country =
+        (typeof LocationData.country === "string" &&
+            LocationData.country.trim()) ||
+        "Unknown Country";
+
+    if (!property) {
+        return <p>Loading property details...</p>;
+    }
+
+    const location_name =
+        `${doorNo} ${street}, ${area}, ${city}, ${state} ${pinCode}, ${country}`.replace(
+            /\s+/g,
+            "+"
+        );
+    const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.8720495500934!2d80.20954641474961!3d13.082680990772045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d37b24a4a3%3A0x736c6116d63b1a8f!2s${location_name}%2C%20India!5e0!3m2!1sen!2sin!4v1624340128653!5m2!1sen!2sin`;
 
     const renderPropertyDetails = (type) => {
         switch (type) {
@@ -64,7 +218,7 @@ const PropertyDetail = () => {
                         <DetailItem
                             icon={<FaMapMarkerAlt />}
                             label="Location"
-                            value={property.location}
+                            value={`${city},${district}`}
                         />
                         <DetailItem
                             icon={<FaDollarSign />}
@@ -89,7 +243,7 @@ const PropertyDetail = () => {
                         <DetailItem
                             icon={<FaMapMarkerAlt />}
                             label="Location"
-                            value={property.location}
+                            value={`${city},${district}`}
                         />
                         <DetailItem
                             icon={<FaUser />}
@@ -127,7 +281,7 @@ const PropertyDetail = () => {
                             value={property.pg_type}
                         />
                         <DetailItem
-                            icon={<FaTag />}
+                            icon={<FaUser />}
                             label="Looking For Gender"
                             value={property.looking_for_gender}
                         />
@@ -139,7 +293,7 @@ const PropertyDetail = () => {
                         <DetailItem
                             icon={<FaMapMarkerAlt />}
                             label="Location"
-                            value={property.location}
+                            value={`${city}, ${district}`}
                         />
                         <DetailItem
                             icon={<FaStar />}
@@ -238,6 +392,25 @@ const PropertyDetail = () => {
                                 </Link>
                             </motion.button>
                         </div>
+                        {mapUrl && (
+                            <motion.iframe
+                                src={mapUrl}
+                                width="100%"
+                                height="500"
+                                className="rounded-lg mt-4 shadow-lg"
+                                allowFullScreen
+                                title="Property Location"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 1 }}
+                            ></motion.iframe>
+                        )}
+                        <div className="social-share mt-6">
+                            <SocialShare
+                                url={`http://localhost:3000/property/${property.id}`}
+                                title={property.title}
+                            />
+                        </div>
                     </motion.div>
 
                     {/* Details Section */}
@@ -260,9 +433,8 @@ const PropertyDetail = () => {
                                 property.listing_type
                             ) && (
                                 <>
-                                    {/* Highlighted Features Section */}
-                                    <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md col-span-2">
-                                        <h3 className="text-2xl font-semibold mb-4  gradient-text">
+                                    <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border border-gray-200 col-span-2">
+                                        <h3 className="text-2xl font-bold mb-6 text-gray-800 gradient-text">
                                             Highlighted Features
                                         </h3>
                                         {Array.isArray(
@@ -270,15 +442,25 @@ const PropertyDetail = () => {
                                         ) &&
                                         property.highlighted_features.length >
                                             0 ? (
-                                            <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
+                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
                                                 {property.highlighted_features.map(
                                                     (feature, index) => (
                                                         <li
                                                             key={index}
-                                                            className="flex items-start"
+                                                            className="flex items-center space-x-3 p-4 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 transition duration-200"
                                                         >
-                                                            <FaStar className="mr-2 text-yellow-500" />
-                                                            {feature}
+                                                            <img
+                                                                src={
+                                                                    featuresImages[
+                                                                        feature
+                                                                    ]
+                                                                }
+                                                                alt={feature}
+                                                                className="w-8 h-8"
+                                                            />
+                                                            <span className="text-lg font-medium">
+                                                                {feature}
+                                                            </span>
                                                         </li>
                                                     )
                                                 )}
@@ -292,21 +474,37 @@ const PropertyDetail = () => {
                                     </div>
 
                                     {/* Amenities Section */}
-                                    <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md col-span-2">
-                                        <h3 className="text-2xl font-semibold mb-4  gradient-text">
+                                    <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border border-gray-200 col-span-2">
+                                        <h3 className="text-2xl font-bold mb-6 text-gray-800 gradient-text">
                                             Amenities
                                         </h3>
                                         {Array.isArray(property.amenities) &&
                                         property.amenities.length > 0 ? (
-                                            <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
+                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
                                                 {property.amenities.map(
                                                     (amenity, index) => (
                                                         <li
                                                             key={index}
-                                                            className="flex items-start"
+                                                            className="flex items-center space-x-3 p-4 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 transition duration-200"
                                                         >
-                                                            <FaStar className="mr-2 text-green-500" />
-                                                            {amenity}
+                                                            {amenitiesImages[
+                                                                amenity
+                                                            ] && (
+                                                                <img
+                                                                    src={
+                                                                        amenitiesImages[
+                                                                            amenity
+                                                                        ]
+                                                                    }
+                                                                    alt={
+                                                                        amenity
+                                                                    }
+                                                                    className="w-8 h-8"
+                                                                />
+                                                            )}
+                                                            <span className="text-lg font-medium">
+                                                                {amenity}
+                                                            </span>
                                                         </li>
                                                     )
                                                 )}
@@ -322,31 +520,59 @@ const PropertyDetail = () => {
                         </div>
 
                         {/* Description Section */}
-                        <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md">
-                            <h2 className="text-2xl font-semibold mb-4 text-gray-800 gradient-text">
+                        <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+                            <h2 className="text-2xl font-bold mb-4 text-gray-800 gradient-text">
                                 Description
                             </h2>
-                            <p className="text-gray-700">
+                            <p className="text-gray-700 leading-relaxed">
                                 {property.description ||
                                     property.pg_post_content ||
-                                    property.post}
+                                    property.post ||
+                                    "No description available."}
                             </p>
                         </div>
                     </motion.div>
-                </div>
+                    {/* NearMe Location */}
+                    {/* <div className="nearby-properties">
+                        <h2>Nearby Properties</h2>
+                        {nearbyProperties.length ? (
+                            <ul>
+                                {nearbyProperties.map((nearby, index) => (
+                                    <li key={index}>
+                                        <Link
+                                            to={`/property/${
+                                                nearby.id
+                                            }/${encodeURIComponent(
+                                                nearby.location
+                                            )}/${nearby.listing_type}`}
+                                        >
+                                            <h3>{nearby.title}</h3>
+                                            <p>{nearby.description}</p>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No nearby properties found.</p>
+                        )}
+                    </div> */}
+                </div>{" "}
             </motion.div>
+            <Footer />
         </div>
     );
 };
 
+// Helper component to render each detail item
 const DetailItem = ({ icon, label, value }) => (
-    <div className="flex items-center mb-4">
-        <div className="text-blue-700 text-2xl mr-4">{icon}</div>
+    <div className="flex items-center mb-2">
+        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-500 mr-4">
+            {icon}
+        </div>
         <div>
-            <h4 className="text-lg font-semibold text-gray-800">{label}</h4>
-            <p className="text-gray-700">{value}</p>
+            <p className="text-sm text-gray-500">{label}</p>
+            <p className="text-lg font-semibold text-gray-800">{value}</p>
         </div>
     </div>
 );
-
 export default PropertyDetail;

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('mobile_num');
             $table->string('looking_for_gender')->nullable();
             $table->string('pg_name');
-            $table->text('location');
+            $table->json('location');
             $table->string('occupancy_type');
             $table->integer('occupancy_amount');
             $table->string('listing_type')->default('pg');
@@ -23,6 +23,7 @@ return new class extends Migration
             $table->json('amenities')->nullable();
             $table->json('photos')->nullable();
             $table->text('pg_post_content');
+            $table->boolean('is_favourite')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); //foreign key constraint

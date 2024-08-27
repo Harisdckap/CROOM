@@ -13,8 +13,14 @@ import PostRequirementPage from "./components/PostRequirementPage";
 import PropertyPage from "./components/RentPageComponent/property";
 import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
 import PlanPage from "./components/RentPageComponent/PlanPage";
-import Profile from "./components/Profile";
-import UserAds from "./components/UserAdsomponent";
+// import Profile from "./components/User";
+// import UserAds from "./components/UserAdsomponent";
+import CountryDropdown from "./components/RentPageComponent/CountryDropdown";
+import MyFavPage from "./components/RentPageComponent/MyFavPage";
+
+// import UserAdsPage from "./components/RentPageComponent/UserAdsPage";
+import Profile from "./components/User";
+// import UserAds from "./components/UserAdsomponent";
 
 function App() {
     return (
@@ -45,7 +51,10 @@ function App() {
 
                 <Route path="/PlanPage" element={<PlanPage />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/my-ads" element={<UserAds />} />
+                <Route path="/my-fav" element={<MyFavPage />} />
+                {/* <Route path="/my-ads" element={<UserAds />} /> */}
+                <Route path="/country-dropdown" element={<CountryDropdown />} />
+                {/* <Route path="/user-ads" element={<UserAdsPage />} /> */}
             </Routes>
         </Router>
     );

@@ -8,8 +8,9 @@ use App\Models\PgListing;
 
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class PropertyController extends Controller
 {
@@ -17,23 +18,28 @@ class PropertyController extends Controller
     {
         $address = $request->input('address', '');
         $page = $request->input('p', 1);
-        $itemsPerPage = 8;
-        $type = $request->input('t', 'a'); // Default to 'a' (all types)
-        $gender = $request->input('gender', 'all'); // Default to 'all'
-        $sortOrder = $request->input('sort', 'ASC'); // Default to 'asc'
-    
-        // Initialize queries for roommates, listings, and PGs
-        $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
-        $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
-        $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
-    
-        // Apply gender filter if specified
+        $itemsPerPage = 20;
+        $type = $request->input('t', 'a');
+        $gender = $request->input('gender', 'all');
+        $sortOrder = $request->input('sort', 'ASC');
+
+        // Queries
+        $roommateQuery = Roommate::query()
+            ->whereRaw('LOWER(location) LIKE ?', ["%" . strtolower($address) . "%"]);
+
+        $listingQuery = Rooms::query()
+            ->whereRaw('LOWER(location) LIKE ?', ["%" . strtolower($address) . "%"]);
+
+        $pgQuery = PgListing::query()
+            ->whereRaw('LOWER(location) LIKE ?', ["%" . strtolower($address) . "%"])
+            ->where('listing_type', 'pg');
+
         if ($gender !== 'all') {
             $roommateQuery->where('looking_for_gender', $gender);
             $listingQuery->where('looking_for_gender', $gender);
             $pgQuery->where('looking_for_gender', $gender);
         }
-    
+
         // Fetch data based on type
         switch ($type) {
             case 'r':
@@ -53,48 +59,51 @@ class PropertyController extends Controller
                 break;
             default:
                 $roommates = $roommateQuery->get();
-                $listings = $listingQuery->get(); 
+                $listings = $listingQuery->get();
                 $pglistings = $pgQuery->get();
                 break;
         }
-    
-        // Combine collections
-        $combinedListings = $pglistings->merge($roommates)->merge($listings);
-    
-        // Debug: Check combined data
-        Log::info('Combined Listings:', $combinedListings->toArray());
-    
-        // Sort the combined collection based on the sortOrder
-        $combinedListings = $combinedListings->sort(function ($a, $b) use ($sortOrder) {
-            $aPrice = $a->price ?? $a->approx_rent ?? $a->occupancy_amount;
-            $bPrice = $b->price ?? $b->approx_rent ?? $b->occupancy_amount;
-    
+
+        // Combine arrays
+        $combinedArray = $roommates->toArray();
+        $combinedArray = array_merge($combinedArray, $listings->toArray());
+        $combinedArray = array_merge($combinedArray, $pglistings->toArray());
+
+        $combinedCollection = collect($combinedArray);
+
+        // Sorting
+        $sortedCollection = $combinedCollection->sort(function ($a, $b) use ($sortOrder) {
+            $aPrice = $a['price'] ?? $a['approx_rent'] ?? $a['occupancy_amount'];
+            $bPrice = $b['price'] ?? $b['approx_rent'] ?? $b['occupancy_amount'];
+
+            if ($sortOrder === 'NEWEST') {
+                return $b['created_at'] <=> $a['created_at'];
+            }
+
             if ($aPrice === $bPrice) {
                 return 0;
             }
-    
+
             return ($sortOrder === 'ASC') ? ($aPrice < $bPrice ? -1 : 1) : ($aPrice > $bPrice ? -1 : 1);
         });
-    
-        // Paginate the combined collection
-        $paginatedListings = $this->paginate($combinedListings, $itemsPerPage, $page,$request);
-    
+
+        // Paginate the sorted collection
+        $paginatedListings = $this->paginate($sortedCollection, $itemsPerPage, $page, $request);
+
         // Return the response
         return response()->json([
             'roommates' => $roommates,
             'listings' => $listings,
             'pg_listings' => $pglistings,
-            'data' => $paginatedListings->all(),
+            'data' => $paginatedListings->items(),
             'current_page' => $paginatedListings->currentPage(),
             'last_page' => $paginatedListings->lastPage(),
             'total' => $paginatedListings->total(),
         ]);
     }
-    
 
     /**
-     * Custom pagination function for a collection
-     * Paginate a given collection.
+     * Custom pagination function for a collection.
      *
      * @param \Illuminate\Support\Collection $items
      * @param int $perPage
@@ -102,12 +111,12 @@ class PropertyController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    protected function paginate($items, $perPage, $page, $request)
+    protected function paginate(Collection $items, $perPage, $page, $request)
     {
         $offset = ($page - 1) * $perPage;
         $paginatedItems = $items->slice($offset, $perPage)->values();
 
-        return new \Illuminate\Pagination\LengthAwarePaginator(
+        return new LengthAwarePaginator(
             $paginatedItems,
             $items->count(),
             $perPage,
@@ -120,17 +129,12 @@ class PropertyController extends Controller
 
 
 
+
     public function show($id, $location, $listing_type)
     {
         // Decode the base64 encoded id
         $decodedId = base64_decode($id);
 
-        // Log the decoded ID, location, and listing type for debugging
-        // Log::info('Decoded ID:', ['id' => $decodedId]);
-        // Log::info('Location:', ['location' => $location]);
-        // Log::info('Listing Type:', ['listing_type' => $listing_type]);
-
-        // Query the appropriate table based on the listing type
         if ($listing_type === 'roommates') {
             $roommate = Roommate::find($decodedId);
             if ($roommate) {
@@ -141,22 +145,186 @@ class PropertyController extends Controller
         } elseif ($listing_type === 'pg') {
             $pgListing = PgListing::find($decodedId);
             if ($pgListing) {
-                Log::info('PG Listing found:', ['pgListing' => $pgListing]);
+
                 // Return the PG listing data with location
                 return response()->json(['data' => $pgListing, 'location' => $location]);
             }
         } else {
-            // Assuming 'listing' type
+
             $listing = Rooms::find($decodedId);
             if ($listing) {
-                // Log::info('Listing found:', ['listing' => $listing]);
-                // Return the listing data with location
+
                 return response()->json(['data' => $listing, 'location' => $location]);
             }
         }
 
-        // If no property is found, return a 404 error
-        // Log::error('Property not found:', ['id' => $decodedId]);
+
         return response()->json(['error' => 'Property not found'], 404);
     }
+
+
+    public function deleteProperty($listingType, $id)
+    {
+        $decodedId = $id;
+        $property = null;
+
+        // Find the property based on listing type
+        switch (strtolower($listingType)) {
+            case 'roommates':
+                $property = Roommate::find($decodedId);
+                break;
+            case 'pg':
+                $property = PgListing::find($decodedId);
+                break;
+            case 'room':
+                $property = Rooms::find($decodedId);
+                break;
+            default:
+                return response()->json(['message' => 'Invalid listing type'], 400);
+        }
+
+        if (!$property) {
+            return response()->json(['message' => 'Property not found'], 404);
+        }
+
+        // Delete the property
+        $property->delete();
+
+        return response()->json(['message' => 'Property deleted successfully']);
+    }
+
+
+
+    public function updateProperty(Request $request, $id,$listingType)
+    {
+        // Define validation rules based on the listing type
+        // Log::info('Received Request Data:', $request->all());
+
+        //  return $request->all();
+        switch ($listingType) {
+            
+            case 'roommates':
+                $validatedData = $request->validate([
+                    'user_id' => 'required|exists:users,id',
+                    'title' => 'required|string|max:255',
+                    'location' => 'required|json',
+                    'looking_for' => 'required|string|max:255',
+                    'looking_for_gender' => 'nullable|string|max:255',
+                    'approx_rent' => 'required|numeric',
+                    'room_type' => 'required|string|max:255',
+                    'highlighted_features' => 'nullable|json',
+                    'amenities' => 'nullable|json',
+                    'post' => 'nullable|string',
+                    'listing_type' => 'required|string|max:255|in:roommates',
+                    'occupancy' => 'required|integer',
+                    'number_of_people' => 'required|integer',
+                    'photos.*' => 'image|mimes:jpg,png,jpeg,gif,webp|max:2048',
+                ]);
+
+                $property = Roommate::where('id', $id)->first();
+                break;
+
+            case 'pg':
+                $validatedData = $request->validate([
+                    'user_id' => 'required|exists:users,id',
+                    'pg_type' => 'required|string|max:255',
+                    'looking_for_gender' => 'nullable|string|max:255',
+                    'mobile_num' => 'required|numeric',
+                    'pg_name' => 'required|string|max:255',
+                    'location' => 'required|json',
+                    'occupancy_type' => 'required|string|max:255',
+                    'occupancy_amount' => 'required|numeric',
+                    'pg_post_content' => 'required|string',
+                    'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+                    'highlighted_features' => 'nullable|json',
+                    'amenities' => 'nullable|json',
+                ]);
+                $property = PgListing::where('id', $id)->first();
+                break;
+
+            case 'room':
+                $validatedData = $request->validate([
+                    'user_id' => 'required|exists:users,id',
+                    'title' => 'required|string|max:255',
+                    'location' => 'required|json',
+                    'price' => 'required|numeric',
+                    'room_type' => 'required|string',
+                    'contact' => 'required|string|max:255',
+                    'looking_for' => 'nullable|string|max:255',
+                    'occupancy' => 'nullable|string|max:255',
+                    'highlighted_features' => 'nullable|json',
+                    'amenities' => 'nullable|json',
+                    'description' => 'nullable|string',
+                    'listing_type' => 'required|string|max:255',
+                    'looking_for_gender' => 'nullable|string|max:255',
+                    'photos.*' => 'image|mimes:jpg,png,jpeg,gif,webp|max:2048',
+                ]);
+
+                $property = Rooms::where('id', $id)->first();
+                return response()->json(['request' => $request->all()]);
+                break;
+
+            default:
+                return response()->json(['message' => 'Invalid listing type'], 400);
+        }
+
+        // Check if property exists
+        if (!$property) {
+            return response()->json(['message' => 'Property not found'], 404);
+        }
+
+        // Update the property with validated data
+        $property->update($validatedData);
+
+        return response()->json(['message' => 'Property updated successfully', 'property' => $property]);
+    }
+
+
+    public function getNearbyProperties($listingType, $propertyId, Request $request)
+    {
+        // Dynamically select the correct model based on listing type
+        $propertyModel = $this->getModelByListingType($listingType);
+    
+        if (!$propertyModel) {
+            return response()->json(['error' => 'Invalid listing type'], 400);
+        }
+    
+        // Get latitude and longitude from the request
+        $latitude = $request->query('latitude');
+        $longitude = $request->query('longitude');
+    
+        if (!$latitude || !$longitude) {
+            return response()->json(['error' => 'Latitude and longitude are required'], 400);
+        }
+    
+        // Query to get nearby properties within a radius (e.g., 10 km)
+        $nearbyProperties = $propertyModel::selectRaw("*, ( 6371 * acos( cos( radians(?) ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance", [$latitude, $longitude, $latitude])
+            ->having('distance', '<', 10) // Example: radius of 10 km
+            ->orderBy('distance')
+            ->get();
+    
+        return response()->json(['data' => $nearbyProperties]);
+    }
+    
+    /**
+     * Get the model class based on the listing type.
+     *
+     * @param string $listingType
+     * @return string|null
+     */
+    private function getModelByListingType($listingType)
+    {
+        switch ($listingType) {
+            case 'room':
+                return Rooms::class;
+            case 'pg':
+                return PgListing::class;
+            case 'roommate':
+                return Roommate::class;
+            default:
+                return null;
+        }
+    }
+    
+    
 }
