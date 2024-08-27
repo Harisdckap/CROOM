@@ -28,10 +28,6 @@ Route::post('/verify-otp', [OTPController::class, 'verifyOtp']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('reset-password', [ResetPasswordController::class, 'reset']);
 Route::get('/password/reset/', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
-<<<<<<< HEAD
-
-=======
->>>>>>> 07078a50cc2d358a58e2a2f0a392ebc000c47da3
 Route::post('/listings', [ListingController::class, 'store']);
 Route::get('/properties', [PropertyController::class, 'index']);
 Route::get('/property/{id}/{location}/{listingType}', [PropertyController::class, 'show']);
