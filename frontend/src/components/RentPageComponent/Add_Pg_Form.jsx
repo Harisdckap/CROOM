@@ -565,7 +565,7 @@ const Add_PG = () => {
 
 
                 <div className="flex mt-8 text-center gap-48">
-                    <div className="w-1/2">
+                    <div className="w-1/2 mt-8">
                         <fieldset className="border text-center w-96 p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
                                 Highlighted Features
@@ -593,7 +593,7 @@ const Add_PG = () => {
                         </fieldset>
                     </div>
 
-                    <div className="w-1/2">
+                    <div className="w-1/2  mt-8">
                         <fieldset className="border text-center w-full p-4 rounded-md">
                             <legend className="text-base font-medium text-gray-900">
                                 Amenities
