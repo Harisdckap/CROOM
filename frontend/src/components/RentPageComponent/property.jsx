@@ -206,9 +206,9 @@ const PropertyPage = () => {
                         <h2 className="text-xl font-semibold gradient-text">
                             {listing.title || listing.pg_name || listing.post}
                         </h2>
-                        <p className="text-green-600 flex items-center">
+                        <p className="text-green-600 flex items-center text-sm">
                             <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
-                            {city}, {district}
+                            {district}
                         </p>
                     </div>
                     <hr className="my-2" />

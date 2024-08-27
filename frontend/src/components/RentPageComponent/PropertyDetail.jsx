@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link,useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
     FaMapMarkerAlt,
@@ -19,6 +19,7 @@ import HomeNavBar from "../Header";
 import { CustomNextArrow, CustomPrevArrow } from "./ArrowComponent";
 import SocialShare from "./ShareBtn";
 import Footer from "../../components/Footer";
+import NearbyProperties from "./NearbyProperties";
 // import MapComponent from "./MapComponet";
 
 // Amenities and Features Images
@@ -40,13 +41,14 @@ import men from "../../assets/men.jpg";
 
 const PropertyDetail = () => {
     const { id, location, listingType } = useParams();
+    const navigate = useNavigate();
     const [property, setProperty] = useState(null);
     const [nearbyProperties, setNearbyProperties] = useState([]);
     const [LocationData, setLocationData] = useState({});
     const [coordinates, setCoordinates] = useState({
         latitude: null,
         longitude: null,
-    });
+    });FaPhoneAlt
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -106,7 +108,7 @@ const PropertyDetail = () => {
                 ) {
                     const { lat, lon } = response.data.features[0].properties;
                     setCoordinates({ latitude: lat, longitude: lon });
-                    fetchNearbyProperties(lat, lon);
+                    fetchNearbyProperties(district, city);
                     // console.log(lat,lon);
                 } else {
                     setError("No geolocation data found for the address.");
@@ -117,18 +119,21 @@ const PropertyDetail = () => {
             }
         };
 
-        const fetchNearbyProperties = async (latitude, longitude) => {
+        const fetchNearbyProperties = async (district, city) => {
             try {
                 const response = await axios.get(
-                    `http://127.0.0.1:8000/api/nearby-properties/${property.listing_type}/${property.id}`,
-                    { params: { latitude, longitude } }
+                    `http://127.0.0.1:8000/api/nearbyproperties/${property.listing_type}/${property.id}`,
+                    { params: { district, city } }
                 );
                 setNearbyProperties(response.data.data);
+                console.log("Nearby Properties:", response.data.data);
             } catch (error) {
                 console.error("Error fetching nearby properties:", error);
                 setError("Error fetching nearby properties.");
             }
         };
+        
+        
 
         if (property && LocationData) {
             fetchGeolocation();
@@ -138,6 +143,10 @@ const PropertyDetail = () => {
     if (!property) {
         return <p>Loading property details...</p>;
     }
+    const handleViewClick = (id, location, type) => {
+        const trimmedLocation = location;
+        navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}/${type}`);
+      };
 
     const amenitiesImages = {
         WiFi: wifi,
@@ -407,7 +416,7 @@ const PropertyDetail = () => {
                         )}
                         <div className="social-share mt-6">
                             <SocialShare
-                                url={`http://localhost:3000/property/${property.id}`}
+                                url={`http://localhost:5173/property/${id}/${encodeURIComponent(city)}/${property.listing_type}`}
                                 title={property.title}
                             />
                         </div>
@@ -434,7 +443,7 @@ const PropertyDetail = () => {
                             ) && (
                                 <>
                                     <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border border-gray-200 col-span-2">
-                                        <h3 className="text-2xl font-bold mb-6 text-gray-800 gradient-text">
+                                        <h3 className="text-2xl  mb-6  font-semibold gradient-text">
                                             Highlighted Features
                                         </h3>
                                         {Array.isArray(
@@ -475,7 +484,7 @@ const PropertyDetail = () => {
 
                                     {/* Amenities Section */}
                                     <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border border-gray-200 col-span-2">
-                                        <h3 className="text-2xl font-bold mb-6 text-gray-800 gradient-text">
+                                        <h3 className="text-2xl  font-semibold mb-6 text-gray-800 gradient-text">
                                             Amenities
                                         </h3>
                                         {Array.isArray(property.amenities) &&
@@ -533,30 +542,13 @@ const PropertyDetail = () => {
                         </div>
                     </motion.div>
                     {/* NearMe Location */}
-                    {/* <div className="nearby-properties">
-                        <h2>Nearby Properties</h2>
-                        {nearbyProperties.length ? (
-                            <ul>
-                                {nearbyProperties.map((nearby, index) => (
-                                    <li key={index}>
-                                        <Link
-                                            to={`/property/${
-                                                nearby.id
-                                            }/${encodeURIComponent(
-                                                nearby.location
-                                            )}/${nearby.listing_type}`}
-                                        >
-                                            <h3>{nearby.title}</h3>
-                                            <p>{nearby.description}</p>
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No nearby properties found.</p>
-                        )}
-                    </div> */}
-                </div>{" "}
+                    {/* Nearby properties */}
+    
+                </div>
+                <NearbyProperties
+        nearbyProperties={nearbyProperties}
+        handleViewClick={handleViewClick} // Pass the function to handle clicks
+      />
             </motion.div>
             <Footer />
         </div>

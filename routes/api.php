@@ -43,4 +43,4 @@ Route::delete('/property/{listingType}/{id}', [PropertyController::class, 'delet
 Route::post('/change-password/{userId}', [RegisterController::class, 'changePassword']);
 Route::post('/{listing_type}/{id}/toggle-favourite', [FavouriteController::class, 'toggleFavourite']);
 Route::get('/user/{id}/favourites', [FavouriteController::class, 'getFavourites']);
-Route::get('/nearby-properties/{listingType}/{propertyId}', [PropertyController::class, 'getNearbyProperties']);
+Route::get('/nearbyproperties/{listingType}/{propertyId}', [PropertyController::class, 'getNearbyProperties']);

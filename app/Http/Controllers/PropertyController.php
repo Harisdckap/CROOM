@@ -279,32 +279,52 @@ class PropertyController extends Controller
         return response()->json(['message' => 'Property updated successfully', 'property' => $property]);
     }
 
-
     public function getNearbyProperties($listingType, $propertyId, Request $request)
-    {
-        // Dynamically select the correct model based on listing type
-        $propertyModel = $this->getModelByListingType($listingType);
-    
-        if (!$propertyModel) {
-            return response()->json(['error' => 'Invalid listing type'], 400);
-        }
-    
-        // Get latitude and longitude from the request
-        $latitude = $request->query('latitude');
-        $longitude = $request->query('longitude');
-    
-        if (!$latitude || !$longitude) {
-            return response()->json(['error' => 'Latitude and longitude are required'], 400);
-        }
-    
-        // Query to get nearby properties within a radius (e.g., 10 km)
-        $nearbyProperties = $propertyModel::selectRaw("*, ( 6371 * acos( cos( radians(?) ) * cos( radians(latitude) ) * cos( radians(longitude) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance", [$latitude, $longitude, $latitude])
-            ->having('distance', '<', 10) // Example: radius of 10 km
-            ->orderBy('distance')
-            ->get();
-    
-        return response()->json(['data' => $nearbyProperties]);
+{
+    // Dynamically select the correct model based on listing type
+    $propertyModel = $this->getModelByListingType($listingType);
+
+    if (!$propertyModel) {
+        return response()->json(['error' => 'Invalid listing type'], 400);
     }
+
+    // Fetch the current property to get its district and city if not passed in the request
+    $currentProperty = $propertyModel::find($propertyId);
+    if (!$currentProperty) {
+        return response()->json(['error' => 'Property not found'], 404);
+    }
+
+    // Get district and city from the request or fallback to current property's district/city
+    $district = $request->query('district') ?? json_decode($currentProperty->location)->district;
+    $city = $request->query('city') ?? json_decode($currentProperty->location)->city;
+
+    if (!$district && !$city) {
+        return response()->json(['error' => 'District or city is required'], 400);
+    }
+
+    // Build the query to exclude the current property
+    $query = $propertyModel::where('id', '!=', $propertyId); // Excludes the current property
+
+    // Apply filters for district and city
+    $query->where(function ($q) use ($district, $city) {
+        if ($district) {
+            $q->whereRaw("LOWER(location) LIKE ?", ["%".strtolower($district)."%"]);
+        }
+
+        if ($city) {
+            $q->orWhereRaw("LOWER(location) LIKE ?", ["%".strtolower($city)."%"]);
+        }
+    });
+
+    // Execute the query
+    $nearbyProperties = $query->get();
+
+    return response()->json(['data' => $nearbyProperties]);
+}
+
+    
+    
+    
     
     /**
      * Get the model class based on the listing type.
@@ -319,12 +339,14 @@ class PropertyController extends Controller
                 return Rooms::class;
             case 'pg':
                 return PgListing::class;
-            case 'roommate':
+            case 'roommates':
                 return Roommate::class;
             default:
                 return null;
         }
     }
+    
+    
     
     
 }

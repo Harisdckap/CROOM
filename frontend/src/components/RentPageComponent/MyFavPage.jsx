@@ -6,7 +6,9 @@ import { useNavigate } from "react-router-dom";
 import "../../slider.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faHome } from "@fortawesome/free-solid-svg-icons";
-
+// import nofavoritiesimag from "../../assets/nofavorities.jpg"
+import NoFavorites from "./NofavoritiesPage";
+// import image from "../../assets/nofavorites.jpg"
 const MyFavPage = () => {
     const navigate = useNavigate();
     const [favourites, setFavourites] = useState([]);
@@ -24,7 +26,6 @@ const MyFavPage = () => {
             setFavourites(response.data.data);
 
             console.log(response.data.data);
-            
         } catch (error) {
             console.error("Error fetching favorite listings:", error);
         }
@@ -159,17 +160,19 @@ const MyFavPage = () => {
         <div>
             <HomeNavBar />
 
-            <div className="flex flex-col items-center mt-10">
-                <h1 className="text-3xl font-bold text-white mt-6">
+            <div className="flex flex-col items-center mt-12">
+                <h1 className="text-2xl font-bold text-white mt-8">
                     My Favorites List
                 </h1>
-                <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className=" mx-auto mt-3">
                     {favourites.length > 0 ? (
-                        favourites.map(renderListing)
+                        // Show grid only when there are favorites
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {favourites.map(renderListing)}
+                        </div>
                     ) : (
-                        <p className="text-center text-gray-500">
-                            No favorites available.
-                        </p>
+                        // Show NoFavorites component when there are no favorites
+                        <NoFavorites />
                     )}
                 </div>
             </div>

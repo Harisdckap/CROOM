@@ -8,7 +8,7 @@ import DistrictModal from "./DistrictModel";
 
 
 // Import district images
-import chennai from "../../assets/chennai.webp";
+import chennai from "../../assets/chennai.jpg";
 import Coimbatore from "../../assets/coimbatore.jpeg";
 import Erode from "../../assets/erode.png";
 import Dindigul from "../../assets/dindigul.jpeg";
