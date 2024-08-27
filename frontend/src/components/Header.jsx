@@ -6,7 +6,6 @@ import logo from "../assets/logo.png";
 import AddListingButton from './AddListingBtn';
 // import UserAds from './UserAds';
 import { Button } from "antd";
-import UserAds from "./UserAds";
 import UserAdsComponent from './UserAdsComponent';
 
 

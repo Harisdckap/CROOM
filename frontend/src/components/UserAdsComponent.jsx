@@ -3,7 +3,7 @@ import { Button, Card, Drawer, Modal, Form, Upload, Input, Select } from "antd";
 import axios from "axios";
 import DetailsUserAdsComponents from "./DetailsUserAdsComponents";
 import "../index.css";
-import { UploadOutlined } from "@ant-design/icons";
+import EditAdsComponent from "./EditAdsComponent";
 
 const { Option } = Select;
 
@@ -20,7 +20,26 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
         const fetchAds = async () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/api/user/${userId}/ads`);
+                const ads=response.data
                 setAds(response.data);
+
+                ads.rooms = ads.rooms.map(ad => ({
+                    ...ad,
+                    highlighted_features: ad.highlighted_features ? ad.highlighted_features.split(", ") : [],
+                    amenities: ad.amenities ? ad.amenities.split(", ") : [],
+                }));
+
+                ads.roommates = ads.roommates.map(ad => ({
+                    ...ad,
+                    highlighted_features: ad.highlighted_features ? ad.highlighted_features.split(", ") : [],
+                    amenities: ad.amenities ? ad.amenities.split(", ") : [],
+                }));
+
+                ads.pg_listings = ads.pg_listings.map(ad => ({
+                    ...ad,
+                    highlighted_features: ad.highlighted_features ? ad.highlighted_features.split(", ") : [],
+                    amenities: ad.amenities ? ad.amenities.split(", ") : [],
+                }));
             } catch (error) {
                 console.error("Error fetching user ads:", error);
             }
@@ -36,6 +55,7 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
 
             const state = locationData.state || "";
             const city = locationData.city || "";
+            const district = location.district || "";
             const street = locationData.street || "";
             const doorNo = locationData.doorNo || "";
             const area = locationData.area || "";
@@ -43,7 +63,7 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
             const pin = locationData.pin || "";
             return {
                 address1: `${doorNo}, ${street}, ${area}`,
-                address2: `${city}`,
+                address2: `${city}, ${district}`,
                 state: `${state}`,
                 pincode: `${pin}`,
                 country: `${country}`,
@@ -59,10 +79,6 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
             };
         }
     };
-
-
-
-
     const showChildrenDrawer = (ad) => {
         setSelectedAd(ad);
         setChildrenDrawer(true);
@@ -70,54 +86,121 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
         const { address1, address2, state, pincode, country } = parseLocation(ad.location);
         setSelectedAd({ ...ad, address1, address2, state, pincode, country });
     };
-
     const onChildrenDrawerClose = () => setChildrenDrawer(false);
     const showEditModal = () => setEditModalVisible(true);
     const handleEditModalCancel = () => setEditModalVisible(false);
-
     const handleFormChange = (changedValues, allValues) => {
         setFormData(allValues);
     };
 
+    const printFormData = (formData) => {
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                console.log(`${key}: ${value.name} (${value.size} bytes)`);
+            } else {
+                console.log(`${key}: ${value}`);
+            }
+        }
+    };
     const handleFormSubmit = async (values) => {
         try {
 
+            const userId = localStorage.getItem('user_id');
+            console.log("userId:", userId);
+
+            // Prepare location data
             const location = JSON.stringify({
                 doorNo: values.address1.split(",")[0] || "",
                 street: values.address1.split(",")[1] || "",
                 area: values.address1.split(",")[2] || "",
-                city: values.address2 || "",
+                city: values.address2.split(",")[0] || "",
+                district: values.address2.split(",")[1] || "",
                 state: values.state || "",
                 pin: values.pincode || "",
                 country: values.country || ""
-            })
-            console.log(location);
+            });
+            // console.log("Location:", location);
 
-            const formData = new FormData();
-            formData.append('title', values.title);
-            formData.append('price', values.price);
-            formData.append('room_type', values.room_type);
-            formData.append('contact', values.contact);
-            formData.append('looking_for_gender', values.looking_for_gender);
-            formData.append('occupancy', values.occupancy);
-            formData.append('location', location);
-            // formData.append('address1', values.address1);
-            // formData.append('address2', values.address2);
-            // formData.append('state', values.state);
-            // formData.append('country', values.country);
-            // formData.append('pincode', values.pincode);
-            formData.append('listing_type', values.listing_type);
-            formData.append('highlighted_features', values.highlighted_features.join(','));
-            formData.append('amenities', values.amenities.join(','));
-            formData.append('description', values.description);
+            // Process highlighted features and amenities
+            const highlightedFeaturesArray = typeof values.highlighted_features === 'string'
+                ? values.highlighted_features.split(",").map(feature => feature.trim())
+                : values.highlighted_features || [];
+            const amenitiesArray = typeof values.amenities === 'string'
+                ? values.amenities.split(",").map(amenity => amenity.trim())
+                : values.amenities || [];
 
-            if (values.images && values.images.length > 0) {
-                values.images.forEach(file => {
-                    formData.append('images[]', file.originFileObj);
+            console.log("Highlighted Features Array:", highlightedFeaturesArray);
+            console.log("Amenities Array:", amenitiesArray);
+
+            // Convert arrays to JSON strings for FormData
+            const highlightedFeaturesString = JSON.stringify(highlightedFeaturesArray);
+            const amenitiesString = JSON.stringify(amenitiesArray);
+
+            console.log("Highlighted Features JSON String for FormData:", highlightedFeaturesString);
+            console.log("Amenities JSON String for FormData:", amenitiesString);
+
+            // Prepare FormData
+
+            const formData = new FormData()
+            formData.append('user_id', userId);
+            if(values.listing_type === "room") {
+                formData.append('title', values.title);
+                formData.append('location', location);
+                formData.append('price', values.price);
+                formData.append('room_type', values.room_type);
+                formData.append('contact', values.contact);
+                formData.append('listing_type', values.listing_type);
+                formData.append('looking_for_gender', values.looking_for_gender);
+                formData.append('lookinf_for', 'Roommates')
+                formData.append('occupancy', values.occupancy);
+                formData.append('highlighted_features', highlightedFeaturesString);
+                formData.append('amenities', amenitiesString);
+                formData.append('photos', values.photos);
+                formData.append('description', values.description);
+            }
+            else if(values.listing_type === "roommates") {
+                formData.append('title', values.title);
+                formData.append('location', location);
+                formData.append('approx_rent', values.approx_rent);
+                formData.append('room_type', values.room_type);
+                formData.append('listing_type', values.listing_type);
+                formData.append('looking_for_gender', values.looking_for_gender);
+                formData.append('lookinf_for', 'Room');
+                formData.append('number_of_people', values.number_of_people)
+                formData.append('occupancy', values.occupancy);
+                formData.append('highlighted_features', highlightedFeaturesString);
+                formData.append('amenities', amenitiesString);
+                formData.append('photos', values.photos);
+                formData.append('post', values.description);
+            }
+            else if(values.listing_type === "pg") {
+                formData.append('pg_name', values.pg_name);
+                formData.append('location', location);
+                formData.append('occupancy_amount', values.occupancy_amount);
+                formData.append('pg_type', values.pg_type);
+                formData.append('mobile_num', values.mobile_num);
+                formData.append('listing_type', values.listing_type);
+                formData.append('looking_for_gender', values.looking_for_gender);
+                formData.append('occupancy_type', values.occupancy);
+                formData.append('highlighted_features', highlightedFeaturesString);
+                formData.append('amenities', amenitiesString);
+                formData.append('photos', values.photos);
+                formData.append('pg_post_content', values.description);
+            }
+
+            if (values.photos && values.photos.length > 0) {
+                values.photos.forEach(file => {
+                    formData.append('photos[]', file.originFileObj);
                 });
             }
 
-            const response = await axios.put(`http://127.0.0.1:8000/api/ads/${selectedAd.id}/update`, formData, {
+            // Log FormData values
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
+
+            // Submit the form data
+            const response = await axios.put(`http://127.0.0.1:8000/api/property/${selectedAd.id}/${selectedAd.listing_type}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -130,8 +213,6 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
             console.error("Error updating ad:", error);
         }
     };
-
-    const normFile = (e) => Array.isArray(e) ? e : e?.fileList;
 
     return (
         <>
@@ -196,181 +277,21 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                 />
             </Drawer>
 
-            <Modal
-                title="Edit Ad"
-                visible={editModalVisible}
-                onCancel={handleEditModalCancel}
-                footer={null}
-                zIndex={1200}
-            >
-                {selectedAd && (
-                    <Form
-                        initialValues={{
-                            ...selectedAd,
-                            address1: parseLocation(selectedAd.location).address1,
-                            address2: parseLocation(selectedAd.location).address2,
-                        }}
-                        onValuesChange={handleFormChange}
-                        onFinish={handleFormSubmit}
-                    >
-                        <Form.Item
-                            name="title"
-                            label="Title"
-                            rules={[{ required: true, message: 'Please input the title!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="price"
-                            label="Price"
-                            rules={[{ required: true, message: 'Please input the price!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="room_type"
-                            label="Room Type"
-                            rules={[{ required: true, message: 'Please input the room type!' }]}
-                        >
-                            <Select>
-                                <Option value="1RK">1RK</Option>
-                                <Option value="1BHK">1BHK</Option>
-                                <Option value="2BHK">2BHK</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="contact"
-                            label="Contact"
-                            rules={[{ required: true, message: 'Please input the contact number!' }]}
-                        >
-                            <Input type="tel" />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="address1"
-                            label="Address 1"
-                            rules={[{ required: true, message: 'Please input address 1!' }]}
-                        >
-                            <Input placeholder="example: door no, street, area" />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="address2"
-                            label="Address 2"
-                            rules={[{ required: true, message: 'Please input address 2!' }]}
-                        >
-                            <Input placeholder="example: city, district" />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="state"
-                            label="State"
-                            rules={[{ required: true, message: 'Please input the state!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="country"
-                            label="Country"
-                            rules={[{ required: true, message: 'Please input the country!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="pincode"
-                            label="PIN Code"
-                            rules={[{ required: true, message: 'Please input the PIN code!' }]}
-                        >
-                            <Input type="number" />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="listing_type"
-                            label="Listing Type"
-                            rules={[{ required: true, message: 'Please select the listing type!' }]}
-                        >
-                            <Select>
-                                <Option value="room">Rooms</Option>
-                                <Option value="roommates">Roommates</Option>
-                                <Option value="pg">PG</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="highlighted_features"
-                            label="Features"
-                            rules={[{ required: true, message: 'Please select at least one feature!' }]}
-                        >
-                            <Select mode="multiple">
-                                <Option value="attached bathroom">Attached Bathroom</Option>
-                                <Option value="balcony">Balcony</Option>
-                                <Option value="swimming pool">Swimming Pool</Option>
-                                <Option value="gym">Gym</Option>
-                                <Option value="parking">Parking</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="amenities"
-                            label="Amenities"
-                            rules={[{ required: true, message: 'Please select at least one amenity!' }]}
-                        >
-                            <Select mode="multiple">
-                                <Option value="wifi">Wi-Fi</Option>
-                                <Option value="air condition">Air Condition</Option>
-                                <Option value="fridge">Fridge</Option>
-                                <Option value="kitchen">Kitchen</Option>
-                                <Option value="washing machine">Washing Machine</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="images"
-                            label="Upload Images"
-                            valuePropName="fileList"
-                            getValueFromEvent={normFile}
-                            rules={[{ message: "Please upload at least one image" }]}
-                        >
-                            <Upload
-                                listType="picture"
-                                className="h-20 w-20 object-cover"
-                                multiple={true}
-                                beforeUpload={() => true}
-                                defaultFileList={selectedAd.photos ? JSON.parse(selectedAd.photos).map((photo, index) => ({
-                                    uid: index.toString(),
-                                    name: `Ad photo ${index}`,
-                                    status: 'done',
-                                    url: `http://127.0.0.1:8000/storage/${photo.replace("\\", "/")}`,
-                                })) : []}
-                            >
-                                <Button icon={<UploadOutlined />}>Click to upload</Button>
-                            </Upload>
-                        </Form.Item>
-
-                        <Form.Item
-                            name="description"
-                            label="Description"
-                            rules={[{ message: 'Please input the description!' }]}
-                        >
-                            <Input.TextArea rows={4} />
-                        </Form.Item>
-
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">Save</Button>
-                        </Form.Item>
-                    </Form>
-                )}
-            </Modal>
+            <EditAdsComponent
+                visible = {editModalVisible}
+                onCancel = {handleEditModalCancel}
+                handleFormSubmit = {handleFormSubmit}
+                selectedAd = {selectedAd}
+                handleFormChange={handleFormChange}
+                normFile={(e)=>(Array.isArray(e) ? e : e?.fileList)}
+                parseLocation={parseLocation}
+            />
         </>
     );
 };
 
 export default UserAdsComponent;
+
 
 
 
