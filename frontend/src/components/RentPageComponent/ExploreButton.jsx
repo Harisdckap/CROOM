@@ -32,7 +32,7 @@ const ExploreButton = () => {
 
     // Districts data
     const districts = [
-        { name: "chennai", image: chennai },
+        { name: "Chennai", image: chennai },
         { name: "Coimbatore", image: Coimbatore },
         { name: "Madurai", image: Madurai },
         { name: "Salem", image: Salem },

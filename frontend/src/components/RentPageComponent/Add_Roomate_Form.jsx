@@ -236,24 +236,6 @@ const AddRequirement = () => {
         return true;
     };
 
-    const showToastMessage = (message, type = "error", districtValue="chennai") => {
-        if (type === "success") {
-            toast.success(message, {
-                position: "top-center",
-                onClose: () => {
-                    setTimeout(() => {
-                        // Corrected the navigation URL without extra '?property'
-                        navigate(
-                            `/property?address=${districtValue || "chennai"}p=0&t=pg&sort=ASC&propertyType=all`
-                        );
-                    }, 100); // Adding a small delay to ensure smooth navigation
-                },
-            });
-        } else {
-            toast.error(message, { position: "top-center" });
-        }
-    };
-    
     const address_1_Value = address_1.split(",");
     const address_2_Value = address_2.split(",");
 
@@ -265,6 +247,20 @@ const AddRequirement = () => {
     const cityValue = address_2_Value[0];
     const districtValue = address_2_Value[1];
 
+    const showToast = (message, type = "error") => {
+        
+        // Show the toast message
+        if (type === "success") {
+            toast.success(message, { position: "top-center" });
+              // Navigate immediately
+        navigate(`/property?address=${districtValue || "chennai"}&p=0&t=rm&sort=ASC&propertyType=all`);
+        } else {
+            toast.error(message, { position: "top-center" });
+        }
+    };
+    
+  
+
 
     
 
@@ -275,20 +271,12 @@ const AddRequirement = () => {
 
     const formDataObj = new FormData();
 
-    const address_1_Value = address_1.split(",");
-    const address_2_Value = address_2.split(",");
 
     if (address_1_Value.length < 3 || address_2_Value.length < 2) {
         showToast("Invalid address format.", "error");
         return;
     }
 
-    const doorNoValue = address_1_Value[0].trim();
-    const streetValue = address_1_Value[1].trim();
-    const areaValue = address_1_Value[2].trim();
-
-    const cityValue = address_2_Value[0].trim();
-    const districtValue = address_2_Value[1].trim();
 
     const formattedFormData = {
         user_id: localStorage.getItem("user_id"), 

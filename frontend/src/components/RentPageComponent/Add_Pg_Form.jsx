@@ -141,19 +141,22 @@ const Add_PG = () => {
         setImages((prevImages) => [...prevImages, ...files]);
     };
 
-    const showToastMessage = (message, type = "error", districtValue="chennai") => {
+    const address_1_Value = address_1.split(",");
+    const addres_2_Value = address_2.split(",");
+
+    const doorNoValue = address_1_Value[0];
+    const streetValue = address_1_Value[1];
+    const areaValue = address_1_Value[2];
+    
+const cityValue = addres_2_Value[0];
+const districtValue = addres_2_Value[1];
+
+    const showToastMessage = (message, type = "error") => {
+        
+        // Show the toast message
         if (type === "success") {
-            toast.success(message, {
-                position: "top-center",
-                onClose: () => {
-                    setTimeout(() => {
-                        // Corrected the navigation URL without extra '?property'
-                        navigate(
-                            `/property?address=${districtValue || "chennai"}p=0&t=pg&sort=ASC&propertyType=all`
-                        );
-                    }, 100); // Adding a small delay to ensure smooth navigation
-                },
-            });
+            toast.success(message, { position: "top-center" });
+        navigate(`/property?address=${districtValue || "chennai"}&p=0&t=pg&sort=ASC&propertyType=all`);
         } else {
             toast.error(message, { position: "top-center" });
         }
@@ -231,32 +234,24 @@ const Add_PG = () => {
 
 
     }
-    const address_1_Value = address_1.split(",");
-        const addres_2_Value = address_2.split(",");
 
-        const doorNoValue = address_1_Value[0];
-        const streetValue = address_1_Value[1];
-        const areaValue = address_1_Value[2];
-        
-    const cityValue = addres_2_Value[0];
-    const districtValue = addres_2_Value[1];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
            if (!validateInputs()) return;
 
-        const address_1_Value = address_1.split(",");
-        const addres_2_Value = address_2.split(",");
+        // const address_1_Value = address_1.split(",");
+        // const addres_2_Value = address_2.split(",");
 
-        const doorNoValue = address_1_Value[0];
-        const streetValue = address_1_Value[1];
-        const areaValue = address_1_Value[2];
+        // const doorNoValue = address_1_Value[0];
+        // const streetValue = address_1_Value[1];
+        // const areaValue = address_1_Value[2];
 
         // console.log(address_1_Value)
         // console.log("door no :"+ doorNoValue + " "+" streetValue :"+streetValue +" "+"area : "+areaValue)
 
-        const cityValue = addres_2_Value[0];
-        const districtValue = addres_2_Value[1];
+        // const cityValue = addres_2_Value[0];
+        // const districtValue = addres_2_Value[1];
 
     
 

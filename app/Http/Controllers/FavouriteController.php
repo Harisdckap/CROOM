@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -42,19 +43,41 @@ class FavouriteController extends Controller
         }
     }
 
-
-    public function getFavourites($userId)
+    public function getFavourites($userId, $type = null, $sortOrder = 'ASC')
     {
-        // Assuming you have a 'user_id' column in your listings tables
-        $pgListings = PgListing::where('is_favourite', 1)->where('user_id', $userId)->get();
-        $rooms = Rooms::where('is_favourite', 1)->where('user_id', $userId)->get();
-        $roommates = Roommate::where('is_favourite', 1)->where('user_id', $userId)->get();
-    
-        // Merging all collections together
-        $favourites = $pgListings->merge($rooms)->merge($roommates);
-    
-        return response()->json(['data' => $favourites]);
-    }
-    
+        $pgListings = collect();
+        $rooms = collect();
+        $roommates = collect();
 
+        switch ($type) {
+            case 'r':
+                $rooms = Rooms::where('is_favourite', 1)->where('user_id', $userId)->get();
+                break;
+            case 'rm':
+                $roommates = Roommate::where('is_favourite', 1)->where('user_id', $userId)->get();
+                break;
+            case 'pg':
+                $pgListings = PgListing::where('is_favourite', 1)->where('user_id', $userId)->get();
+                break;
+            default:
+                $pgListings = PgListing::where('is_favourite', 1)->where('user_id', $userId)->get();
+                $rooms = Rooms::where('is_favourite', 1)->where('user_id', $userId)->get();
+                $roommates = Roommate::where('is_favourite', 1)->where('user_id', $userId)->get();
+                break;
+        }
+
+        $combinedArray = $roommates->toArray();
+        $combinedArray = array_merge($combinedArray, $rooms->toArray());
+        $combinedArray = array_merge($combinedArray, $pgListings->toArray());
+        $combinedCollection = collect($combinedArray);
+
+        $sortedCollection = $combinedCollection->sort(function ($a, $b) use ($sortOrder) {
+            if ($sortOrder === 'NEWEST') {
+                return $b['created_at'] <=> $a['created_at'];
+            }
+            return 0;
+        });
+
+        return response()->json(['data' => $sortedCollection->values()]);
+    }
 }

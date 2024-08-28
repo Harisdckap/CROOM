@@ -171,25 +171,33 @@ const AddRoomForm = () => {
             return { ...prevState, amenities };
         });
     };
+    const address_1_Value = address_1.split(",");
+    const addres_2_Value = address_2.split(",");
+
+    const doorNoValue = address_1_Value[0];
+    const streetValue = address_1_Value[1];
+    const areaValue = address_1_Value[2];
+
+    // console.log(address_1_Value)
+    // console.log("door no :"+ doorNoValue + " "+" streetValue :"+streetValue +" "+"area : "+areaValue)
+
+    const cityValue = addres_2_Value[0];
+    const districtValue = addres_2_Value[1];
 
 
-    const showToastMessage = (message, type = "error", districtValue="chennai") => {
+    const showToast = (message, type = "error") => {
+      
+    
+        // Show the toast message
         if (type === "success") {
-            toast.success(message, {
-                position: "top-center",
-                onClose: () => {
-                    setTimeout(() => {
-                        // Corrected the navigation URL without extra '?property'
-                        navigate(
-                            `/property?address=${districtValue || "chennai"}p=0&t=pg&sort=ASC&propertyType=all`
-                        );
-                    }, 100); // Adding a small delay to ensure smooth navigation
-                },
-            });
+            toast.success(message, { position: "top-center" });
+              // Navigate immediately
+        navigate(`/property?address=${districtValue || "chennai"}&p=0&t=r&sort=ASC&propertyType=all`);
         } else {
             toast.error(message, { position: "top-center" });
         }
     };
+    
     
     
 
@@ -280,18 +288,7 @@ const AddRoomForm = () => {
         return true;
     };
     
-    const address_1_Value = address_1.split(",");
-    const addres_2_Value = address_2.split(",");
 
-    const doorNoValue = address_1_Value[0];
-    const streetValue = address_1_Value[1];
-    const areaValue = address_1_Value[2];
-
-    // console.log(address_1_Value)
-    // console.log("door no :"+ doorNoValue + " "+" streetValue :"+streetValue +" "+"area : "+areaValue)
-
-    const cityValue = addres_2_Value[0];
-    const districtValue = addres_2_Value[1];
  
     const handleSubmit = async (e) => {
 
@@ -332,7 +329,6 @@ const AddRoomForm = () => {
         // Log the FormData entries to verify images are being appended correctly
         for (let pair of uploadData.entries()) {
             console.log(pair[0] + ', ' + pair[1]);
-           
         }
 
 
@@ -350,14 +346,21 @@ const AddRoomForm = () => {
             showToast("Room Added Sucessfully", "success");
 
             setFormData({
+
                 title: "",
                 state: "",
                 price: "",
-                room_type: "1RK",
+                country: "",
+                address_1: "",
+                address_2: "",
+                city: "",
+                PIN:"",
+                district: "",
+                room_type: "",
                 contact: "",
-                looking_for_gender: "any",
-                looking_for: "Roommate",
-                occupancy: "Bachelar",
+                looking_for_gender: "",
+                looking_for: "",
+                occupancy: "",
                 photos: [],
                 highlighted_features: [],
                 amenities: [],

@@ -111,6 +111,7 @@ const PropertyPage = () => {
     const toggleFavourite = async (id, listing_type) => {
         try {
             const response = await axios.post(`http://127.0.0.1:8000/api/${listing_type}/${id}/toggle-favourite`);
+            console.log("New Favourite Status:",newFavouriteStatus);
             if (response.data.success) {
                 const newFavouriteStatus = response.data.is_favourite;
                 setListings((prevListings) =>

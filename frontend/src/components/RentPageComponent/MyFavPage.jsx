@@ -6,26 +6,22 @@ import { useNavigate } from "react-router-dom";
 import "../../slider.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faHome } from "@fortawesome/free-solid-svg-icons";
-// import nofavoritiesimag from "../../assets/nofavorities.jpg"
-import NoFavorites from "./NofavoritiesPage";
-// import image from "../../assets/nofavorites.jpg"
+
 const MyFavPage = () => {
     const navigate = useNavigate();
     const [favourites, setFavourites] = useState([]);
     const userId = localStorage.getItem("user_id");
 
     useEffect(() => {
-        fetchFavourites(userId);
+        if (userId) {
+            fetchFavourites(userId);
+        }
     }, [userId]);
 
     const fetchFavourites = async (userId) => {
         try {
-            const response = await axios.get(
-                `http://127.0.0.1:8000/api/user/${userId}/favourites`
-            );
+            const response = await axios.get(`http://127.0.0.1:8000/api/user/${userId}/favourites`);
             setFavourites(response.data.data);
-
-            console.log(response.data.data);
         } catch (error) {
             console.error("Error fetching favorite listings:", error);
         }
@@ -52,9 +48,7 @@ const MyFavPage = () => {
                             src={`http://127.0.0.1:8000/storage/${photo}`}
                             alt="Property Photo"
                             className="w-full h-48 object-cover rounded-lg"
-                            onError={(e) =>
-                                (e.target.src = "/path/to/fallback-image.jpg")
-                            }
+                            onError={(e) => (e.target.src = "/path/to/fallback-image.jpg")}
                         />
                     </div>
                 ))}
@@ -64,11 +58,7 @@ const MyFavPage = () => {
 
     const handleViewClick = (id, location, type) => {
         const trimmedLocation = location.trim();
-        navigate(
-            `/property/${btoa(id)}/${encodeURIComponent(
-                trimmedLocation
-            )}/${type}`
-        );
+        navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}/${type}`);
     };
 
     const renderListing = (listing, index) => {
@@ -78,9 +68,7 @@ const MyFavPage = () => {
 
         if (listing.photos) {
             try {
-                photos = JSON.parse(listing.photos).map((photo) =>
-                    photo.replace("/", "/")
-                );
+                photos = JSON.parse(listing.photos).map((photo) => photo.replace("/", "/"));
             } catch (error) {
                 console.error("Failed to parse photos:", error);
             }
@@ -95,22 +83,14 @@ const MyFavPage = () => {
             }
         }
 
-        const city =
-            (typeof locationData.city === "string" &&
-                locationData.city.trim()) ||
-            "Unknown City";
-        const district =
-            (typeof locationData.district === "string" &&
-                locationData.district.trim()) ||
-            "Unknown District";
+        const city = (typeof locationData.city === "string" && locationData.city.trim()) || "Unknown City";
+        const district = (typeof locationData.district === "string" && locationData.district.trim()) || "Unknown District";
 
         return (
             <div
                 key={`${listing.id}-${index}`}
                 className={`border rounded-lg p-6 bg-white shadow-md hover:bg-gray-200 ml-4 mr-4 cursor-pointer`}
-                onClick={() =>
-                    handleViewClick(listing.id, city, listing.listing_type)
-                }
+                onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
             >
                 <div className="relative">
                     {photos.length > 0 ? (
@@ -127,10 +107,7 @@ const MyFavPage = () => {
                             {listing.title || listing.pg_name || listing.post}
                         </h2>
                         <p className="text-green-600 flex items-center">
-                            <FontAwesomeIcon
-                                icon={faMapMarkerAlt}
-                                className="mr-2"
-                            />
+                            <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
                             {city}, {district}
                         </p>
                     </div>
@@ -139,10 +116,7 @@ const MyFavPage = () => {
                         <div className="text-gray-700">
                             <p>
                                 <span className="font-semibold">
-                                    ₹
-                                    {listing.price ||
-                                        listing.occupancy_amount ||
-                                        listing.approx_rent}
+                                    ₹{listing.price || listing.occupancy_amount || listing.approx_rent}
                                 </span>
                             </p>
                         </div>
@@ -159,20 +133,17 @@ const MyFavPage = () => {
     return (
         <div>
             <HomeNavBar />
-
-            <div className="flex flex-col items-center mt-12">
-                <h1 className="text-2xl font-bold text-white mt-8">
+            <div className="flex flex-col items-center mt-10">
+                <h1 className="text-3xl font-bold text-white mt-6">
                     My Favorites List
                 </h1>
-                <div className=" mx-auto mt-3">
+                <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {favourites.length > 0 ? (
-                        // Show grid only when there are favorites
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {favourites.map(renderListing)}
-                        </div>
+                        favourites.map(renderListing)
                     ) : (
-                        // Show NoFavorites component when there are no favorites
-                        <NoFavorites />
+                        <p className="text-center text-gray-500">
+                            No favorites available.
+                        </p>
                     )}
                 </div>
             </div>

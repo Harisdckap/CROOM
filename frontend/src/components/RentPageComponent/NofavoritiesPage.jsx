@@ -21,7 +21,7 @@ const NoFavorites = () => {
         </p>
 
         {/* Navigate to listing button */}
-        <Link to="/property?address=chennai&p=0&t=a" className="bg-blue-500 text-white px-6 py-3 rounded-full shadow hover:bg-blue-600 transition duration-300">
+        <Link to="/property?address=chennai&p=0&t=a&propertyType=all" className="bg-blue-500 text-white px-6 py-3 rounded-full shadow hover:bg-blue-600 transition duration-300">
           Browse Listings
         </Link>
       </div>

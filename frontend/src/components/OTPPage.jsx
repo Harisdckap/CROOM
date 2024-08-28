@@ -5,6 +5,9 @@ import { verifyOtp } from "../js/api/auth";
 import img from '../assets/otp.png';
 import Auth_navbar from "./RentPageComponent/Auth_navbar";
 // import logo from "../assets/logo.png";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
 
 const OTPPage = () => {
     const [otp, setOtp] = useState("");
@@ -21,9 +24,11 @@ const OTPPage = () => {
         try {
             const response = await verifyOtp(otp, token); // Pass OTP and token
             if (response.success) {
+                toast.success("OTP verified successfully!");
                 navigate("/");
             } else {
-                setError("Invalid OTP. Please try again.");
+                toast.error(response.error);
+                setError(response.error);
             }
         } catch (err) {
             console.error(err);
@@ -69,7 +74,9 @@ const OTPPage = () => {
                     </div>
                 </div>
             </div>
+                <ToastContainer/>
         </div>
+
     );
 };
 

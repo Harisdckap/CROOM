@@ -9,6 +9,7 @@ module.exports = {
       colors: {
         customBackground: 'rgb(31,41,59)',
         'custom-green': '#10B981',
+        'blue-color': '#3B82F6',
       },
       keyframes: {
         'tilt-shake': {

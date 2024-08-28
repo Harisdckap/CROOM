@@ -11,6 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use SebastianBergmann\Type\TrueType;
 
 class PropertyController extends Controller
 {
@@ -199,7 +200,7 @@ class PropertyController extends Controller
         // Delete the property
         $property->delete();
 
-        return response()->json(['message' => 'Property deleted successfully']);
+        return response()->json(['message' => 'Property deleted successfully','success'=>true]);
     }
 
 
