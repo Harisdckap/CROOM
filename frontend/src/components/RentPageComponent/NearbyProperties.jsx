@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faChevronLeft, faChevronRight, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
@@ -60,14 +61,16 @@ const NearbyPropertiesCarousel = ({ nearbyProperties, handleViewClick }) => {
                 ₹{nearby.price || nearby.occupancy_amount || nearby.approx_rent}
               </p>
               <div className="flex flex-col gap-2">
-                <motion.p
-                  className="text-base font-medium text-indigo-800 cursor-pointer"
-                  whileHover={{ x: 10 }} // Slide effect on hover
-                  transition={{ duration: 0.3 }}
-                  onClick={() => handleViewClick(nearby.id, locationData1.city || 'Unknown City', nearby.listing_type)}
-                >
-                  View Details &rarr;
-                </motion.p>
+              <motion.p
+    className="text-base font-medium text-indigo-800 cursor-pointer"
+    whileHover={{ x: 10 }} // Slide effect on hover
+    transition={{ duration: 0.3 }}
+    onClick={() => {
+        window.location.href = `/property/${btoa(nearby.id)}/${encodeURIComponent(locationData1.city || 'Unknown City')}/${nearby.listing_type}`;
+    }}
+>
+    View Details &rarr;
+</motion.p>
                 <p className="text-green-600 flex items-center text-base">
                   <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
                   {locationData1.district || 'Unknown District'}

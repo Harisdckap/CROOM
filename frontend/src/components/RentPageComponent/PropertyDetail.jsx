@@ -143,10 +143,10 @@ const PropertyDetail = () => {
     if (!property) {
         return <p>Loading property details...</p>;
     }
-    const handleViewClick = (id, location, type) => {
-        const trimmedLocation = location;
-        navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}/${type}`);
-      };
+    // const handleViewClick = (id, location, type) => {
+    //     const trimmedLocation = location;
+    //     navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}/${type}`);
+    //   };
 
     const amenitiesImages = {
         WiFi: wifi,
@@ -549,7 +549,7 @@ const PropertyDetail = () => {
      {nearbyProperties.length > 0 && (
             <NearbyProperties
                 nearbyProperties={nearbyProperties}
-                handleViewClick={handleViewClick} // Pass the function to handle clicks
+                // handleViewClick={handleViewClick} // Pass the function to handle clicks
             />
         )}
             </motion.div>
