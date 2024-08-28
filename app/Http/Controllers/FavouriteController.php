@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -64,27 +65,19 @@ class FavouriteController extends Controller
                 $roommates = Roommate::where('is_favourite', 1)->where('user_id', $userId)->get();
                 break;
         }
+
         $combinedArray = $roommates->toArray();
         $combinedArray = array_merge($combinedArray, $rooms->toArray());
         $combinedArray = array_merge($combinedArray, $pgListings->toArray());
         $combinedCollection = collect($combinedArray);
 
         $sortedCollection = $combinedCollection->sort(function ($a, $b) use ($sortOrder) {
-            $aPrice = $a['price'] ?? $a['approx_rent'] ?? $a['occupancy_amount'];
-            $bPrice = $b['price'] ?? $b['approx_rent'] ?? $b['occupancy_amount'];
-
             if ($sortOrder === 'NEWEST') {
                 return $b['created_at'] <=> $a['created_at'];
             }
-
-            if ($aPrice === $bPrice) {
-                return 0;
-            }
-
-            return ($sortOrder === 'ASC') ? ($aPrice < $bPrice ? -1 : 1) : ($aPrice > $bPrice ? -1 : 1);
+            return 0;
         });
 
         return response()->json(['data' => $sortedCollection->values()]);
     }
-
 }
