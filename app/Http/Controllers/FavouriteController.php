@@ -44,12 +44,10 @@ class FavouriteController extends Controller
 
     public function getFavourites($userId, $type = null, $sortOrder = 'ASC')
     {
-        // Initialize empty collections
         $pgListings = collect();
         $rooms = collect();
         $roommates = collect();
 
-        // Fetch data based on type
         switch ($type) {
             case 'r':
                 $rooms = Rooms::where('is_favourite', 1)->where('user_id', $userId)->get();
@@ -66,16 +64,11 @@ class FavouriteController extends Controller
                 $roommates = Roommate::where('is_favourite', 1)->where('user_id', $userId)->get();
                 break;
         }
-
-        // Combine collections into a single array
         $combinedArray = $roommates->toArray();
         $combinedArray = array_merge($combinedArray, $rooms->toArray());
         $combinedArray = array_merge($combinedArray, $pgListings->toArray());
-
-        // Convert back to collection for sorting
         $combinedCollection = collect($combinedArray);
 
-        // Sort the collection
         $sortedCollection = $combinedCollection->sort(function ($a, $b) use ($sortOrder) {
             $aPrice = $a['price'] ?? $a['approx_rent'] ?? $a['occupancy_amount'];
             $bPrice = $b['price'] ?? $b['approx_rent'] ?? $b['occupancy_amount'];
