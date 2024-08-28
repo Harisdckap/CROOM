@@ -71,7 +71,7 @@ function LoginPage() {
 
             {/* Main Content */}
             <div className="flex flex-grow items-center justify-center">
-                <div className="bg-gray-100 h-auto mt-14 max-w-3xl p-4 rounded-md flex">
+                <div className="bg-gray-100  h-auto mt-14 max-w-3xl p-4 py-14 rounded-md flex">
                     {/* Image Section */}
                     <div className="flex w-1/2 items-center justify-between">
                         <img
@@ -82,32 +82,32 @@ function LoginPage() {
                     </div>
 
                     {/* Form Section */}
-                    <div className="flex items-center w-1/2 items-center justify-center">
+                    <div className="flex  relative w-1/2 items-center justify-center">
                         <div className="w-full max-w-md">
-                            <h1 className="text-center text-2xl font-bold mb-4">
+                            <h1 className="text-center text-3xl font-bold ">
                                 Login to your account
                             </h1>
-                            <p className="text-center text-gray-500 mb-4">
-                                Welcome back! Select a method to login:
+                            <p className="mx-8 text-xs text-gray-500 ">
+                                Welcome back! Please enter your detailes
                             </p>
 
-                            <form onSubmit={handleSubmit} autoComplete="off">
+                            <form onSubmit={handleSubmit} autoComplete="off" className="mt-4 ">
                                 {errorMessage && (
-                                    <div className="bg-red-300 rounded-sm p-1 text-center text-red-500 mb-4 relative text-sm">
+                                    <div className="bg-red-500 w-72 rounded top-10  absolute  mx-6  p-1 text-center text-white    text-sm">
                                         {errorMessage}
                                     </div>
                                 )}
 
-                                <div className="mb-3">
+                                <div className="mt-6">
                                     <label
                                         htmlFor="email"
-                                        className="block text-gray-700 text-sm font-medium"
+                                        className="block text-black text-sm font-medium"
                                     >
                                         Email:
                                     </label>
                                     <input
                                         type="email"
-                                        className={`mt-1 block w-full p-1 border ${
+                                        className={`mt-1 block w-11/12 h-10 px-2 border ${
                                             errorMessage
                                                 ? "border-red-500"
                                                 : "border-gray-300"
@@ -119,10 +119,10 @@ function LoginPage() {
                                         placeholder="Email"
                                     />
                                 </div>
-                                <div className="mb-3 relative">
+                                <div className="mt-2 relative">
                                     <label
                                         htmlFor="password"
-                                        className="block text-sm font-medium text-gray-700"
+                                        className="block text-sm font-medium text-black"
                                     >
                                         Password:
                                     </label>
@@ -130,7 +130,7 @@ function LoginPage() {
                                         type={
                                             showPassword ? "text" : "password"
                                         }
-                                        className={`mt-1 block w-full p-2 border ${
+                                        className={`mt-1 block  w-11/12 h-10 px-2  border ${
                                             errorMessage
                                                 ? "border-red-500"
                                                 : "border-gray-300"
@@ -143,7 +143,7 @@ function LoginPage() {
                                         autoComplete="off"
                                     />
                                     <p
-                                        className="absolute top-9 right-3 cursor-pointer"
+                                        className="absolute top-9 right-10 cursor-pointer"
                                         onClick={() =>
                                             setShowPassword(!showPassword)
                                         }
@@ -166,14 +166,14 @@ function LoginPage() {
                                         )}
                                     </p>
                                 </div>
-                                <div className="flex items-center">
+                                <div className="flex mt-4 items-center">
                                     <input
                                         type="checkbox"
-                                        className="h-4 w-4 text-blue-600"
+                                        className="h-4 w-4  text-blue-600"
                                         id="rememberMe"
                                     />
                                     <label
-                                        className="ml-2 block text-sm font-medium text-gray-700"
+                                        className="ml-2 block   text-sm font-medium text-black"
                                         htmlFor="rememberMe"
                                     >
                                         Remember me
@@ -184,16 +184,16 @@ function LoginPage() {
                                         {/* Use Link component for navigation */}
                                         <Link
                                             to="/forgot-Password"
-                                            className="text-blue-500 text-sm font-medium hover:underline"
+                                            className="primary-text text-sm font-medium hover:underline"
                                         >
                                             Forgot password?
                                         </Link>
                                     </div>
                                 </div>
-                                <div className="text-center">
+                                <div className="">
                                     <button
                                         type="submit"
-                                        className="inline-flex items-center px-4 py-2 mt-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                        className="w-11/12 py-1 rounded cursor text-white primary-btn"
                                     >
                                         Login
                                     </button>
@@ -201,14 +201,14 @@ function LoginPage() {
                                 <div className="flex gap-4 justify-center pt-4">
                                     <Link className="transform transition-transform duration-200 hover:scale-110">
                                         <img
-                                            className="w-10 h-10 hover:animate-tilt-shake"
+                                            className="w-6 h-6 hover:animate-tilt-shake"
                                             src={FacebookLogo}
                                             alt="Facebook Logo"
                                         />
                                     </Link>
                                     <Link className="transform transition-transform duration-200 hover:scale-110">
                                         <img
-                                            className="w-10 h-10 hover:animate-tilt-shake"
+                                            className="w-6 h-6 hover:animate-tilt-shake"
                                             src={GoogleLogo}
                                             alt="Google Logo"
                                         />
@@ -219,7 +219,7 @@ function LoginPage() {
                                 Don't have an account?{" "}
                                 <Link
                                     to="/register"
-                                    className="text-blue-500 hover:underline"
+                                    className="primary-text hover:underline"
                                 >
                                     Create account
                                 </Link>

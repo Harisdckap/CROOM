@@ -50,7 +50,7 @@ const ExploreButton = () => {
     const handleSelectDistrict = (district) => {
         setSelectedDistrict(district.name);
         const formattedAddress = encodeURIComponent(district.name);
-        const url = `/property?address=${formattedAddress}&p=0&t=a`;
+        const url = `/property?address=${formattedAddress}&p=0&t=a&propertyType=all`;
         // console.log(`Navigating to: ${url}`);
         navigate(url);
     };
