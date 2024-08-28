@@ -60,7 +60,7 @@ In order to ensure that the Laravel community is welcoming to all, please review
 ## Security Vulnerabilities
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
+<!--  -->
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
@@ -70,3 +70,12 @@ npm install @vitejs/plugin-react
 npm install vite
 composer install
 npm i
+npm install @fortawesome/fontawesome-free
+
+npm install react-icons
+
+
+<!-- created -->
+<!-- Merge-Branch -->
+<!-- Main Merged Branch -->
+

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -10,20 +10,30 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Models\OTPVerification;
-use App\Mail\OTPMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Laravel\Socialite\Facades\Socialite;
 use Exception;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 
 
 class RegisterController extends Controller
 {
     public function register(Request $request)
     {
+        $existingUser = User::where('email', $request->email)->first();
+        if ($existingUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User already registered. Please login.'
+            ], 409);
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
             'gender' => 'required|string',
             'mobile' => 'required|string|max:10',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -33,7 +43,6 @@ class RegisterController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -121,13 +130,45 @@ class RegisterController extends Controller
         }
 
     }
+    public function changePassword(Request $request, $userId)
+    {
+
+        // Validate input fields
+        $validator = Validator::make($request->all(), [
+            'existingPassword' => 'required',
+            'newPassword' => 'required|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Validation failed', 'messages' => $validator->errors()], 422);
+        }
+
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => ' user not found'], 400);
+        }
+
+        // Check if existing password is correct
+        if (!Hash::check($request->input('existingPassword'), $user->password)) {
+            return response()->json(['error' => 'Current password is incorrect'], 400);
+        }
+
+        // Update password and save user
+        $user->password = Hash::make($request->input('newPassword'));
+        $user->save();
+
+        return response()->json(['message' => 'Password changed successfully']);
+    }
+
+
 
     public function logout(Request $request)
     {
         try {
-            $token = $request->header('Authorization');
+            $token = str_replace('Bearer ', '', $request->header('Authorization')); // Extract token
             if ($token) {
-                JWTAuth::parseToken()->invalidate();
+                JWTAuth::parseToken()->invalidate(); // Invalidate the JWT token
                 return response()->json([
                     'success' => true,
                     'message' => 'User logged out successfully.'
@@ -138,7 +179,7 @@ class RegisterController extends Controller
                     'message' => 'Authorization token not found.'
                 ], 401);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to log out, please try again.'
@@ -146,4 +187,48 @@ class RegisterController extends Controller
         }
     }
 
+
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        // Validation rules
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'mobile' => 'required|string|max:10',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Update user profile
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->gender = $request->gender;
+        $user->mobile = $request->mobile;
+
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($user->photo) {
+                Storage::delete($user->photo);
+            }
+
+            // Store new photo
+            $photoPath = $request->file('photo')->store('profile_photos');
+            $user->photo = $photoPath;
+        }
+
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully.',
+            'user' => $user,
+        ], 200);
+    }
 }

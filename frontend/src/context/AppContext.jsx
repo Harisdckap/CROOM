@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios"; 
+import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { useStateContext } from "./ContextProvider"; 
+import { useStateContext } from "./ContextProvider";
 
 const AppContext = createContext();
 
 const MyContextProvider = ({ children }) => {
     const params = useParams();
     const navigate = useNavigate();
-    const { auth } = useStateContext();  //getting auth token from ContextProvider
+    const { auth } = useStateContext(); 
     const [userDetail, setUserDetail] = useState(null);
 
     useEffect(() => {
@@ -21,11 +21,11 @@ const MyContextProvider = ({ children }) => {
         try {
             const response = await axios.get("http://127.0.0.1:8000/api/userDetail", {
                 headers: {
-                    Authorization: `Bearer ${auth}` 
+                    Authorization: `Bearer ${auth}`
                 }
             });
-            
-            setUserDetail(response.data.user); 
+
+            setUserDetail(response.data.user);
         } catch (error) {
             console.error("Error fetching user detail:", error);
         }
@@ -36,6 +36,9 @@ const MyContextProvider = ({ children }) => {
             value={{
                 userDetail,
                 userInfo,
+                isAdmin: () => {
+                    return userDetail && (userDetail.user_type === 1 || userDetail.user_type === 2);
+                }
             }}
         >
             {children}
@@ -44,7 +47,14 @@ const MyContextProvider = ({ children }) => {
 };
 
 const useMyContext = () => {
-    return useContext(AppContext);
+    const context = useContext(AppContext);
+
+    // Ensure the context is not undefined and provides default values
+    if (!context) {
+        throw new Error("useMyContext must be used within a MyContextProvider");
+    }
+
+    return context;
 };
 
 export { MyContextProvider, useMyContext };

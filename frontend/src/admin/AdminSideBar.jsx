@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaUsers } from 'react-icons/fa';
+import { FaUsers, FaAd } from 'react-icons/fa';
 import logo from "../assets/logo.png";
 
 
@@ -13,6 +13,7 @@ const AdminSideBar = ({ setSelectedMenuTitle }) => {
    
    
     { title: 'User Management', key: 'users', icon: <FaUsers /> },
+    { title: 'Ads Management', key: 'ads', icon: <FaAd /> },
    
     
     
@@ -38,7 +39,7 @@ const AdminSideBar = ({ setSelectedMenuTitle }) => {
                 className={`flex items-center w-full justify-start my-1 py-2 px-4 transition-colors duration-200 rounded-md ${
                   isActiveMenu ? 'bg-white bg-opacity-10' : 'hover:bg-white hover:bg-opacity-10'
                 }`}
-                onClick={() => setSelectedMenuTitle(menu.title)} //update title on click
+                onClick={() => setSelectedMenuTitle(menu.title)}
               >
                 <Link to={`/admin/${menuPath}`} className="flex-1 text-center">
                   <button

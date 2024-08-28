@@ -2,11 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import axios from "axios";
 
+
 import AdminSideBar from "./AdminSideBar";
 
 import Navbar from "./Navbar";
 
 import User from "./User";
+
+import AdsTable from "./AdsTable";
+
+import UnderConstruction from "./UnderConstruction";
 
 const AdminView = () => {
     const navigate = useNavigate();
@@ -25,7 +30,7 @@ const AdminView = () => {
                             },
                         }
                     );
-                    if (response.data.user.user_type == 1) {
+                    if (response.data.user.user_type == 1 || response.data.user.user_type == 2) {
                         setIsAdmin(true);
                     } else {
                         navigate("/access-denied");
@@ -60,6 +65,8 @@ const AdminView = () => {
                             <Route path="/" element={<User />} />
 
                             <Route path="/users/*" element={<User />} />
+
+                            <Route path="/ads" element={<UnderConstruction />} />
                         </Routes>
                     </div>
                 </div>

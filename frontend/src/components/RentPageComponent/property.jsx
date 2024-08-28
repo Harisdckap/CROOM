@@ -1,35 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Slider from 'react-slick';
-import Navbar from './Navbar';
-import HomeNavBar from '../Header';
+import React, { useState, useEffect, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Slider from "react-slick";
+import Navbar from "./Navbar";
+import HomeNavBar from "../Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faMapMarkerAlt, faHome, faHeart } from "@fortawesome/free-solid-svg-icons";
+import "../../slider.css";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import NoPropertiesFound from "../RentPageComponent/NoPropertyFound";
+import Loader from "./Loader";
+import Footer from "../../components/Footer";
 
 const PropertyPage = () => {
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams();
-    const [search, setSearch] = useState('');
-    const [gender, setGender] = useState('all');
+    const [search, setSearch] = useState(searchParams.get("address") || "");
+    const [gender, setGender] = useState(searchParams.get("gender") || "all");
+    const [sortOrder, setSortOrder] = useState(searchParams.get("sort") || "ASC");
+    const [loading, setLoading] = useState(true);
+
+    // const toastShownRef = useRef(false); // Use useRef to keep track of toast display
+
+
 
     useEffect(() => {
-        fetchListings();
+        const fetchListingsWithDelay = async () => {
+            setLoading(true);  // Start loading
+            await fetchListings();
+            setTimeout(() => {
+                setLoading(false);  // Stop loading after 2 seconds
+            }, 1000);
+        };
+
+        fetchListingsWithDelay();
     }, [searchParams]);
 
     const fetchListings = async () => {
         try {
             const params = {
-                address: searchParams.get('address') || '',
-                t: searchParams.get('t') || 'a',
-                p: searchParams.get('p') || 1,
-                gender: searchParams.get('gender') || 'all',
+                address: searchParams.get("address") || "",
+                t: searchParams.get("t") || "a",
+                gender: searchParams.get("gender") || "all",
+                sort: searchParams.get("sort") || sortOrder,
             };
-            const response = await axios.get('http://127.0.0.1:8000/api/properties', { params });
+            const response = await axios.get("http://127.0.0.1:8000/api/properties", { params });
             setListings(response.data.data);
+
+            // if (response.data.data.length === 0 && !toastShownRef.current) {
+            //     toast.info("No properties found in this location.");
+            //     toastShownRef.current = true; // Mark that the toast has been shown
+            // } else if (response.data.data.length > 0) {
+            //     toastShownRef.current = false; // Reset if listings are found
+            // }
         } catch (error) {
-            console.error('Error fetching listings:', error);
+            console.error("Error fetching listings:", error);
         }
     };
 
@@ -41,7 +68,7 @@ const PropertyPage = () => {
         setGender(event.target.value);
         setSearchParams((prev) => {
             const newParams = new URLSearchParams(prev);
-            newParams.set('gender', event.target.value);
+            newParams.set("gender", event.target.value);
             return newParams;
         });
     };
@@ -50,24 +77,52 @@ const PropertyPage = () => {
         event.preventDefault();
         setSearchParams({
             address: search,
-            t: searchParams.get('t') || 'a',
-            p: 1,
+            t: searchParams.get("t") || "a",
             gender: gender,
+            sort: sortOrder,
         });
     };
 
-    const handleNavClick = (type) => {
-        setSearchParams({
-            address: searchParams.get('address') || '',
-            t: type,
-            p: 1,
-            gender: gender,
+    const handleSortChange = (order) => {
+        setSortOrder(order);
+        setSearchParams((prev) => {
+            const newParams = new URLSearchParams(prev);
+            newParams.set("sort", order);
+            return newParams;
         });
     };
 
-    const handleViewClick = (id, location, listingType) => {
+    const setListingType = (type) => {
+        setSearchParams((prev) => {
+            const newParams = new URLSearchParams(prev);
+            newParams.set("t", type);
+            return newParams;
+        });
+    };
+
+    const handleViewClick = (id, location, type) => {
         const trimmedLocation = location.trim();
-        navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}/${listingType}`);
+        navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}/${type}`);
+    };
+
+    const toggleFavourite = async (id, listing_type) => {
+        try {
+            const response = await axios.post(`http://127.0.0.1:8000/api/${listing_type}/${id}/toggle-favourite`);
+            if (response.data.success) {
+                const newFavouriteStatus = response.data.is_favourite;
+                setListings((prevListings) =>
+                    prevListings.map((listing) =>
+                        listing.id === id
+                            ? { ...listing, is_favourite: newFavouriteStatus }
+                            : listing
+                    )
+                );
+            } else {
+                console.error("Failed to toggle favourite:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error toggling favourite status:", error);
+        }
     };
 
     const renderSlider = (photos) => {
@@ -78,7 +133,9 @@ const PropertyPage = () => {
             slidesToShow: 1,
             slidesToScroll: 1,
             autoplay: true,
-            autoplaySpeed: 5000, // 5000 milliseconds = 5 seconds
+            autoplaySpeed: 5000,
+            className: "custom-slider",
+            dotsClass: "custom-dots",
         };
 
         return (
@@ -89,7 +146,7 @@ const PropertyPage = () => {
                             src={`http://127.0.0.1:8000/storage/${photo}`}
                             alt="Property Photo"
                             className="w-full h-48 object-cover rounded-lg"
-                            onError={(e) => (e.target.src = '/path/to/fallback-image.jpg')}
+                            onError={(e) => (e.target.src = "/path/to/fallback-image.jpg")}
                         />
                     </div>
                 ))}
@@ -97,130 +154,115 @@ const PropertyPage = () => {
         );
     };
 
-    const renderListing = (listing) => {
+    const renderListing = (listing, index) => {
         let photos = [];
+        let locationData = {};
+
         if (listing.photos) {
-            photos = JSON.parse(listing.photos).map(photo => photo.replace('\/', '/'));
+            try {
+                photos = JSON.parse(listing.photos).map((photo) =>
+                    photo.replace("/", "/")
+                );
+            } catch (error) {
+                console.error("Failed to parse photos:", error);
+            }
         }
 
-        switch (listing.listing_type) {
-            case 'room':
-                return (
-                    <div key={listing.id} className="border rounded-lg p-4 bg-white">
-                        <div className="mb-4">
-                            {photos.length > 0 ? renderSlider(photos) : (
-                                <p className="text-gray-500 text-center">No photo available.</p>
-                            )}
-                        </div>
-                        <h2 className="text-xl font-semibold mb-2 gradient-text">{listing.title}</h2>
-                        <div className="text-gray-700 mb-2 flex justify-between">
-                            <div className="flex flex-col space-y-1">
-                                <p>Location: {listing.location}</p>
-                                <p>Price: &#8377;{listing.price}</p>
-                            </div>
-                            <div className="flex flex-col space-y-1">
-                                <p>Room Type: {listing.room_type}</p>
-                                <p>Looking for: {listing.looking_for_gender}</p>
-                            </div>
-                        </div>
-                        <div className="mt-4 flex justify-end">
-                            <button
-                                onClick={() => handleViewClick(listing.id, listing.location, listing.listing_type)}
-                                className="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg focus:ring-2 focus:ring-blue-600"
-                            >
-                                <FontAwesomeIcon icon={faEye} className="mr-2" />
-                                View
-                            </button>
-                        </div>
-                    </div>
-                );
-            case 'pg':
-                return (
-                    <div key={listing.id} className="border rounded-lg p-4 bg-white">
-                        <div className="mb-4">
-                            {photos.length > 0 ? renderSlider(photos) : (
-                                <p className="text-gray-500 text-center">No photo available.</p>
-                            )}
-                        </div>
-                        <h2 className="text-xl font-semibold mb-2 gradient-text">{listing.pg_name}</h2>
-                        <div className="text-gray-700 mb-2 flex justify-between">
-                            <div className="flex flex-col space-y-1">
-                                <p>Location: {listing.location}</p>
-                                <p>Price: &#8377;{listing.occupancy_amount}</p>
-                            </div>
-                            <div className="flex flex-col space-y-1">
-                                <p>Type: {listing.pg_type}</p>
-                                <p>Occupancy: {listing.occupancy_type}</p>
-                            </div>
-                        </div>
-                        <div className="mt-4 flex justify-end">
-                            <button
-                                onClick={() => handleViewClick(listing.id, listing.location, listing.listing_type)}
-                                className="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg focus:ring-2 focus:ring-blue-600"
-                            >
-                                <FontAwesomeIcon icon={faEye} className="mr-2" />
-                                View
-                            </button>
-                        </div>
-                    </div>
-                );
-            case 'roommates':
-                return (
-                    <div key={listing.id} className="border rounded-lg p-4 bg-white">
-                        <div className="mb-4">
-                            {photos.length > 0 ? renderSlider(photos) : (
-                                <p className="text-gray-500 text-center">No photo available.</p>
-                            )}
-                        </div>
-                        <h2 className="text-xl font-semibold mb-2 gradient-text">{listing.post}</h2>
-                        <div className="text-gray-700 mb-2 flex justify-between">
-                            <div className="flex flex-col space-y-1">
-                                <p>Location: {listing.location}</p>
-                                <p>Approx Rent: &#8377;{listing.approx_rent}</p>
-                            </div>
-                            <div className="flex flex-col space-y-1">
-                                <p>Number of People: {listing.number_of_people}</p>
-                                <p>Looking for: {listing.looking_for_gender}</p>
-                            </div>
-                        </div>
-                        <div className="mt-4 flex justify-end">
-                            <button
-                                onClick={() => handleViewClick(listing.id, listing.location, listing.listing_type)}
-                                className="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg focus:ring-2 focus:ring-blue-600"
-                            >
-                                <FontAwesomeIcon icon={faEye} className="mr-2" />
-                                View
-                            </button>
-                        </div>
-                    </div>
-                );
-            default:
-                return null;
+        if (listing.location) {
+            try {
+                const outerJson = JSON.parse(listing.location);
+                locationData = JSON.parse(outerJson);
+            } catch (error) {
+                console.error("Failed to parse location data:", error);
+            }
         }
+
+        const city = (typeof locationData.city === "string" && locationData.city.trim()) || "Unknown City";
+        const district = (typeof locationData.district === "string" && locationData.district.trim()) || "Unknown District";
+
+        return (
+            <div
+                key={`${listing.id}-${index}`}
+                className={`border rounded-lg p-6 bg-white shadow-md ml-4 mr-4 cursor-pointer hover:bg-gray-200 transition-transform`}
+                onClick={() => handleViewClick(listing.id, city, listing.listing_type)}
+            >
+                <div className="relative">
+                    <FontAwesomeIcon
+                        icon={faHeart}
+                        className={`absolute top-2 right-2 text-2xl cursor-pointer z-10 ${listing.is_favourite ? "text-red-500" : "text-gray-100"}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavourite(listing.id, listing.listing_type);
+                        }}
+                    />
+                    {photos.length > 0 ? (
+                        renderSlider(photos)
+                    ) : (
+                        <p className="text-gray-500 text-center">No photo available.</p>
+                    )}
+                </div>
+                <div className="px-2">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-semibold gradient-text">
+                            {listing.title || listing.pg_name || listing.post}
+                        </h2>
+                        <p className="text-green-600 flex items-center text-sm">
+                            <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+                            {district}
+                        </p>
+                    </div>
+                    <hr className="my-2" />
+                    <div className="flex justify-between items-center mt-2 p-1">
+                        <div className="text-gray-700">
+                            <p>
+                                <span className="font-semibold">₹{listing.price || listing.occupancy_amount || listing.approx_rent}</span>
+                            </p>
+                        </div>
+                        <p className="text-gray-700 flex items-center">
+                            <FontAwesomeIcon icon={faHome} className="mr-2" />
+                            Room Type: {listing.room_type || listing.pg_type}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     return (
         <div>
-            <HomeNavBar />
-            <Navbar
-                search={search}
-                onSearchChange={handleSearchChange}
-                onSearchSubmit={handleSearchSubmit}
-                gender={gender}
-                onGenderChange={handleGenderChange}
-                onNavClick={handleNavClick}
-            />
-            <div className="max-w-6xl mx-auto py-10">
-                {listings.length === 0 ? (
-                    <p className="text-center text-gray-500">No listings found.</p>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {listings.map((listing) => renderListing(listing))}
-                    </div>
-                )}
-            </div>
+  <HomeNavBar />
+  <Navbar
+    search={search}
+    onSearchChange={handleSearchChange}
+    onSearchSubmit={handleSearchSubmit}
+    gender={gender}
+    onGenderChange={handleGenderChange}
+    setListingType={setListingType}
+    onSortChange={handleSortChange}
+  />
+
+  <div className="flex justify-center mt-6">
+    {loading ? (
+      <Loader />  // Show loader if loading
+    ) : (
+      listings.length === 0 ? (
+        <NoPropertiesFound />
+      ) : (
+        <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+          {/* Added mb-12 to create space between the listings and the footer */}
+          {listings.map((listing, index) => renderListing(listing, index))}
         </div>
-    );
+      )
+    )}
+  </div>
+
+  <ToastContainer />
+  
+  {/* Add padding or margin to the footer */}
+  <Footer/>
+</div>
+
+      );
 };
 
 export default PropertyPage;

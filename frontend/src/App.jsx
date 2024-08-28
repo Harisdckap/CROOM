@@ -13,10 +13,11 @@ import PostRequirementPage from "./components/PostRequirementPage";
 import PropertyPage from "./components/RentPageComponent/property";
 import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
 import PlanPage from "./components/RentPageComponent/PlanPage";
-import Profile from "./components/Profile";
+import Profile from "./components/User";
 import UserAds from "./userAds/UserAds";
 import AdminView from "./admin/Adminview";
 import AccessDenied from "./admin/AccessDenied";
+import MyFavPage from "./components/RentPageComponent/MyFavPage";
 
 function App() {
     return (
@@ -51,6 +52,7 @@ function App() {
                 <Route path="/my-ads" element={<UserAds />} />
                 <Route path="/access-denied" element={<AccessDenied />} />
                 <Route path="/admin/*" element={<AdminView />} />
+                <Route path="/my-fav" element={<MyFavPage />} />
             </Routes>
         </Router>
     );

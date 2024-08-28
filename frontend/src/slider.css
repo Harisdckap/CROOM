@@ -1,0 +1,26 @@
+
+.custom-slider .slick-prev:before,
+.custom-slider .slick-next:before {
+    color: rgb(36, 32, 32);
+    
+}
+
+.custom-dots {
+    bottom: 10px;
+    display: none !important;;
+ 
+}
+
+.custom-dots li button:before {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.5);
+    opacity: 0.7;
+    display: none;
+}
+
+.custom-dots li.slick-active button:before {
+    color: rgba(0, 0, 0, 0.315);
+   
+}
+
+

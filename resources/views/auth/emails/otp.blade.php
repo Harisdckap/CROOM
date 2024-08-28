@@ -81,7 +81,9 @@
             <h1>C-room</h1>
         </div>
         <div class="content">
-            <img src="./image/otp.png" alt="Logo">
+            <!-- <img src="./image/otp.png" alt="Logo"> -->
+            <img src="{{ asset('images/otp.png') }}" alt="Logo" />
+
             <h2>Your OTP Code</h2>
             <p>Thank you for registering with C-room. Please use the following OTP to verify your account:</p>
             <h3>{{ $otp }}</h3>

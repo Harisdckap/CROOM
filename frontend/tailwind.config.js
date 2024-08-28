@@ -16,12 +16,18 @@ module.exports = {
           '25%': { transform: 'rotate(-10deg)' },
           '75%': { transform: 'rotate(10deg)' },
         },
+        slideUpFadeIn: {
+          '0%': { opacity: 0, transform: 'translateY(20px)' },
+          '100%': { opacity: 1, transform: 'translateY(0)' },
+        },
       },
       animation: {
         'tilt-shake': 'tilt-shake 0.5s ease-in-out 0.2s both',
+        slideUpFadeIn: 'slideUpFadeIn 0.8s ease-out',
       },
     },
   },
+  variants: {},
   plugins: [],
 }
 

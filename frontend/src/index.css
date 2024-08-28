@@ -1,16 +1,43 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-html, body{
+html, body {
   font-family: "Varela Round", sans-serif;
   margin: 0;
   padding: 0;
 }
+
+/* Gradient text styling */
 .gradient-text {
   background: linear-gradient(to right, #000000, #1e3a8a, #1d4ed8);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; 
+  -webkit-text-fill-color: transparent;
 }
+
+.primary-btn{
+    background-color: #1F293B;
+    color:white;
+}
+
+/* Custom scrollbar styling */
+/* ::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e3a8a; 
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1e3a8a; 
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #1e3a8a;
+} */

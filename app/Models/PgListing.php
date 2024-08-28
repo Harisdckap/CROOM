@@ -12,6 +12,7 @@ class PgListing extends Model
     protected $fillable = [
         'user_id',
         'pg_type',
+        'looking_for_gender',
         'mobile_num',
         'pg_name',
         'location',
@@ -28,6 +29,7 @@ class PgListing extends Model
         'photos' => 'array',
         'highlighted_features' => 'array',
         'amenities' => 'array',
+        'location' => 'array',
     ];
 
 }
