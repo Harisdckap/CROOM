@@ -45,8 +45,8 @@ class LoginController extends Controller
             $jwt = JWT::encode($payload, $key, 'HS256');
             return response()->json([
                 'success' => true,
-                'user' => $user,
-                'access_token' => $jwt,
+                'user_id' => $user->id,
+                'access_token' => $token,
                 'token_type' => 'Bearer'
             ]);
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {

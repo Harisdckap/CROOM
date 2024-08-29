@@ -7,7 +7,7 @@ import { FaSearch } from 'react-icons/fa'; // Import the icon
 const NoPropertiesFound = () => {
   const navigate = useNavigate();
   return (
-    <div className="flex items-center justify-center mt-6">
+    <div className="flex items-center justify-center m-6 mb-6">
       <motion.div
         className="flex flex-col md:flex-row bg-white shadow-lg rounded-lg max-w-4xl mx-auto"
         initial={{ opacity: 0, scale: 0.9 }}

@@ -15,7 +15,9 @@ use App\Http\Controllers\RoommateController;
 use App\Http\Controllers\PgListingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdsController;
+use App\Http\Controllers\UserListController;
 use App\Http\Controllers\FavouriteController;
+use App\Http\Controllers\AdminAdsController;
 
 // Api Routes 
 
@@ -35,9 +37,20 @@ Route::post('/upload', [ImageController::class, 'upload']);
 Route::post('/roommates', [RoommateController::class, 'store']);
 Route::post('/pg_listings', [PgListingController::class, 'store']);
 Route::get('/userDetail', [UserController::class, 'decodeToken']);
+Route::post('/userDetail', [UserController::class, 'updateProfile']);
+Route::get('user/{userId}/ads', [AdsController::class, 'getUserAds']);
+Route::get('/usersList/{auth_userID}', [UserListController::class, 'getUserList']);
+Route::get('/adminList/{auth_userID}', [UserListController::class, 'getAdminList']);
+Route::delete('/removeUser', [UserListController::class, 'removeUser']);
+Route::post('/changeRole', [UserListController::class, 'changeRole']);
+Route::get('/admin/ads', [AdminAdsController::class, 'getAllAds']);
+Route::post('/admin/remove-ad', [AdminAdsController::class, 'removeAd']);
+
+
+
+
 Route::middleware('auth:api')->post('/update-profile', [RegisterController::class, 'updateProfile']);
 
-Route::get('user/{userId}/ads', [AdsController::class, 'getUserAds']);
 Route::put('/property/{id}/{listing_type}', [PropertyController::class, 'updateProperty']);
 Route::delete('/property/{listingType}/{id}', [PropertyController::class, 'deleteProperty']);
 Route::post('/change-password/{userId}', [RegisterController::class, 'changePassword']);

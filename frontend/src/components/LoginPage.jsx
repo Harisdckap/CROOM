@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../js/api/auth";
+import { googleLogin } from "../js/api/auth";
 import apartmentIMG from "../assets/log3.png";
 // import FacebookLogo from "../assets/facebook.png";
 import GoogleLogo from "../assets/google.png";
@@ -31,17 +32,20 @@ function LoginPage() {
         try {
             const response = await login(formData);
 
-            if (response && response.success) {
-                if (response.access_token) {
-                    const { access_token } = response;
-                    const now = new Date();
-                    localStorage.setItem("auth_token", access_token);
-                    const expirationTime = now.getTime() + 24 * 60 * 60 * 1000;
-                    localStorage.setItem("auth_token_expiration", expirationTime);
+            if (response && response.access_token) {
+                const { access_token } = response;
+                const user_id = response.user_id;
+                const user_type = response.user_id;
 
-                    toast.success("Logged in successfully!");
-                    navigate("/");
-                }
+                //storing the token and user_id in localStorage
+                localStorage.setItem("auth_token", access_token);
+                localStorage.setItem("user_id", user_id);
+
+                // Redirect to home page
+                if (user_type == 1 || user_type == 2) {
+                    navigate("/admin");
+                } else navigate("/");
+                
             } else {
                 throw new Error(response.message || "Login failed.");
             }
@@ -60,6 +64,35 @@ function LoginPage() {
         }
     };
 
+    const handleGoogleAuth = async (e) => {
+        // e.preventDefault();
+        // window.location.href = "http://localhost:8000/auth/google";
+        e.preventDefault();
+
+        try {
+            const response = await googleLogin();
+
+            if (response && response.access_token) {
+                const { access_token } = response;
+                const user_id = response.user_id;
+
+                //storing the token and user_id in localStorage
+                localStorage.setItem("auth_token", access_token);
+                localStorage.setItem("user_id", user_id);
+
+                // Redirect to home page
+                navigate("/");
+            } else {
+                throw new Error("No access token received from the server");
+            }
+        } catch (error) {
+            // console.error("Login error:", error);/
+            setErrorMessage(
+                "Login failed. Please check your credentials and try again."
+            );
+        }
+    };
+
     return (
         <div className="min-h-screen flex flex-col bg-gray-100" style={{ backgroundColor: "rgb(31, 41, 59)" }}>
             <Auth_navbar />
@@ -70,7 +103,8 @@ function LoginPage() {
                         <img src={apartmentIMG} className="w-full h-auto" alt="Apartment" />
                     </div>
 
-                    <div className="flex relative w-1/2 items-center justify-center">
+                    {/* Form Section */}
+                    <div className="flex items-center w-1/2justify-center">
                         <div className="w-full max-w-md">
                             <h1 className="text-center text-3xl font-bold">Login to your account</h1>
                             <p className="mx-8 text-xs text-gray-500">Welcome back! Please enter your details</p>
@@ -140,7 +174,19 @@ function LoginPage() {
                                         <img className="w-6 h-6 hover:animate-tilt-shake" src={FacebookLogo} alt="Facebook Logo" />
                                     </Link> */}
                                     <Link className="transform transition-transform duration-200 hover:scale-110">
-                                        <img className="w-6 h-6 hover:animate-tilt-shake" src={GoogleLogo} alt="Google Logo" />
+                                        <img
+                                            className="w-10 h-10 hover:animate-tilt-shake"
+                                            src={FacebookLogo}
+                                            alt="Facebook Logo"
+                                        />
+                                    </Link>
+                                    <Link className="transform transition-transform duration-200 hover:scale-110">
+                                        <img
+                                            className="w-10 h-10 hover:animate-tilt-shake"
+                                            src={GoogleLogo}
+                                            alt="Google Logo"
+                                            onClick={handleGoogleAuth}
+                                        />
                                     </Link>
                                 </div>
                             </form>

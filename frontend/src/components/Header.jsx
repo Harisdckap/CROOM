@@ -38,7 +38,8 @@ const Header = () => {
                 );
     
                 if (response.status === 200) {
-                    localStorage.removeItem("auth_token"); // Remove token from local storage
+                    localStorage.removeItem("auth_token");
+                    localStorage.removeItem("user_id"); 
                     setIsLoggedIn(false); // Update state
                     navigate("/login"); // Navigate to login page
                 } else {
@@ -117,7 +118,7 @@ const Header = () => {
                                         </Link>
                                         <button
                                             onClick={handleMyAdsClick}
-                                            className="block text-center hover:bg-blue-300 rounded p-2 w-full text-left"
+                                            className="block text-center hover:bg-blue-300 rounded p-2 w-full"
                                         >
                                             My Ads
                                         </button>
@@ -131,7 +132,7 @@ const Header = () => {
                                         </Link> */}
                                         <button
                                             onClick={onLogout}
-                                            className="block text-center hover:bg-blue-300 rounded p-2 w-full text-left"
+                                            className="block text-center hover:bg-blue-300 rounded p-2 w-full"
                                         >
                                             Logout
                                         </button>
