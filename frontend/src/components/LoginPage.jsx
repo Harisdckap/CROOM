@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../js/api/auth";
 import apartmentIMG from "../assets/log3.png";
-import FacebookLogo from "../assets/facebook.png";
+// import FacebookLogo from "../assets/facebook.png";
 import GoogleLogo from "../assets/google.png";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import Auth_navbar from "./RentPageComponent/Auth_navbar";
@@ -136,9 +136,9 @@ function LoginPage() {
                                     </button>
                                 </div>
                                 <div className="flex gap-4 justify-center pt-4">
-                                    <Link className="transform transition-transform duration-200 hover:scale-110">
+                                    {/* <Link className="transform transition-transform duration-200 hover:scale-110">
                                         <img className="w-6 h-6 hover:animate-tilt-shake" src={FacebookLogo} alt="Facebook Logo" />
-                                    </Link>
+                                    </Link> */}
                                     <Link className="transform transition-transform duration-200 hover:scale-110">
                                         <img className="w-6 h-6 hover:animate-tilt-shake" src={GoogleLogo} alt="Google Logo" />
                                     </Link>

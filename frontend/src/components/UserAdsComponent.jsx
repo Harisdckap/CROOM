@@ -226,7 +226,7 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                 className="custom-drawer absolute top-14"
                 zIndex={200}
             >
-                <div className="block" style={{ fontFamily: 'Varela Round, sans-serif' }}>
+                <div className="block" style={{ fontFamily: 'Varela Round, sans-serif', cursor: 'pointer' }}>
                     {ads.rooms.length === 0 ? (
                         <p>No room ads found.</p>
                     ) : (
@@ -245,7 +245,7 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                         <p>No roommates ads found.</p>
                     ) : (
                         ads.roommates.map((ad) => (
-                            <Card key={ad.id} className="w-full mb-4" style={{ fontFamily: 'Varela Round, sans-serif' }} onClick={() => showChildrenDrawer(ad)}>
+                            <Card key={ad.id} className="w-full mb-4" style={{ fontFamily: 'Varela Round, sans-serif', cursor: 'pointer' }} onClick={() => showChildrenDrawer(ad)}>
                                 <div className="flex flex-wrap justify-between">
                                     <h3 className="text-base font-bold">Title:<span className="font-normal">{ad.title}</span> </h3>
                                     <h3 className="text-base font-bold">Price:<span className="font-normal">&#x20B9;{ad.approx_rent}</span> </h3>
@@ -259,7 +259,7 @@ const UserAdsComponent = ({ drawerOpen, closeDrawer }) => {
                         <p>No PG listings found.</p>
                     ) : (
                         ads.pg_listings.map((ad) => (
-                            <Card key={ad.id} className="w-full mb-4" style={{ fontFamily: 'Varela Round, sans-serif' }} onClick={() => showChildrenDrawer(ad)}>
+                            <Card key={ad.id} className="w-full mb-4" style={{ fontFamily: 'Varela Round, sans-serif', cursor: 'pointer' }} onClick={() => showChildrenDrawer(ad)}>
                                 <div className="flex flex-wrap justify-between">
                                     <h3 className="text-base font-bold">Title: <span className="font-normal">{ad.pg_name}</span></h3>
                                     <h3 className="text-base font-bold">Price:<span className="font-normal">&#x20B9;{ad.occupancy_amount}</span> </h3>

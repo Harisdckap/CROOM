@@ -121,14 +121,14 @@ const Header = () => {
                                         >
                                             My Ads
                                         </button>
-                                        <Link to="/my-fav">
+                                        {/* <Link to="/my-fav">
                                             <a
                                                 href="#"
                                                 className="block hover:bg-blue-300 rounded p-2"
                                             >
                                                 My Favourite
                                             </a>
-                                        </Link>
+                                        </Link> */}
                                         <button
                                             onClick={onLogout}
                                             className="block text-center hover:bg-blue-300 rounded p-2 w-full text-left"
@@ -144,7 +144,7 @@ const Header = () => {
                                     to="/register"
                                     className="text-blue-500 hover:underline"
                                 >
-                                    Register
+                                    Register /
                                 </Link>
                                 <Link
                                     to="/login"
